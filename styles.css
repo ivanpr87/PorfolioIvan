@@ -313,7 +313,7 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
 
   .hero-orb { display: none; }
 
-  .grid-inv-items { grid-template-columns: repeat(3, 1fr) !important; }
+  .grid-inv-items { grid-template-columns: repeat(2, 1fr) !important; }
 
   .cart-modal-inner {
     max-height: 85vh;
