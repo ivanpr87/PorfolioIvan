@@ -251,46 +251,53 @@ function CartridgeModal({ p, title, sub, genre, desc, accent, onClose }) {
       <m.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
         transition={{ duration: 0.25 }}
         onClick={(e) => e.stopPropagation()}
-        style={{
-          maxWidth: 680, width: '100%',
+        style={{ maxWidth: 680, width: '100%' }}>
+        <div style={{
+          maxHeight: '85vh', overflowY: 'auto',
           background: 'var(--bg-panel)',
           border: `3px solid ${accent}`,
           boxShadow: `inset 0 0 0 2px var(--bg-void), inset 0 0 0 4px var(--ink-white), 8px 8px 0 0 var(--bg-void)`,
           padding: 28, position: 'relative',
         }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <div className="font-pixel" style={{ fontSize: 10, color: accent, letterSpacing: '0.1em' }}>
-            {t('proj_cart_loaded')} :: {genre}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div className="font-pixel" style={{ fontSize: 10, color: accent, letterSpacing: '0.1em' }}>
+              {t('proj_cart_loaded')} :: {genre}
+            </div>
+            <button onClick={onClose} onMouseEnter={() => AudioCtx.hover()}
+              className="font-pixel cart-modal-close" style={{ border: 'none', background: 'transparent', color: 'var(--ink-white)', fontSize: 12 }}>
+              {t('proj_close')}
+            </button>
+          </div>
+          <div className="font-pixel" style={{ fontSize: 28, color: 'var(--ink-white)', marginBottom: 8, textShadow: `3px 3px 0 ${accent}` }}>
+            {title}
+          </div>
+          <div style={{ fontFamily: 'VT323, monospace', fontSize: 22, color: 'var(--ink-dim)', marginBottom: 20 }}>
+            {sub} · {p.year}
+          </div>
+          <div className="dialog-box" style={{ marginBottom: 20 }}>
+            <div style={{ fontFamily: 'VT323, monospace', fontSize: 22, color: 'var(--ink-white)', lineHeight: 1.4 }}>
+              {desc}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+            {p.tech.map(tc => (
+              <span key={tc} className="font-pixel" style={{
+                fontSize: 9, padding: '6px 10px',
+                background: 'var(--bg-void)', color: accent,
+                boxShadow: `inset 0 0 0 2px ${accent}`,
+                letterSpacing: '0.08em',
+              }}>{tc}</span>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button className="pixel-btn" onMouseEnter={() => AudioCtx.hover()} onClick={() => AudioCtx.coin()}>{t('proj_view_demo')}</button>
+            <button className="pixel-btn" onMouseEnter={() => AudioCtx.hover()} onClick={() => AudioCtx.select()} style={{ background: 'transparent' }}>{t('proj_case')}</button>
           </div>
           <button onClick={onClose} onMouseEnter={() => AudioCtx.hover()}
-            className="font-pixel" style={{ border: 'none', background: 'transparent', color: 'var(--ink-white)', fontSize: 12 }}>
-            {t('proj_close')}
+            className="font-pixel pixel-btn cart-modal-close-bottom"
+            style={{ marginTop: 20, width: '100%' }}>
+            ✕ {t('proj_close')}
           </button>
-        </div>
-        <div className="font-pixel" style={{ fontSize: 28, color: 'var(--ink-white)', marginBottom: 8, textShadow: `3px 3px 0 ${accent}` }}>
-          {title}
-        </div>
-        <div style={{ fontFamily: 'VT323, monospace', fontSize: 22, color: 'var(--ink-dim)', marginBottom: 20 }}>
-          {sub} · {p.year}
-        </div>
-        <div className="dialog-box" style={{ marginBottom: 20 }}>
-          <div style={{ fontFamily: 'VT323, monospace', fontSize: 22, color: 'var(--ink-white)', lineHeight: 1.4 }}>
-            {desc}
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
-          {p.tech.map(tc => (
-            <span key={tc} className="font-pixel" style={{
-              fontSize: 9, padding: '6px 10px',
-              background: 'var(--bg-void)', color: accent,
-              boxShadow: `inset 0 0 0 2px ${accent}`,
-              letterSpacing: '0.08em',
-            }}>{tc}</span>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button className="pixel-btn" onMouseEnter={() => AudioCtx.hover()} onClick={() => AudioCtx.coin()}>{t('proj_view_demo')}</button>
-          <button className="pixel-btn" onMouseEnter={() => AudioCtx.hover()} onClick={() => AudioCtx.select()} style={{ background: 'transparent' }}>{t('proj_case')}</button>
         </div>
       </m.div>
     </m.div>

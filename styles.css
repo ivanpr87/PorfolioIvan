@@ -297,7 +297,8 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
 }
 
 /* === GRIDS RESPONSIVOS === */
-.grid-char   { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 40px; align-items: start; }
+.grid-char      { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 40px; align-items: start; }
+.grid-inv-items { grid-template-columns: repeat(4, 1fr); }
 .grid-stats  { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
 .grid-inv    { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .grid-skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px; }
@@ -312,9 +313,31 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
 
   .hero-orb { display: none; }
 
+  .grid-inv-items { grid-template-columns: repeat(3, 1fr) !important; }
+
+  .cart-modal-inner {
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 18px !important;
+  }
+
+  .cart-modal-close {
+    font-size: 10px !important;
+    padding: 10px 16px !important;
+    background: var(--neon-magenta) !important;
+    color: var(--bg-void) !important;
+    box-shadow: inset 0 0 0 2px var(--bg-void), 3px 3px 0 0 var(--ink-white) !important;
+  }
+
+  .cart-modal-close-bottom {
+    display: block !important;
+  }
+
   *, *:hover, *:focus, *:active,
   button, a, input, textarea, select { cursor: auto !important; }
 }
+
+.cart-modal-close-bottom { display: none; }
 
 /* Dialog box (JRPG style window) */
 .dialog-box {

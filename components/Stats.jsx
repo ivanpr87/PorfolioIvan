@@ -150,7 +150,7 @@ function InventoryPanel() {
         <div className="font-pixel" style={{ fontSize: 11, color: 'var(--neon-cyan)', marginBottom: 18, letterSpacing: '0.1em' }}>
           ▸ {t('stats_equipped')}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+        <div className="grid-inv-items" style={{ display: 'grid', gap: 8 }}>
           {PLAYER_DATA.inventory.map((it, i) => (
             <button key={it.k}
               onClick={() => { setSel(i); AudioCtx.select(); }}
