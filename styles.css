@@ -296,6 +296,26 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
   96% { transform: translate(2px, 0); filter: hue-rotate(40deg); }
 }
 
+/* === GRIDS RESPONSIVOS === */
+.grid-char   { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 40px; align-items: start; }
+.grid-stats  { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.grid-inv    { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.grid-skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px; }
+
+@media (max-width: 768px) {
+  section { padding: 80px 5vw 60px; }
+
+  .grid-char   { grid-template-columns: 1fr; }
+  .grid-stats  { grid-template-columns: 1fr; }
+  .grid-inv    { grid-template-columns: 1fr; }
+  .grid-skills { grid-template-columns: 1fr; }
+
+  .hero-orb { display: none; }
+
+  *, *:hover, *:focus, *:active,
+  button, a, input, textarea, select { cursor: auto !important; }
+}
+
 /* Dialog box (JRPG style window) */
 .dialog-box {
   background: linear-gradient(180deg, var(--bg-panel) 0%, var(--bg-deep) 100%);

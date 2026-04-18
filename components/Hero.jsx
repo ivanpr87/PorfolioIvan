@@ -24,6 +24,7 @@ function Hero() {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: 'easeOut' }}
+        className="hero-orb"
         style={{
           position: 'absolute', right: '8%', top: '18%',
           width: 260, height: 260, borderRadius: '50%',
@@ -123,7 +124,7 @@ function CharacterSelect() {
     <section id="about" data-screen-label="02 Character Select">
       <SectionTitle stage={t('char_stage')} title={t('char_title')} sub={t('char_sub')} accent="var(--neon-cyan)"/>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 360px) 1fr', gap: 40, alignItems: 'start' }}>
+      <div className="grid-char">
         <m.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.5 }}
           className="pixel-border-cyan"

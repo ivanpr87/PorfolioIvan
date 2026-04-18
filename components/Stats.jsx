@@ -47,7 +47,7 @@ function SkillsPanel() {
       <div className="font-pixel" style={{ fontSize: 11, color: 'var(--neon-cyan)', marginBottom: 22, letterSpacing: '0.1em' }}>
         ▸ {t('stats_abilities')}
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 18 }}>
+      <div className="grid-skills">
         {PLAYER_DATA.skills.map((s, i) => (
           <m.div key={s.key}
             initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
@@ -94,7 +94,7 @@ function StatsPanel() {
   const m = window.Motion.motion;
   const stats = Object.entries(PLAYER_DATA.stats);
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
+    <div className="grid-stats">
       <div>
         <div className="font-pixel" style={{ fontSize: 11, color: 'var(--neon-cyan)', marginBottom: 22, letterSpacing: '0.1em' }}>
           ▸ {t('stats_base')}
@@ -145,7 +145,7 @@ function InventoryPanel() {
   const [sel, setSel] = React.useState(0);
   const item = PLAYER_DATA.inventory[sel];
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+    <div className="grid-inv">
       <div>
         <div className="font-pixel" style={{ fontSize: 11, color: 'var(--neon-cyan)', marginBottom: 18, letterSpacing: '0.1em' }}>
           ▸ {t('stats_equipped')}
