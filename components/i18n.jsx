@@ -1,0 +1,428 @@
+/* i18n + real CV data for Ivan Bastos
+   Exposes window.i18n, window.PLAYER_DATA, window.useLang */
+
+const PLAYER_DATA = {
+  name: 'IVAN BASTOS',
+  age: 31,
+  location: 'Buenos Aires, Argentina',
+  email: 'ivanbastos18@gmail.com',
+  linkedin: 'in/ivan-bastos-574186216',
+  timezone: 'GMT-3 · Remoto',
+  languages: { es: 'Nativo', en: 'B1-B2' },
+  // Skill levels are consistent between languages
+  skills: [
+    { key: 'ai',     lvl: 95, color: 'var(--neon-violet)',  tagEn: 'AI',    tagEs: 'IA' },
+    { key: 'n8n',    lvl: 92, color: 'var(--neon-magenta)', tagEn: 'AUTO',  tagEs: 'AUTO' },
+    { key: 'react',  lvl: 88, color: 'var(--neon-cyan)',    tagEn: 'FRONT', tagEs: 'FRONT' },
+    { key: 'nestjs', lvl: 84, color: 'var(--neon-green)',   tagEn: 'BACK',  tagEs: 'BACK' },
+    { key: 'sql',    lvl: 90, color: 'var(--neon-yellow)',  tagEn: 'DATA',  tagEs: 'DATA' },
+    { key: 'ts',     lvl: 90, color: 'var(--neon-cyan)',    tagEn: 'LANG',  tagEs: 'LENG' },
+    { key: 'po',     lvl: 88, color: 'var(--neon-magenta)', tagEn: 'META',  tagEs: 'META' },
+    { key: 'qa',     lvl: 85, color: 'var(--neon-yellow)',  tagEn: 'OPS',   tagEs: 'OPS' },
+  ],
+  stats: { HP: 92, MP: 94, ATK: 88, DEF: 82, SPD: 90, LCK: 78 },
+  inventory: [
+    { k: 'Claude',     r: 'epic' },
+    { k: 'OpenAI',     r: 'epic' },
+    { k: 'n8n',        r: 'epic' },
+    { k: 'Next.js',    r: 'rare' },
+    { k: 'NestJS',     r: 'rare' },
+    { k: 'PostgreSQL', r: 'rare' },
+    { k: 'Prisma',     r: 'rare' },
+    { k: 'Docker',     r: 'common' },
+  ],
+};
+
+const PROJECT_DATA = [
+  { id: 1, key: 'nexus',     year: '2026', color: 'violet',  tech: ['n8n', 'Groq', 'Ollama', 'Slack'] },
+  { id: 2, key: 'labtrack1', year: '2025', color: 'magenta', tech: ['PWA', 'JavaScript', 'Drive API'] },
+  { id: 3, key: 'dashboard', year: '2025', color: 'yellow',  tech: ['Excel', 'PDD', 'Python'] },
+  { id: 4, key: 'labtrack2', year: '2026', color: 'cyan',    tech: ['Next.js', 'NestJS', 'Prisma', 'Postgres'] },
+  { id: 5, key: 'aleman',    year: '2025', color: 'green',   tech: ['Landing', 'SEO', 'Schema'] },
+  { id: 6, key: 'multiagent',year: '2026', color: 'magenta', tech: ['Claude Code', 'XML', 'Markdown'] },
+  { id: 7, key: 'centinela', year: '2026', color: 'cyan',    tech: ['n8n', 'Claude API', 'PostgreSQL', 'Streamlit'] },
+  { id: 8, key: 'portfolio', year: '2026', color: 'yellow',  tech: ['React', 'Framer Motion', 'Tailwind'] },
+];
+
+const I18N = {
+  en: {
+    // HUD
+    hud_credits: 'CREDITS',
+    hud_now: 'NOW',
+    hud_palette: 'PALETTE',
+    hud_lang: 'LANG',
+
+    // Section labels
+    sec_title: 'TITLE SCREEN',
+    sec_char:  'CHARACTER SELECT',
+    sec_stats: 'STATUS SCREEN',
+    sec_shelf: 'CART SHELF',
+    sec_game:  'MINI-GAME',
+    sec_score: 'HIGH SCORES',
+
+    // Hero
+    hero_tag: '© 2026 IVANSOFT · LICENSED BY THE INTERNET',
+    hero_role: 'AI AUTOMATION SPECIALIST',
+    hero_sub: 'Product-oriented builder crafting multi-agent systems, automations and full-stack apps with AI at the core.',
+    hero_press: 'PRESS START',
+    hero_loaded: 'GAME LOADED — SCROLL TO CONTINUE',
+    hero_scroll: 'SCROLL ▼',
+
+    // Character Select
+    char_stage: 'STAGE 02',
+    char_title: 'CHARACTER SELECT',
+    char_sub: 'The player behind the cartridges',
+    char_bio_label: 'BIO.TXT',
+    char_bio: "I'm Ivan Bastos, 31, AI Automation Specialist based in Buenos Aires. I build end-to-end systems with a Prompt-Driven Development mindset: multi-agent architectures, n8n automations with Human-in-the-Loop, and full-stack apps in TypeScript + Next.js + NestJS. International experience in Chile and Costa Rica.",
+    char_role: 'ROLE',
+    char_role_v: 'AI Automation Specialist',
+    char_stack: 'STACK',
+    char_stack_v: 'n8n · Next.js · NestJS · AI',
+    char_mindset: 'MINDSET',
+    char_mindset_v: 'Product Owner · PDD',
+    char_status: 'STATUS',
+    char_status_v: 'AVAILABLE NOW',
+    char_moves: 'SPECIAL MOVES',
+    char_move1: 'Ship multi-agent system',
+    char_move2: 'PDD combo — Prompt-Driven Dev',
+    char_move3: 'HITL pattern — human approval',
+    char_move4: 'QA & Product mindset',
+    char_class: 'AI AUTOMATION',
+    char_tagline: 'Builds with AI. Ships with intent. Thinks like a Product Owner.',
+
+    // Stats
+    stats_stage: 'STAGE 03',
+    stats_title: 'STATUS SCREEN',
+    stats_sub: 'Level, stats & equipped inventory',
+    stats_tab_skills: 'SKILLS',
+    stats_tab_stats: 'STATS',
+    stats_tab_inv: 'INVENTORY',
+    stats_abilities: 'ABILITIES.DAT',
+    stats_base: 'BASE STATS',
+    stats_level: 'LEVEL PROGRESS',
+    stats_xp: 'EXP',
+    stats_next: 'NEXT LV',
+    stats_titles: 'TITLES EARNED:',
+    stats_title_1: 'Automation Architect',
+    stats_title_2: 'Multi-Agent Summoner',
+    stats_title_3: 'Prompt-Driven Dev',
+    stats_title_4: 'Product Owner',
+    stats_equipped: 'EQUIPPED ITEMS',
+    stats_detail: 'ITEM DETAIL',
+    stats_rarity: 'RARITY',
+
+    // Skills names
+    sk_ai: 'AI / LLMs',
+    sk_n8n: 'n8n / AUTO',
+    sk_react: 'React / Next',
+    sk_nestjs: 'NestJS / Node',
+    sk_sql: 'SQL / Prisma',
+    sk_ts: 'TypeScript',
+    sk_po: 'PRODUCT MINDSET',
+    sk_qa: 'QA / TESTING',
+
+    // Inventory descriptions
+    inv_Claude: 'Primary LLM companion. +∞ MP. Used across all multi-agent orchestration.',
+    inv_OpenAI: 'Versatile caster. Fallback spellbook when Claude is out of mana.',
+    inv_n8n: 'Legendary automation engine. 9 workflows active in production.',
+    'inv_Next.js': 'Full-stack React sword. SSR + routing in a single scabbard.',
+    inv_NestJS: 'Enterprise backend armor. Modular, typed, battle-tested.',
+    inv_PostgreSQL: 'Battle-hardened relational weapon. Joins never miss.',
+    inv_Prisma: 'Type-safe ORM talisman. Zero N+1 curses cast on you.',
+    inv_Docker: 'Container armor. Works on any dungeon.',
+
+    // Projects
+    proj_stage: 'STAGE 04',
+    proj_title: 'SELECT A CART',
+    proj_sub: 'Real shipped projects — hover to enter attract mode',
+    proj_marquee: 'NOW PLAYING · 8 CARTRIDGES LOADED · HOVER FOR ATTRACT MODE · CLICK FOR DETAILS · REAL PRODUCTION WORK',
+    proj_cart_loaded: 'CART-LOADED',
+    proj_view_demo: '▶ VIEW DEMO',
+    proj_case: '◎ CASE STUDY',
+    proj_close: '✕ CLOSE',
+
+    // Game
+    game_stage: 'STAGE 05',
+    game_title: 'BUG INVADERS',
+    game_sub: 'Classic shmup — shoot the bugs before they ship to prod',
+    game_start: '▶ INSERT COIN',
+    game_restart: '▶ RESTART',
+    game_score: 'SCORE',
+    game_hi: 'HI-SCORE',
+    game_lives: 'LIVES',
+    game_wave: 'WAVE',
+    game_over: 'GAME OVER',
+    game_win: 'WAVE CLEARED',
+    game_ready: 'READY?',
+    game_tip: 'MOVE: ← → or A/D · FIRE: SPACE · TOUCH: drag & tap',
+
+    // Contact
+    score_stage: 'STAGE 06',
+    score_title: 'ENTER YOUR NAME',
+    score_sub: 'You made the leaderboard — now say hi',
+    score_new: '◆ NEW ENTRY ◆',
+    score_hi: '◆ HIGH SCORES ◆',
+    score_msg_ph: '> TYPE YOUR MESSAGE HERE...',
+    score_submit: '▶ SUBMIT SCORE',
+    score_sent: '✓ REGISTERED! GG',
+    score_sent_sub: 'ENTRY SAVED. IVAN WILL REACH BACK SOON.',
+    score_foot: 'THANK YOU FOR PLAYING',
+    score_foot_sub: '© 2026 IVAN BASTOS · BUILT WITH REACT · FRAMER MOTION · CHIPTUNE',
+
+    // Projects names/subs/desc
+    p_nexus_t: 'NEXUS',
+    p_nexus_s: 'Multi-Agent AI Platform',
+    p_nexus_g: 'AI · AUTOMATION',
+    p_nexus_d: '9 interconnected n8n workflows (Sentinel, Dispatcher, Approval Proxy, HITL Generator). Monitors 5 tech sources with Groq LLM + local Ollama. Human-in-the-Loop approval via Slack before every AI action.',
+    p_nexus_sc: ['SENTINEL → DISPATCHER', 'GROQ ANALYSIS', 'SLACK APPROVAL ✓'],
+
+    p_lab1_t: 'LABTRACK V1',
+    p_lab1_s: 'Technical Service PWA',
+    p_lab1_g: 'PWA · PRODUCTION',
+    p_lab1_d: 'Replaced 9 Excel sheets. Auto stock discount, predictive alerts, technician ranking, QR equipment history, photos via phone camera to Drive. Installable on Android. Saves ~8 min/equipment. Validated monthly-salary savings.',
+    p_lab1_sc: ['SCAN QR → LOG', 'STOCK AUTO -1', '+1 SALARY SAVED'],
+
+    p_dash_t: 'DASHBOARD',
+    p_dash_s: 'Service Analytics',
+    p_dash_g: 'DATA · ANALYTICS',
+    p_dash_d: 'Excel data processing: income by model, component, company. Period comparison and consolidation. Zero to MVP in 2 weeks with prompt-driven development.',
+    p_dash_sc: ['EXCEL → INSIGHTS', 'MODEL REVENUE', 'PERIOD COMPARE'],
+
+    p_lab2_t: 'LABTRACK V2',
+    p_lab2_s: 'Enterprise Migration',
+    p_lab2_g: 'SAAS · ENTERPRISE',
+    p_lab2_d: 'Monorepo Next.js + NestJS + PostgreSQL. Full RBAC (4 roles), Google SSO. Phased QA documented across 4 reports. Claude Code with 9 specialized agents in Markdown.',
+    p_lab2_sc: ['SSO LOGIN ✓', 'RBAC ENFORCED', 'QA PHASE 4 PASS'],
+
+    p_aleman_t: 'EL ALEMÁN',
+    p_aleman_s: 'Premium Landing',
+    p_aleman_g: 'LANDING · SEO',
+    p_aleman_d: 'Dark premium landing with before/after slider, lightbox gallery, scroll reveal and floating WhatsApp. Local SEO with AutoRepair schema markup + geolocation.',
+    p_aleman_sc: ['BEFORE / AFTER', 'LIGHTBOX OPEN', 'SCHEMA LOCAL SEO'],
+
+    p_multi_t: 'MULTI-AGENT',
+    p_multi_s: 'Custom Orchestration',
+    p_multi_g: 'AI · ARCHITECTURE',
+    p_multi_d: 'Custom multi-agent system: Orchestrator → Explorer → Architect → Coder → QA → Memory Manager. Structured XML I/O protocol. Runs under Prompt-Driven Development methodology.',
+    p_multi_sc: ['ORCHESTRATOR RUN', 'ARCHITECT DESIGN', 'CODER + QA PASS'],
+
+    p_centinela_t: 'CENTINELA',
+    p_centinela_s: 'AI Financial Analysis System',
+    p_centinela_g: 'AI · FINANCE',
+    p_centinela_d: 'Autonomous daily financial pipeline. 5 AI agents (Claude + Ollama) cross technical indicators, real macro news and self-correction. BUY/HOLD/SELL/AVOID signals for NYSE + BCBA portfolios. Auto-corrects biases from Day N to Day N+1.',
+    p_centinela_sc: ['MARKET SCAN ▶', 'AI SIGNAL ✓', 'MAIL SENT 📧'],
+
+    p_port_t: 'ARCADIA',
+    p_port_s: 'This Portfolio',
+    p_port_g: 'CREATIVE · FUN',
+    p_port_d: 'The cartridge you are hovering. 16-bit everything, chiptune optional, bilingual, with a Galaxiga-style mini-game.',
+    p_port_sc: ['PRESS START', 'ATTRACT MODE', 'HI-SCORE UPDATED'],
+
+    // Contact items
+    contact_email: 'EMAIL',
+    contact_github: 'GITHUB',
+    contact_linkedin: 'LINKEDIN',
+    contact_location: 'LOCATION',
+
+    // Leaderboard labels
+    lb_1: 'AVAILABLE FOR HIRE',
+    lb_2: 'AI Automation · PDD',
+    lb_3: 'n8n · 9 Workflows Live',
+    lb_4: 'Next.js · NestJS · Prisma',
+    lb_5: 'PostgreSQL · SQL',
+  },
+  es: {
+    hud_credits: 'CRÉDITOS',
+    hud_now: 'AHORA',
+    hud_palette: 'PALETA',
+    hud_lang: 'IDIOMA',
+
+    sec_title: 'PANTALLA TÍTULO',
+    sec_char:  'ELEGIR PERSONAJE',
+    sec_stats: 'PANTALLA ESTADO',
+    sec_shelf: 'CARTUCHOS',
+    sec_game:  'MINIJUEGO',
+    sec_score: 'RÉCORDS',
+
+    hero_tag: '© 2026 IVANSOFT · LICENCIADO POR INTERNET',
+    hero_role: 'ESPECIALISTA EN AUTOMATIZACIÓN IA',
+    hero_sub: 'Builder con mentalidad de producto que crea sistemas multi-agente, automatizaciones y apps full-stack con IA en el núcleo.',
+    hero_press: 'PRESIONA START',
+    hero_loaded: 'JUEGO CARGADO — HAZ SCROLL',
+    hero_scroll: 'SCROLL ▼',
+
+    char_stage: 'STAGE 02',
+    char_title: 'ELEGIR PERSONAJE',
+    char_sub: 'El jugador detrás de los cartuchos',
+    char_bio_label: 'BIO.TXT',
+    char_bio: 'Soy Ivan Bastos, 31 años, Especialista en Automatización IA basado en Buenos Aires. Construyo sistemas end-to-end con mentalidad Prompt-Driven Development: arquitecturas multi-agente, automatizaciones n8n con Human-in-the-Loop, y apps full-stack en TypeScript + Next.js + NestJS. Experiencia internacional en Chile y Costa Rica.',
+    char_role: 'ROL',
+    char_role_v: 'AI Automation Specialist',
+    char_stack: 'STACK',
+    char_stack_v: 'n8n · Next.js · NestJS · IA',
+    char_mindset: 'MINDSET',
+    char_mindset_v: 'Product Owner · PDD',
+    char_status: 'ESTADO',
+    char_status_v: 'DISPONIBLE YA',
+    char_moves: 'MOVIMIENTOS ESPECIALES',
+    char_move1: 'Desplegar sistema multi-agente',
+    char_move2: 'Combo PDD — Prompt-Driven',
+    char_move3: 'Patrón HITL — aprobación humana',
+    char_move4: 'QA & mentalidad de producto',
+    char_class: 'AUTOMATIZACIÓN IA',
+    char_tagline: 'Construye con IA. Entrega con intención. Piensa como Product Owner.',
+
+    stats_stage: 'STAGE 03',
+    stats_title: 'PANTALLA DE ESTADO',
+    stats_sub: 'Nivel, stats e inventario equipado',
+    stats_tab_skills: 'SKILLS',
+    stats_tab_stats: 'STATS',
+    stats_tab_inv: 'INVENTARIO',
+    stats_abilities: 'HABILIDADES.DAT',
+    stats_base: 'STATS BASE',
+    stats_level: 'PROGRESO DE NIVEL',
+    stats_xp: 'EXP',
+    stats_next: 'SIG. NV',
+    stats_titles: 'TÍTULOS OBTENIDOS:',
+    stats_title_1: 'Arquitecto de Automatización',
+    stats_title_2: 'Invocador Multi-Agente',
+    stats_title_3: 'Prompt-Driven Dev',
+    stats_title_4: 'Product Owner',
+    stats_equipped: 'ÍTEMS EQUIPADOS',
+    stats_detail: 'DETALLE DEL ÍTEM',
+    stats_rarity: 'RAREZA',
+
+    sk_ai: 'IA / LLMs',
+    sk_n8n: 'n8n / AUTO',
+    sk_react: 'React / Next',
+    sk_nestjs: 'NestJS / Node',
+    sk_sql: 'SQL / Prisma',
+    sk_ts: 'TypeScript',
+    sk_po: 'MENTALIDAD PO',
+    sk_qa: 'QA / TESTING',
+
+    inv_Claude: 'Compañero LLM principal. +∞ MP. Usado en toda orquestación multi-agente.',
+    inv_OpenAI: 'Caster versátil. Grimorio de respaldo cuando Claude se queda sin maná.',
+    inv_n8n: 'Motor de automatización legendario. 9 workflows activos en producción.',
+    'inv_Next.js': 'Espada React full-stack. SSR + routing en una sola vaina.',
+    inv_NestJS: 'Armadura backend enterprise. Modular, tipada, probada en batalla.',
+    inv_PostgreSQL: 'Arma relacional curtida. Los JOINs nunca fallan.',
+    inv_Prisma: 'Talismán ORM type-safe. Cero maldiciones N+1.',
+    inv_Docker: 'Armadura contenedora. Funciona en cualquier mazmorra.',
+
+    proj_stage: 'STAGE 04',
+    proj_title: 'ELIGE UN CART',
+    proj_sub: 'Proyectos reales en producción — hover para attract mode',
+    proj_marquee: 'EN PANTALLA · 8 CARTUCHOS CARGADOS · HOVER PARA ATTRACT MODE · CLIC PARA DETALLE · PRODUCCIÓN REAL',
+    proj_cart_loaded: 'CARTUCHO',
+    proj_view_demo: '▶ VER DEMO',
+    proj_case: '◎ CASO DE ESTUDIO',
+    proj_close: '✕ CERRAR',
+
+    game_stage: 'STAGE 05',
+    game_title: 'BUG INVADERS',
+    game_sub: 'Shmup clásico — derriba los bugs antes de que lleguen a prod',
+    game_start: '▶ INSERTAR MONEDA',
+    game_restart: '▶ REINICIAR',
+    game_score: 'PUNTOS',
+    game_hi: 'RÉCORD',
+    game_lives: 'VIDAS',
+    game_wave: 'OLEADA',
+    game_over: 'GAME OVER',
+    game_win: 'OLEADA SUPERADA',
+    game_ready: '¿LISTO?',
+    game_tip: 'MOVER: ← → o A/D · DISPARAR: ESPACIO · TOUCH: arrastrar y tocar',
+
+    score_stage: 'STAGE 06',
+    score_title: 'INGRESA TU NOMBRE',
+    score_sub: 'Entraste al leaderboard — ahora saludá',
+    score_new: '◆ NUEVA ENTRADA ◆',
+    score_hi: '◆ RÉCORDS ◆',
+    score_msg_ph: '> ESCRIBE TU MENSAJE AQUÍ...',
+    score_submit: '▶ ENVIAR PUNTAJE',
+    score_sent: '✓ REGISTRADO! GG',
+    score_sent_sub: 'ENTRADA GUARDADA. IVAN RESPONDE PRONTO.',
+    score_foot: 'GRACIAS POR JUGAR',
+    score_foot_sub: '© 2026 IVAN BASTOS · HECHO CON REACT · FRAMER MOTION · CHIPTUNE',
+
+    p_nexus_t: 'NEXUS',
+    p_nexus_s: 'Plataforma IA Multi-Agente',
+    p_nexus_g: 'IA · AUTOMATIZACIÓN',
+    p_nexus_d: '9 workflows n8n interconectados (Sentinel, Dispatcher, Approval Proxy, HITL Generator). Monitorea 5 fuentes tech con Groq LLM + Ollama local. Aprobación Human-in-the-Loop vía Slack antes de cada acción IA.',
+    p_nexus_sc: ['SENTINEL → DISPATCHER', 'ANÁLISIS GROQ', 'APROBACIÓN SLACK ✓'],
+
+    p_lab1_t: 'LABTRACK V1',
+    p_lab1_s: 'PWA Servicio Técnico',
+    p_lab1_g: 'PWA · PRODUCCIÓN',
+    p_lab1_d: 'Reemplazó 9 planillas Excel. Descuento de stock automático, alertas predictivas, ranking de técnicos, historial por QR, fotos desde celular a Drive. Instalable en Android. Ahorra ~8 min/equipo. Ahorro validado: +1 sueldo/mes.',
+    p_lab1_sc: ['ESCANEAR QR → LOG', 'STOCK AUTO -1', '+1 SUELDO AHORRADO'],
+
+    p_dash_t: 'DASHBOARD',
+    p_dash_s: 'Análisis de Servicio',
+    p_dash_g: 'DATOS · ANÁLISIS',
+    p_dash_d: 'Procesamiento Excel: ingresos por modelo, componente, empresa. Comparación y consolidación de períodos. De cero a MVP en 2 semanas con desarrollo prompt-driven.',
+    p_dash_sc: ['EXCEL → INSIGHTS', 'INGRESOS MODELO', 'COMPARAR PERÍODOS'],
+
+    p_lab2_t: 'LABTRACK V2',
+    p_lab2_s: 'Migración Enterprise',
+    p_lab2_g: 'SAAS · ENTERPRISE',
+    p_lab2_d: 'Monorepo Next.js + NestJS + PostgreSQL. RBAC completo (4 roles), SSO Google. QA por fases documentado en 4 reportes. Claude Code con 9 agentes especializados en Markdown.',
+    p_lab2_sc: ['LOGIN SSO ✓', 'RBAC APLICADO', 'QA FASE 4 OK'],
+
+    p_aleman_t: 'EL ALEMÁN',
+    p_aleman_s: 'Landing Premium',
+    p_aleman_g: 'LANDING · SEO',
+    p_aleman_d: 'Landing dark premium con slider before/after, galería lightbox, scroll reveal y WhatsApp flotante. SEO local con schema AutoRepair + geolocalización.',
+    p_aleman_sc: ['ANTES / DESPUÉS', 'LIGHTBOX ABIERTO', 'SCHEMA SEO LOCAL'],
+
+    p_multi_t: 'MULTI-AGENTE',
+    p_multi_s: 'Orquestación Custom',
+    p_multi_g: 'IA · ARQUITECTURA',
+    p_multi_d: 'Sistema multi-agente custom: Orchestrator → Explorer → Architect → Coder → QA → Memory Manager. Protocolo I/O en XML. Corre bajo metodología Prompt-Driven Development.',
+    p_multi_sc: ['ORCHESTRATOR RUN', 'ARCHITECT DESIGN', 'CODER + QA OK'],
+
+    p_centinela_t: 'CENTINELA',
+    p_centinela_s: 'Sistema de Análisis Financiero IA',
+    p_centinela_g: 'IA · FINANZAS',
+    p_centinela_d: 'Pipeline financiero autónomo diario. 5 agentes IA (Claude + Ollama) cruzan indicadores técnicos, noticias macro reales y auto-corrección. Señales COMPRAR/MANTENER/VENDER/EVITAR para carteras NYSE + BCBA. Corrige sesgos del Día N al N+1.',
+    p_centinela_sc: ['ESCANEO MERCADO ▶', 'SEÑAL IA ✓', 'MAIL ENVIADO 📧'],
+
+    p_port_t: 'ARCADIA',
+    p_port_s: 'Este Portfolio',
+    p_port_g: 'CREATIVO · FUN',
+    p_port_d: 'El cartucho que estás hover-eando. Todo en 16-bit, chiptune opcional, bilingüe y con minijuego estilo Galaxiga.',
+    p_port_sc: ['PRESIONA START', 'ATTRACT MODE', 'RÉCORD ACTUALIZADO'],
+
+    contact_email: 'EMAIL',
+    contact_github: 'GITHUB',
+    contact_linkedin: 'LINKEDIN',
+    contact_location: 'UBICACIÓN',
+
+    lb_1: 'DISPONIBLE PARA CONTRATAR',
+    lb_2: 'AI Automation · PDD',
+    lb_3: 'n8n · 9 Workflows Live',
+    lb_4: 'Next.js · NestJS · Prisma',
+    lb_5: 'PostgreSQL · SQL',
+  },
+};
+
+// Lang context via simple subscribe
+const LangState = {
+  lang: (typeof localStorage !== 'undefined' && localStorage.getItem('lang')) || 'es',
+  listeners: new Set(),
+  set(l) {
+    this.lang = l;
+    try { localStorage.setItem('lang', l); } catch(_) {}
+    this.listeners.forEach(fn => fn(l));
+  },
+  subscribe(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); },
+};
+
+function useLang() {
+  const [, force] = React.useState(0);
+  React.useEffect(() => LangState.subscribe(() => force(x => x + 1)), []);
+  const t = (k) => (I18N[LangState.lang] && I18N[LangState.lang][k]) || (I18N.en[k] || k);
+  return { lang: LangState.lang, setLang: (l) => LangState.set(l), t };
+}
+
+Object.assign(window, { PLAYER_DATA, PROJECT_DATA, I18N, LangState, useLang });
