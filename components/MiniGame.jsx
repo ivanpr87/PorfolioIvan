@@ -31,6 +31,7 @@ function MiniGame() {
     running: false,
     t: 0,
     winTimer: null,
+    autoplay: false,
   });
 
   // Init stars once
@@ -120,6 +121,25 @@ function MiniGame() {
       const speed = 200;
       if (g.keys['ArrowLeft'] || g.keys['a'] || g.keys['A']) g.player.x -= speed * dt;
       if (g.keys['ArrowRight'] || g.keys['d'] || g.keys['D']) g.player.x += speed * dt;
+      
+      // AI Pilot (Autoplay)
+      if (g.autoplay && g.enemies.length) {
+        const aliveInFormation = g.enemies.filter(e => e.alive && e.state === 'formation');
+        const diving = g.enemies.filter(e => e.alive && e.state === 'dive');
+        // Priority: Diving enemies first, then the nearest formation enemy
+        const target = diving.sort((a,b) => b.y - a.y)[0] || 
+                     aliveInFormation.sort((a,b) => b.y - a.y || Math.abs(a.x - g.player.x) - Math.abs(b.x - g.player.x))[0];
+        
+        if (target) {
+          const dx = target.x - g.player.x;
+          if (Math.abs(dx) > 4) {
+            g.player.x += Math.sign(dx) * speed * dt;
+          }
+          // Shoot if roughly aligned or random chance
+          if (Math.abs(dx) < 20 || Math.random() < 0.05) shoot();
+        }
+      }
+
       if (g.touch != null) g.player.x = g.touch;
       g.player.x = Math.max(14, Math.min(g.W - 14, g.player.x));
       g.player.cool = Math.max(0, g.player.cool - dt);
@@ -397,7 +417,12 @@ function MiniGame() {
                   <div style={{ fontFamily: 'VT323, monospace', fontSize: 18, color: 'var(--ink-dim)', maxWidth: 320 }}>
                     {t('game_tip')}
                   </div>
-                  <button className="pixel-btn blink" onClick={start} onMouseEnter={() => AudioCtx.hover()}>{t('game_start')}</button>
+                  <button className="pixel-btn blink" onClick={() => { game.current.autoplay = false; start(); }} onMouseEnter={() => AudioCtx.hover()}>{t('game_start')}</button>
+                  <button className="font-pixel" onClick={() => { game.current.autoplay = true; start(); }} 
+                    onMouseEnter={() => AudioCtx.hover()}
+                    style={{ border: 'none', background: 'transparent', color: 'var(--neon-cyan)', fontSize: 10, cursor: 'none' }}>
+                    [ RUN AI_PILOT.EXE (DEMO) ]
+                  </button>
                 </>
               )}
               {state === 'ready' && (

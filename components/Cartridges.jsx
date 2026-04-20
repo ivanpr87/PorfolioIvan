@@ -275,7 +275,7 @@ function CartridgeModal({ p, title, sub, genre, desc, accent, onClose }) {
             {sub} · {p.year}
           </div>
           <div className="dialog-box" style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: 'VT323, monospace', fontSize: 22, color: 'var(--ink-white)', lineHeight: 1.4 }}>
+            <div style={{ fontFamily: 'VT323, monospace', fontSize: 24, color: 'var(--ink-white)', lineHeight: 1.3, letterSpacing: '0.01em' }}>
               {desc}
             </div>
           </div>

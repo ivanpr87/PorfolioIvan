@@ -61,6 +61,23 @@ function HUD({ palette, setPalette, muted, setMuted, section }) {
         <span style={{ color: 'var(--neon-cyan)' }}>{t('hud_now')}: {section}</span>
       </div>
 
+      {muted && (
+        <window.Motion.motion.div 
+          animate={{ scale: [1, 1.1, 1], opacity: [0.7, 1, 0.7] }} 
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          onClick={() => { setMuted(false); AudioCtx.muted = false; AudioCtx.coin(); }}
+          onMouseEnter={() => AudioCtx.hover()}
+          className="font-pixel"
+          style={{
+            pointerEvents: 'auto', cursor: 'none',
+            fontSize: 9, color: 'var(--bg-void)', background: 'var(--neon-magenta)',
+            padding: '6px 12px', boxShadow: '4px 4px 0 var(--ink-white)',
+            letterSpacing: '0.1em'
+          }}>
+          🔊 ENABLE SOUND
+        </window.Motion.motion.div>
+      )}
+
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', pointerEvents: 'auto', flexWrap: 'wrap' }}>
         {/* LANGUAGE TOGGLE */}
         <div className="font-pixel" style={{ fontSize: 9, color: 'var(--ink-ghost)', marginRight: 4 }}>{t('hud_lang')}</div>

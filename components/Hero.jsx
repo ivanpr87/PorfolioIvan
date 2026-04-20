@@ -158,7 +158,7 @@ function CharacterSelect() {
             <div className="font-pixel" style={{ fontSize: 11, color: 'var(--neon-yellow)', marginBottom: 14, letterSpacing: '0.1em' }}>
               ▸ {t('char_bio_label')}
             </div>
-            <p style={{ fontFamily: 'VT323, monospace', fontSize: 22, lineHeight: 1.4, color: 'var(--ink-white)', margin: 0, textWrap: 'pretty' }}>
+            <p style={{ fontFamily: 'VT323, monospace', fontSize: 24, lineHeight: 1.3, color: 'var(--ink-white)', margin: 0, textWrap: 'pretty', letterSpacing: '0.02em' }}>
               {t('char_bio')}
             </p>
           </m.div>
