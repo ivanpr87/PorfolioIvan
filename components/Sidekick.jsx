@@ -22,17 +22,33 @@ function Sidekick({ sectionId }) {
   React.useEffect(() => {
     const config = msgMap[sectionId];
     if (config) {
-      const newText = t(config.key);
-      setMsg(newText);
+      setMsg(t(config.key));
       setEmotion(config.emo);
       setVisible(true);
-      
-      // Auto-hide after some time OR keep visible? 
-      // Let's keep it visible for 6 seconds per section entry.
       const timer = setTimeout(() => setVisible(false), 6000);
       return () => clearTimeout(timer);
     }
   }, [sectionId, t]);
+
+  // Click reactions
+  React.useEffect(() => {
+    let last = 0;
+    const onClick = () => {
+      const now = Date.now();
+      if (now - last < 3000) return; // Cooldown 3s
+      last = now;
+
+      const rand = Math.floor(Math.random() * 5) + 1;
+      setMsg(t(`sk_click_${rand}`));
+      setEmotion('happy');
+      setVisible(true);
+      
+      const timer = setTimeout(() => setVisible(false), 4000);
+      return () => clearTimeout(timer);
+    };
+    window.addEventListener('click', onClick);
+    return () => window.removeEventListener('click', onClick);
+  }, [t]);
 
   // Typing effect
   React.useEffect(() => {

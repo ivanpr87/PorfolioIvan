@@ -247,6 +247,13 @@ const I18N = {
     sk_msg_game: "WATCH OUT! Don't let the bugs reach production!",
     sk_msg_contact: "Leave your signature! Ivan will get it directly.",
     sk_msg_idle: "Zzz... Just scrolling? Check out the mini-game!",
+
+    // Click reactions
+    sk_click_1: "Ouch! Watch that mouse!",
+    sk_click_2: "Nice click! Exploring everything, huh?",
+    sk_click_3: "That looks important!",
+    sk_click_4: "Executing action... just kidding!",
+    sk_click_5: "Right on target!",
   },
   es: {
     hud_credits: 'CRÉDITOS',
@@ -435,6 +442,13 @@ const I18N = {
     sk_msg_game: "¡CUIDADO! No dejes que los bugs lleguen a producción.",
     sk_msg_contact: "¡Firmá el leaderboard! Le llegará directo a Ivan.",
     sk_msg_idle: "Zzz... ¿Solo haciendo scroll? ¡Probá el minijuego!",
+
+    // Click reactions
+    sk_click_1: "¡Ouch! Cuidado con ese puntero.",
+    sk_click_2: "¡Buen click! Explorando todo, ¿eh?",
+    sk_click_3: "¡Eso parece importante!",
+    sk_click_4: "Ejecutando acción... ¡mentira!",
+    sk_click_5: "¡Directo al grano!",
   },
 };
 
