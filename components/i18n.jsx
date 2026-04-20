@@ -32,6 +32,8 @@ const PLAYER_DATA = {
     { id: 'it7', k: 'Prisma',     r: 'common', t: 'artifact', stats: { DEX: 25, LCK: 5  } },
     { id: 'it8', k: 'Docker',     r: 'common', t: 'armor',    stats: { DEF: 25, RES: 30 } },
     { id: 'it9', k: 'Linux Bash', r: 'rare',   t: 'weapon',   stats: { ATK: 30, SPD: 20 } },
+    { id: 'it10', k: 'React',      r: 'epic',   t: 'weapon',   stats: { ATK: 45, SPD: 15 } },
+    { id: 'it11', k: 'Node JS',    r: 'rare',   t: 'armor',    stats: { DEF: 35, HP: 10 } },
   ],
 };
 
@@ -276,6 +278,8 @@ const I18N = {
     'sk_lore_Prisma': "A type-safe talisman. Keeps the bugs away from the DB.",
     'sk_lore_Docker': "Everything in its neat little box. Order is power.",
     'sk_lore_Linux Bash': "The black terminal... where the TRUE magic happens.",
+    'sk_lore_React': "The legendary UI library. Your main blade, keep it sharp!",
+    'sk_lore_Node JS': "Asynchronous power! The foundation where all your logic runs.",
   },
   es: {
     hud_credits: 'CRÉDITOS',
@@ -493,6 +497,8 @@ const I18N = {
     'sk_lore_Prisma': "Talismán type-safe. Mantiene a los bugs lejos de la base.",
     'sk_lore_Docker': "Todo en su cajita, bien ordenado. El orden es poder.",
     'sk_lore_Linux Bash': "Ah, la terminal negra... donde ocurre la verdadera magia.",
+    'sk_lore_React': "La legendaria librería de UI. Tu espada principal, ¡mantenela afilada!",
+    'sk_lore_Node JS': "¡Poder asincrónico! El cimiento donde corre toda tu lógica.",
   },
 };
 
