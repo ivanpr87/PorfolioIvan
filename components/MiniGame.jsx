@@ -35,8 +35,8 @@ function MiniGame() {
     player: { x: 240, y: 320, w: 22, h: 14, cool: 0, shield: 0 },
     bullets: [], enemies: [], efire: [], particles: [], stars: [], powerups: [],
     keys: {}, touch: null, dir: 1, step: 0, diveTimer: 2, running: false, t: 0,
-    winTimer: null, autoplay: false, wave: 1, shoot: null, isBossWave: false,
     powers: { double: 0, rapid: 0 },
+    playerAbilities: [], abilityAlert: null
   });
 
   React.useEffect(() => {
@@ -159,7 +159,7 @@ function MiniGame() {
     const g = game.current; g.wave = 1;
     g.player = { x: g.W/2, y: 320, w: 22, h: 14, cool: 0, shield: 0 };
     g.bullets = []; g.efire = []; g.particles = []; g.powerups = [];
-    g.powers = { double: 0, rapid: 0 }; spawnWave(1);
+    g.powers = { double: 0, rapid: 0 }; g.playerAbilities = []; spawnWave(1);
     setState('ready'); AudioCtx.playBgm();
     window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'start_game' }));
     setTimeout(() => { setState('play'); g.running = true; }, 800);
@@ -168,12 +168,27 @@ function MiniGame() {
   const shoot = () => {
     const g = game.current; if (g.player.cool > 0) return;
     const isRapid = g.powers.rapid > 0, isDouble = g.powers.double > 0;
+    
+    const addB = (x, y, vx, vy, color = '#ffe74c') => g.bullets.push({ x, y, w:3, h:8, vx:vx||0, vy:vy||-360, color });
+
     if (isDouble) {
-      g.bullets.push({ x: g.player.x-6, y: g.player.y-8, w:3, h:8, vy:-380 });
-      g.bullets.push({ x: g.player.x+6, y: g.player.y-8, w:3, h:8, vy:-380 });
+      addB(g.player.x-6, g.player.y-8); addB(g.player.x+6, g.player.y-8);
     } else {
-      g.bullets.push({ x: g.player.x, y: g.player.y-8, w:3, h:8, vy:-360 });
+      addB(g.player.x, g.player.y-8);
     }
+
+    // Boss Abilities
+    if (g.playerAbilities.includes('spread')) {
+      addB(g.player.x, g.player.y-8, -100, -320, '#ff9500');
+      addB(g.player.x, g.player.y-8, 100, -320, '#ff9500');
+    }
+    if (g.playerAbilities.includes('homing')) {
+      g.bullets.push({ x: g.player.x, y: g.player.y, w:5, h:5, vx:0, vy:-200, homing: true, color: '#1cf2ff' });
+    }
+    if (g.playerAbilities.includes('nova')) {
+      g.particles.push({ x: g.player.x, y: g.player.y, nova: true, r: 10, maxR: 80, life: 0.5, color: '#8a2dff' });
+    }
+
     g.player.cool = isRapid ? 0.08 : 0.22;
     AudioCtx.blip(isRapid ? 1600 : 1200, 0.04, 'square', 0.03);
   };
@@ -211,8 +226,20 @@ function MiniGame() {
       g.player.x = Math.max(14, Math.min(g.W-14, g.player.x));
       g.player.cool = Math.max(0, g.player.cool - dt);
 
-      g.bullets.forEach(b => b.y += b.vy * dt); 
-      g.bullets = g.bullets.filter(b => b.y > -10);
+      g.bullets.forEach(b => {
+        if (b.homing) {
+          const target = g.enemies.find(e => e.alive);
+          if (target) {
+            const dx = target.x - b.x, dy = target.y - b.y;
+            const dist = Math.sqrt(dx*dx+dy*dy);
+            b.vx += (dx/dist) * 400 * dt; b.vy += (dy/dist) * 400 * dt;
+            const spd = Math.sqrt(b.vx*b.vx+b.vy*b.vy);
+            if (spd > 400) { b.vx = (b.vx/spd)*400; b.vy = (b.vy/spd)*400; }
+          }
+        }
+        b.x += (b.vx || 0) * dt; b.y += b.vy * dt;
+      });
+      g.bullets = g.bullets.filter(b => b.y > -10 && b.y < g.H+10 && b.x > -10 && b.x < g.W+10);
       g.efire.forEach(b => b.y += b.vy * dt);
       g.efire = g.efire.filter(b => b.y < g.H + 50);
       g.powerups.forEach(p => { 
@@ -306,7 +333,17 @@ function MiniGame() {
             b.y = -100;
             if (e.type === 'mega_boss') {
               e.hp -= 1; AudioCtx.blip(600,0.05,'sawtooth',0.02);
-              if (e.hp <= 0) { e.alive = false; setScore(s => s+2000); explode(e.x, e.y, '#ff9500', 30); AudioCtx.blip(100,0.4,'sawtooth',0.1); }
+              if (e.hp <= 0) { 
+                e.alive = false; setScore(s => s+2000); explode(e.x, e.y, '#ff9500', 30); AudioCtx.blip(100,0.4,'sawtooth',0.1);
+                // GAIN ABILITY
+                const abs = ['spread', 'homing', 'nova'];
+                const newAb = abs[e.model];
+                if (!g.playerAbilities.includes(newAb)) {
+                  g.playerAbilities.push(newAb);
+                  g.abilityAlert = { text: `CAPTURED: ${newAb.toUpperCase()}`, timer: 3 };
+                  AudioCtx.coin(); triggerEmotion('happy', 3000);
+                }
+              }
             } else {
               e.alive = false; setScore(s => {
                 const ns = s + (e.type==='boss'?300:e.type==='mid'?150:80);
@@ -335,7 +372,25 @@ function MiniGame() {
       g.efire.forEach(b => { if (Math.abs(b.x - g.player.x) < 12 && Math.abs(b.y - g.player.y) < 12) { b.y=500; hit(); } });
       g.enemies.forEach(e => { if (e.alive && e.state === 'dive' && Math.abs(e.x - g.player.x) < 20 && Math.abs(e.y - g.player.y) < 20) { e.alive=false; hit(); } });
       g.efire = g.efire.filter(b => b.y < g.H+10);
-      g.particles.forEach(p => { p.x += p.vx*dt; p.y += p.vy*dt; p.life -= dt; }); g.particles = g.particles.filter(p => p.life>0);
+      g.particles.forEach(p => { 
+        if (p.nova) {
+          p.r += 200 * dt; 
+          // Damaging enemies with Nova
+          g.enemies.forEach(e => {
+            if (e.alive && Math.sqrt((e.x-p.x)**2 + (e.y-p.y)**2) < p.r) {
+              if (e.type === 'mega_boss') e.hp -= 0.1; // Slower burn on bosses
+              else { e.alive = false; setScore(s => s + 50); explode(e.x, e.y, '#8a2dff', 4); }
+            }
+          });
+        } else {
+          p.x += p.vx*dt; p.y += p.vy*dt; 
+        }
+        p.life -= dt; 
+      }); 
+      g.particles = g.particles.filter(p => p.life>0);
+      if (g.abilityAlert) {
+         g.abilityAlert.timer -= dt; if (g.abilityAlert.timer <= 0) g.abilityAlert = null;
+      }
     };
 
     const draw = () => {
@@ -345,18 +400,26 @@ function MiniGame() {
       if (g.powers.rapid > 0) { ctx.fillStyle = '#1cf2ff'; ctx.fillRect(10, g.H-10, (g.powers.rapid/10)*60, 3); }
       if (g.player.shield > 0) { ctx.strokeStyle = '#ffe74c'; ctx.beginPath(); ctx.arc(g.player.x, g.player.y, 18, 0, Math.PI*2); ctx.stroke(); }
       drawPlayer(ctx, g.player.x, g.player.y);
-      ctx.fillStyle = '#ffe74c'; g.bullets.forEach(b => ctx.fillRect(b.x-1, b.y-4, 3, 8));
+      ctx.fillStyle = '#ffe74c'; g.bullets.forEach(b => {
+        ctx.fillStyle = b.color || '#ffe74c';
+        ctx.fillRect(b.x-b.w/2, b.y-b.h/2, b.w, b.h);
+      });
       ctx.fillStyle = '#ff3860'; g.efire.forEach(b => ctx.fillRect(b.x-1, b.y-3, 3, 6));
       g.enemies.forEach(e => { if (e.alive) { if(e.type==='mega_boss') drawMegaBoss(ctx, e.x, e.y, e.hp, e.maxHp, g.t, e.model); else drawBug(ctx, e.x, e.y, e.type, g.t); } });
-      g.powerups.forEach(p => { 
-        if(window.drawPowerup) window.drawPowerup(ctx, p.x, p.y, p.type, g.t);
-        else {
-          ctx.fillStyle = p.type==='double'?'#ff9500':p.type==='rapid'?'#1cf2ff':'#ffe74c';
-          ctx.fillRect(p.x-6, p.y-6, 12, 12);
+      g.particles.forEach(p => { 
+        if (p.nova) {
+          ctx.strokeStyle = p.color; ctx.lineWidth = 2; ctx.globalAlpha = p.life * 2;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.stroke();
+        } else {
+          ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.life); ctx.fillRect(p.x-1,p.y-1,3,3); 
         }
       });
-      g.particles.forEach(p => { ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.life); ctx.fillRect(p.x-1,p.y-1,3,3); });
       ctx.globalAlpha = 1;
+      if (g.abilityAlert) {
+        ctx.font = 'bold 16px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+        ctx.fillText(g.abilityAlert.text, g.W/2, g.H/2 + 40);
+        ctx.font = '8px VT323'; ctx.fillText('BOSS POWER ACQUIRED', g.W/2, g.H/2 + 55);
+      }
     };
 
     const loop = (n) => { const dt = Math.min(0.05, (n-last)/1000); last=n; update(dt); draw(); raf=requestAnimationFrame(loop); };
