@@ -67,7 +67,6 @@ function SpaceCursor({ variant = 'fighter' }) {
           transform: `translate(calc(var(--mx) - 50%), calc(var(--my) - 50%)) scale(${scale})`,
           pointerEvents: 'none',
           zIndex: 9999,
-          transition: 'transform 80ms steps(3)',
           imageRendering: 'pixelated',
         }}
       >

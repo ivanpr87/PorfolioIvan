@@ -249,27 +249,37 @@ function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }
           <rect x="8" y="9" width="16" height="10" fill={faceColor}/>
           <rect x="9" y="19" width="14" height="2" fill="#d49a6a"/>
           
-          <m.g style={{ x: 'calc(var(--mnx) * 0.8px)', y: 'calc(var(--mny) * 0.8px)' }}>
-            {/* Eyes */}
-            {emotion === 'sad' ? (
+          {/* Eyes Group (Pupils Follow Mouse) */}
+          <g>
+            {/* Left Eye */}
+            <m.g animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
+                 transition={{ duration: 5, repeat: Infinity }}
+                 style={{ originY: '13px' }}>
+              <rect x="11" y="12" width="3" height="2" fill="#fff"/>
+              {emotion !== 'sad' && (
+                <m.rect style={{ x: 'calc(var(--mnx) * 1.2px)', y: 'calc(var(--mny) * 1px)' }}
+                        x="12" y="12.5" width="1" height="1" fill="#07060f"/>
+              )}
+            </m.g>
+            
+            {/* Right Eye */}
+            <m.g animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
+                 transition={{ duration: 5, repeat: Infinity }}
+                 style={{ originY: '13px' }}>
+              <rect x="18" y="12" width="3" height="2" fill="#fff"/>
+              {emotion !== 'sad' && (
+                <m.rect style={{ x: 'calc(var(--mnx) * 1.2px)', y: 'calc(var(--mny) * 1px)' }}
+                        x="19" y="12.5" width="1" height="1" fill="#07060f"/>
+              )}
+            </m.g>
+
+            {emotion === 'sad' && (
               <>
-                <rect x="11" y="12" width="3" height="1" fill="#07060f"/>
-                <rect x="18" y="12" width="3" height="1" fill="#07060f"/>
-              </>
-            ) : (
-              <>
-                <rect x="11" y="12" width="3" height="2" fill="#fff"/>
-                <m.rect animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
-                  transition={{ duration: 5, repeat: Infinity }}
-                  x="12" y="12" width="1" height="2" fill="#07060f"/>
-                
-                <rect x="18" y="12" width="3" height="2" fill="#fff"/>
-                <m.rect animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
-                  transition={{ duration: 5, repeat: Infinity }}
-                  x="19" y="12" width="1" height="2" fill="#07060f"/>
+                <rect x="11" y="13" width="3" height="1" fill="#07060f" opacity="0.4"/>
+                <rect x="18" y="13" width="3" height="1" fill="#07060f" opacity="0.4"/>
               </>
             )}
-          </m.g>
+          </g>
 
           {/* Brows */}
           <m.rect animate={{ y: emotion === 'sad' ? 1 : emotion === 'happy' ? -1 : 0 }} x="10" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
