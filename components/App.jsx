@@ -39,6 +39,7 @@ function App() {
   const [scanIntensity, setScanIntensity] = React.useState(TWEAKS.scanIntensity);
   const [cursorVariant, setCursorVariant] = React.useState(TWEAKS.cursorVariant);
   const [section, setSection] = React.useState('TITLE');
+  const [currentSectionId, setCurrentSectionId] = React.useState('hero');
   const [editMode, setEditMode] = React.useState(false);
 
   React.useEffect(() => {
@@ -60,7 +61,10 @@ function App() {
       entries.forEach(e => {
         if (e.isIntersecting) {
           const hit = sections.find(s => s.id === e.target.id);
-          if (hit) setSection(t(hit.key));
+          if (hit) {
+            setSection(t(hit.key));
+            setCurrentSectionId(hit.id);
+          }
         }
       });
     }, { threshold: 0.35 });
@@ -108,6 +112,7 @@ function App() {
       />
       <CornerBrackets/>
       <SpaceCursor variant={cursorVariant}/>
+      <Sidekick sectionId={currentSectionId}/>
 
       <Hero/>
       <CharacterSelect/>

@@ -238,6 +238,15 @@ const I18N = {
     lb_3: 'n8n · 9 Workflows Live',
     lb_4: 'Next.js · NestJS · Prisma',
     lb_5: 'PostgreSQL · SQL',
+
+    // Sidekick
+    sk_msg_intro: "Hey! I'm Ivan's sidekick. Navigate to see the action!",
+    sk_msg_about: "Base stats loaded. Looking sharp!",
+    sk_msg_skills: "That React Sword? We sharpened it yesterday. It's EPIC!",
+    sk_msg_projects: "Each cartridge is a real project. Pick your adventure!",
+    sk_msg_game: "WATCH OUT! Don't let the bugs reach production!",
+    sk_msg_contact: "Leave your signature! Ivan will get it directly.",
+    sk_msg_idle: "Zzz... Just scrolling? Check out the mini-game!",
   },
   es: {
     hud_credits: 'CRÉDITOS',
@@ -417,6 +426,15 @@ const I18N = {
     lb_3: 'n8n · 9 Workflows Live',
     lb_4: 'Next.js · NestJS · Prisma',
     lb_5: 'PostgreSQL · SQL',
+
+    // Sidekick
+    sk_msg_intro: "¡Hola! Soy el asistente de Ivan. ¡Explora la web!",
+    sk_msg_about: "Stats base cargados. ¡Estamos listos!",
+    sk_msg_skills: "Esa espada de React la afilamos ayer. ¡Está ÉPICA!",
+    sk_msg_projects: "Cada cartucho es un proyecto real. ¡Elegí uno!",
+    sk_msg_game: "¡CUIDADO! No dejes que los bugs lleguen a producción.",
+    sk_msg_contact: "¡Firmá el leaderboard! Le llegará directo a Ivan.",
+    sk_msg_idle: "Zzz... ¿Solo haciendo scroll? ¡Probá el minijuego!",
   },
 };
 
