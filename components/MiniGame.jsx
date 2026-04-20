@@ -240,8 +240,11 @@ function MiniGame() {
         b.x += (b.vx || 0) * dt; b.y += b.vy * dt;
       });
       g.bullets = g.bullets.filter(b => b.y > -10 && b.y < g.H+10 && b.x > -10 && b.x < g.W+10);
-      g.efire.forEach(b => b.y += b.vy * dt);
-      g.efire = g.efire.filter(b => b.y < g.H + 50);
+      g.efire.forEach(b => {
+        b.x += (b.vx || 0) * dt;
+        b.y += b.vy * dt;
+      });
+      g.efire = g.efire.filter(b => b.y < g.H + 50 && b.x > -50 && b.x < g.W + 50);
       g.powerups.forEach(p => { 
         p.y += p.vy * dt;
         if (Math.abs(p.x - g.player.x) < 20 && Math.abs(p.y - g.player.y) < 20) {
