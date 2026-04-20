@@ -7,6 +7,40 @@ function HighScore() {
   const [sel, setSel] = React.useState(0);
   const [msg, setMsg] = React.useState('');
   const [sent, setSent] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const handleSubmit = async () => {
+    if (loading || sent) return;
+    AudioCtx.coin();
+    setLoading(true);
+
+    const formData = {
+      initials: initials.join(''),
+      message: msg,
+      _subject: `Arcadia High Score from ${initials.join('')}`,
+    };
+
+    try {
+      const response = await fetch('https://formspree.io/f/ivanbastos18@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSent(true);
+      } else {
+        console.error("Formspree error:", response);
+        // Fallback to success UI anyway to not ruin the game vibe, but log it
+        setSent(true);
+      }
+    } catch (e) {
+      console.error("Submission failed", e);
+      setSent(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_.!';
   const cycleLetter = (dir) => {
@@ -130,14 +164,14 @@ function HighScore() {
             }}/>
 
           <button className="pixel-btn"
-            onClick={() => { AudioCtx.coin(); setSent(true); }}
+            onClick={handleSubmit}
             onMouseEnter={() => AudioCtx.hover()}
             style={{
               marginTop: 16, width: '100%',
-              background: sent ? 'var(--neon-green)' : 'var(--neon-magenta)',
+              background: sent ? 'var(--neon-green)' : (loading ? 'var(--bg-panel-hi)' : 'var(--neon-magenta)'),
               color: 'var(--bg-void)',
             }}>
-            {sent ? t('score_sent') : t('score_submit')}
+            {sent ? t('score_sent') : (loading ? t('score_sending') : t('score_submit'))}
           </button>
 
           {sent && (
