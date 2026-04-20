@@ -139,14 +139,17 @@ function MiniGame() {
           ctx.fillStyle = '#fff'; ctx.fillRect(sx-2, sy-2, 4, 4);
         }
       } else if (model === 4) { // The Monolith
-        const pulse = Math.sin(t*2)*0.2 + 0.8;
-        ctx.fillStyle = '#111'; ctx.shadowBlur = 10; ctx.shadowColor = '#ff2fb6';
-        ctx.fillRect(x-20, y-30, 40, 60); ctx.shadowBlur = 0;
-        ctx.fillStyle = '#ff3860'; P(25, 15, 10, 4, '#ff3860'); // Red line
-      } else { // OmegArchitect
-        ctx.fillStyle = '#ffe74c'; ctx.beginPath(); ctx.arc(x, y, 30, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = '#07060f'; ctx.fillRect(x-15, y-5, 8, 4); ctx.fillRect(x+7, y-5, 8, 4);
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = '#111'; ctx.fillRect(x-20, y-30, 40, 60);
+        ctx.strokeStyle = '#ff2fb6'; ctx.lineWidth = (Math.sin(t*10)+1)*2; ctx.strokeRect(x-20, y-30, 40, 60);
+        P(25, 20, 10, 4, '#ff3860'); // Red line
+      } else { // React Overlord (Model 5)
+        ctx.fillStyle = '#61dafb'; ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#61dafb'; ctx.lineWidth = 2;
+        for(let i=0; i<3; i++) {
+          ctx.save(); ctx.translate(x, y); ctx.rotate((i * Math.PI / 3) + t*2);
+          ctx.beginPath(); ctx.ellipse(0, 0, 30, 12, 0, 0, Math.PI*2); ctx.stroke();
+          ctx.restore();
+        }
       }
       
       ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x-30, y-35, 60, 4);
@@ -205,6 +208,18 @@ function MiniGame() {
     }
     if (g.playerAbilities.includes('nova')) {
       g.particles.push({ x: g.player.x, y: g.player.y, nova: true, r: 10, maxR: 80, life: 0.5, color: '#8a2dff' });
+    }
+    if (g.playerAbilities.includes('barrage')) {
+       addB(g.player.x - 15, g.player.y, 0, -500, '#2ecc71');
+       addB(g.player.x + 15, g.player.y, 0, -500, '#2ecc71');
+    }
+    if (g.playerAbilities.includes('drone')) {
+       const ang = g.t * 4;
+       const dx = Math.cos(ang)*30, dy = Math.sin(ang)*30;
+       addB(g.player.x + dx, g.player.y + dy, 0, -400, '#fff');
+    }
+    if (g.playerAbilities.includes('atom')) {
+       // Atom ability: Bullets splash on impact (handled in update)
     }
 
     g.player.cool = isRapid ? 0.08 : 0.22;
@@ -313,27 +328,28 @@ function MiniGame() {
           if (g.diveTimer <= 0) {
             const cs = alive.filter(e => e.state === 'formation');
             if (cs.length) { 
-              const num = g.wave > 5 ? 2 : 1; 
+              const num = (g.wave > 5 ? 2 : 1) + (g.wave > 20 ? 1 : 0); 
               for(let i=0; i<num; i++) {
                 if(cs[i]) { cs[i].state = 'dive'; cs[i].diveT = 0; }
               }
             }
-            g.diveTimer = 2.0 + Math.random()*1.5 - Math.min(1.0, g.wave*0.05);
+            g.diveTimer = 2.0 + Math.random()*1.5 - Math.min(1.2, g.wave*0.06);
           }
           alive.forEach(e => {
             if (e.state === 'dive') {
               e.diveT += dt; 
-              // Basic dive speed
-              e.y += 140*dt;
-              // Evasive maneuvers after wave 5
+              // Scaling dive speed
+              const speedFact = g.wave > 20 ? 1.5 : 1;
+              e.y += 140*dt*speedFact;
+              // Evasive maneuvers
               if (g.wave > 5) {
                 e.x += (g.player.x - e.x)*dt*1.2;
-                e.x += Math.sin(e.diveT * 6) * 120 * dt; // Slither movement
-                if (g.wave > 8) e.y += Math.cos(e.diveT * 8) * 40 * dt; // Looping effect
+                e.x += Math.sin(e.diveT * 6) * 120 * dt; 
+                if (g.wave > 8) e.y += Math.cos(e.diveT * 8) * 40 * dt; 
               } else {
                 e.x += (g.player.x - e.x)*dt*1.5;
               }
-              if (Math.random() < dt*2) g.efire.push({ x: e.x, y: e.y+6, vy: 180 });
+              if (Math.random() < dt*2) g.efire.push({ x: e.x, y: e.y+6, vy: 180 * speedFact });
               if (e.y > g.H+20) { e.state = 'formation'; e.y = e.homeY; e.x = e.homeX; }
             } else if (Math.random() < dt*0.08) g.efire.push({ x: e.x, y: e.y+6, vy: 140 });
           });
@@ -378,7 +394,7 @@ function MiniGame() {
                 e.alive = false; setScore(s => s+2000); setLives(L => L + 1); // +1 Life for Boss Kill
                 explode(e.x, e.y, '#ff9500', 30); AudioCtx.blip(100,0.4,'sawtooth',0.1);
                 // GAIN ABILITY
-                const abs = ['spread', 'homing', 'nova'];
+                const abs = ['spread', 'homing', 'nova', 'barrage', 'drone', 'atom'];
                 const newAb = abs[e.model];
                 if (!g.playerAbilities.includes(newAb)) {
                   g.playerAbilities.push(newAb);
@@ -389,7 +405,15 @@ function MiniGame() {
             } else {
               e.hp -= 1;
               if (e.hp <= 0) {
-                e.alive = false; setScore(s => {
+                e.alive = false; 
+                if (g.playerAbilities.includes('atom')) {
+                  // Splash damage particles
+                  for(let i=0; i<4; i++) {
+                     const a = (i/4)*Math.PI*2;
+                     g.bullets.push({ x: e.x, y: e.y, w:2, h:2, vx: Math.cos(a)*200, vy: Math.sin(a)*200, color: '#61dafb' });
+                  }
+                }
+                setScore(s => {
                   const ns = s + (e.type==='boss'?300:e.type==='mid'?150:80);
                   if (ns >= 100) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'first_kill' }));
                   if (ns > hi) { setHi(ns); localStorage.setItem('bugInvadersHi', ns); }
@@ -447,21 +471,46 @@ function MiniGame() {
         const time = g.t;
         // Wormhole effect
         ctx.save(); ctx.translate(g.W/2, g.H/2);
-        for(let i=0; i<60; i++) {
-          const a = i * 0.2 + time*5;
-          const r = (i*4 + time*100) % 300;
-          ctx.fillStyle = i%2===0?'#8a2dff':'#1cf2ff';
+        const wormS = Math.min(1.5, 0.5 + time*0.1); ctx.scale(wormS, wormS);
+        for(let i=0; i<80; i++) {
+          const a = i * 0.15 + time*8;
+          const r = (i*4 + time*150) % 350;
+          ctx.fillStyle = i%3===0?'#8a2dff':i%3===1?'#1cf2ff':'#fff';
           ctx.fillRect(Math.cos(a)*r, Math.sin(a)*r, 2, 2);
         }
         ctx.restore();
-        // Earth Rising
-        const ey = g.H - Math.min(g.H, (time%10)*40);
-        ctx.fillStyle = '#12a4ff'; ctx.beginPath(); ctx.arc(g.W/2, ey + 400, 380, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = '#2ecc71'; ctx.beginPath(); ctx.arc(g.W/2 - 20, ey + 40, 15, 0, Math.PI*2); ctx.fill();
+
+        // Earth Rendering
+        const ey = g.H - Math.min(260, time*50);
+        const centerX = g.W/2, centerY = ey + 300;
+        // Atmosphere
+        ctx.globalAlpha = 0.3; ctx.fillStyle = '#1cf2ff'; ctx.beginPath(); ctx.arc(centerX, centerY, 320, 0, Math.PI*2); ctx.fill();
+        ctx.globalAlpha = 1.0;
+        // Ocean
+        ctx.fillStyle = '#0a4da2'; ctx.beginPath(); ctx.arc(centerX, centerY, 300, 0, Math.PI*2); ctx.fill();
+        // Drawing continents manually with paths
+        ctx.fillStyle = '#4ade80';
+        ctx.beginPath(); // Continent 1
+        ctx.arc(centerX-40, centerY-280, 40, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); // Continent 2 
+        ctx.arc(centerX+60, centerY-270, 35, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); // Land 3
+        ctx.arc(centerX, centerY-290, 50, 0, Math.PI); ctx.fill();
+        // Clouds
+        ctx.globalAlpha = 0.6; ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(centerX+20, centerY-285, 20, 0.5, 3); ctx.fill();
+        ctx.beginPath(); ctx.arc(centerX-80, centerY-270, 25, 0, 4); ctx.fill();
+        ctx.globalAlpha = 1.0;
+
+        // Ship Descending
+        const shipY = Math.max(ey - 40, 20);
+        drawPlayer(ctx, g.W/2, shipY);
         
-        ctx.font = '20px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+        ctx.font = 'bold 24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+        ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
         ctx.fillText("MISSION ACCOMPLISHED", g.W/2, g.H/2 - 20);
-        ctx.font = '10px VT323'; ctx.fillText("EARTH IS SAFE. WELCOME HOME PILOT.", g.W/2, g.H/2 + 10);
+        ctx.font = '10px VT323'; ctx.fillText("WELCOME BACK TO EARTH, HERO.", g.W/2, g.H/2 + 10);
+        ctx.shadowBlur = 0;
         return;
       }
 
