@@ -24,8 +24,8 @@ const PLAYER_DATA = {
   stats: { HP: 92, MP: 94, ATK: 88, DEF: 82, SPD: 90, LCK: 78 },
   inventory: [
     { id: 'it1', k: 'Claude',     r: 'legendary',   t: 'artifact', stats: { MP: 50, INT: 99 } },
-    { id: 'it2', k: 'OpenAI',     r: 'rare',   t: 'artifact', stats: { MP: 30, INT: 85 } },
-    { id: 'it3', k: 'n8n',        r: 'epic',   t: 'weapon',   stats: { ATK: 45, SPD: 95 } },
+    { id: 'it2', k: 'OpenAI',     r: 'unique',   t: 'artifact', stats: { MP: 30, INT: 85 } },
+    { id: 'it3', k: 'n8n',        r: 'unique',   t: 'weapon',   stats: { ATK: 45, SPD: 95 } },
     { id: 'it4', k: 'Next.js',    r: 'rare',   t: 'armor',    stats: { DEF: 40, SPD: 20 } },
     { id: 'it5', k: 'NestJS',     r: 'rare',   t: 'armor',    stats: { DEF: 60, STR: 15 } },
     { id: 'it6', k: 'PostgreSQL', r: 'rare',   t: 'weapon',   stats: { ATK: 35, INT: 10 } },
@@ -33,7 +33,7 @@ const PLAYER_DATA = {
     { id: 'it8', k: 'Docker',     r: 'common', t: 'armor',    stats: { DEF: 25, RES: 30 } },
     { id: 'it9', k: 'Linux Bash', r: 'rare',   t: 'weapon',   stats: { ATK: 30, SPD: 20 } },
     { id: 'it10', k: 'React',      r: 'epic',   t: 'weapon',   stats: { ATK: 45, SPD: 15 } },
-    { id: 'it11', k: 'Node JS',    r: 'rare',   t: 'armor',    stats: { DEF: 35, HP: 10 } },
+    { id: 'it11', k: 'Node JS',    r: 'epic',   t: 'armor',    stats: { DEF: 35, HP: 10 } },
     { id: 'it12', k: 'Python',     r: 'legendary', t: 'artifact', stats: { INT: 50, LCK: 20 } },
   ],
 };

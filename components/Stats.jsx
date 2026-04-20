@@ -149,7 +149,8 @@ function InventoryPanel() {
     common: 'var(--ink-dim)', 
     rare: 'var(--neon-green)', 
     epic: 'var(--neon-magenta)', 
-    legendary: 'var(--neon-orange)' 
+    legendary: 'var(--neon-orange)',
+    unique: 'var(--neon-yellow)'
   };
   const [sel, setSel] = React.useState(0);
   const item = PLAYER_DATA.inventory[sel];
@@ -170,7 +171,11 @@ function InventoryPanel() {
                 window.dispatchEvent(new CustomEvent('sidekick-lore', { detail: it.k }));
               }}
               onMouseEnter={() => AudioCtx.hover()}
-              className={it.r === 'epic' ? 'epic-pulse' : it.r === 'legendary' ? 'legendary-pulse' : ''}
+              className={
+                it.r === 'epic' ? 'epic-pulse' : 
+                it.r === 'legendary' ? 'legendary-pulse' : 
+                it.r === 'unique' ? 'unique-pulse' : ''
+              }
               style={{
                 aspectRatio: '1',
                 background: sel === i ? 'var(--bg-panel-hi)' : 'var(--bg-void)',

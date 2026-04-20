@@ -398,6 +398,16 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
   50% { box-shadow: 0 0 30px var(--neon-orange), inset 0 0 20px var(--neon-orange); }
 }
 
+.unique-pulse {
+  animation: unique-glow 2.2s ease-in-out infinite;
+  background: linear-gradient(135deg, var(--bg-panel) 0%, #4d4d1a 100%) !important;
+}
+
+@keyframes unique-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--neon-yellow), inset 0 0 4px var(--neon-yellow); }
+  50% { box-shadow: 0 0 22px var(--neon-yellow), inset 0 0 12px var(--neon-yellow); }
+}
+
 .grid-inv-items button:hover {
   transform: translateY(-4px) scale(1.05);
   background: var(--bg-panel-hi);
