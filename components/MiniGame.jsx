@@ -553,8 +553,9 @@ function MiniGame() {
             </div>
           )}
         </div>
+      </div>
 
-        <div className="font-pixel" style={{ fontSize: 8, color: 'var(--ink-ghost)', marginTop: 10, textAlign: 'center', letterSpacing: '0.1em' }}>
+      <div className="font-pixel" style={{ fontSize: 8, color: 'var(--ink-ghost)', marginTop: 10, textAlign: 'center', letterSpacing: '0.1em' }}>
           {t('game_tip')}
         </div>
       </div>
