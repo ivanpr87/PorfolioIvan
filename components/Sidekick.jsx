@@ -3,11 +3,13 @@
 function Sidekick({ sectionId }) {
   const { t } = useLang();
   const m = window.Motion.motion;
-  const [msg, setMsg] = React.useState('');
   const [displayedText, setDisplayedText] = React.useState('');
   const [visible, setVisible] = React.useState(false);
   const [emotion, setEmotion] = React.useState('neutral');
+  
   const timerRef = React.useRef(null);
+  const typeRef = React.useRef(null);
+  const lastMsgRef = React.useRef("");
 
   const msgMap = {
     'hero':     { key: 'sk_msg_intro',    emo: 'happy' },
@@ -18,12 +20,35 @@ function Sidekick({ sectionId }) {
     'contact':  { key: 'sk_msg_contact',  emo: 'happy' },
   };
 
+  const startTyping = (text) => {
+    if (typeRef.current) clearInterval(typeRef.current);
+    if (!text) return;
+    
+    setDisplayedText('');
+    let i = 0;
+    typeRef.current = setInterval(() => {
+      if (i < text.length) {
+        setDisplayedText(text.substring(0, i + 1));
+        i++;
+      } else {
+        clearInterval(typeRef.current);
+      }
+    }, 35);
+  };
+
   const showMsg = (text, emo, duration = 6000) => {
+    if (!text || text === lastMsgRef.current) return;
+    lastMsgRef.current = text;
+
     if (timerRef.current) clearTimeout(timerRef.current);
-    setMsg(text);
     setEmotion(emo);
     setVisible(true);
-    timerRef.current = setTimeout(() => setVisible(false), duration);
+    startTyping(text);
+    
+    timerRef.current = setTimeout(() => {
+      setVisible(false);
+      lastMsgRef.current = ""; // Reset to allow repeating same msg later if needed
+    }, duration);
   };
 
   // Change message when section changes
@@ -36,11 +61,14 @@ function Sidekick({ sectionId }) {
 
   // Click reactions
   React.useEffect(() => {
-    let last = 0;
-    const onClick = () => {
+    let lastClick = 0;
+    const onClick = (e) => {
+      // Ignore if clicked on a button or interactive element that has its own logic
+      if (e.target.closest('button') || e.target.closest('a')) return;
+      
       const now = Date.now();
-      if (now - last < 3000) return; // Cooldown 3s
-      last = now;
+      if (now - lastClick < 4000) return;
+      lastClick = now;
 
       const rand = Math.floor(Math.random() * 5) + 1;
       showMsg(t(`sk_click_${rand}`), 'happy', 4000);
@@ -52,15 +80,19 @@ function Sidekick({ sectionId }) {
   // Inventory & Tab reactions
   React.useEffect(() => {
     const onEquip = (e) => {
-      const item = e.detail;
-      const typeMsg = t(`sk_eq_${item.t}`);
-      const genMsg = t('sk_eq_gen').replace('{item}', item.k);
+      const item = e.detail || {};
+      const name = item.k || '???';
+      const type = item.t || 'gen';
+      const typeMsg = t(`sk_eq_${type}`);
+      const genMsg = t('sk_eq_gen').replace('{item}', name);
       showMsg(`${genMsg} ${typeMsg}`, 'happy', 5000);
     };
     const onTab = (e) => {
+      if (!e.detail) return;
       showMsg(t(`sk_tab_${e.detail.toLowerCase()}`), 'neutral', 5000);
     };
     const onLore = (e) => {
+      if (!e.detail) return;
       showMsg(t(`sk_lore_${e.detail}`), 'happy', 6000);
     };
 
@@ -74,24 +106,9 @@ function Sidekick({ sectionId }) {
     };
   }, [t]);
 
-  // Typing effect
-  React.useEffect(() => {
-    setDisplayedText('');
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < msg.length) {
-        setDisplayedText(prev => prev + msg[i]);
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 40);
-    return () => clearInterval(interval);
-  }, [msg]);
-
   return (
     <div style={{
-      position: 'fixed', bottom: 30, left: 30, zIndex: 1000,
+      position: 'fixed', bottom: 30, left: 30, zIndex: 5000,
       display: 'flex', alignItems: 'flex-end', gap: 12,
       pointerEvents: 'none',
       filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))',
