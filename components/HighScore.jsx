@@ -16,14 +16,14 @@ function HighScore() {
     setLoading(true);
 
     const formData = {
-      initials: initials.join(''),
-      email: email, // Formspree uses this for Reply-To
+      name: initials.join(''),
+      email: email,
       message: msg,
-      _subject: `Arcadia High Score from ${initials.join('')}`,
+      _subject: `🕹️ ARCADIA: Nuevo Récord de ${initials.join('')}`,
     };
 
     try {
-      const response = await fetch('https://formspree.io/f/ivanbastos18@gmail.com', {
+      const response = await fetch('https://formsubmit.co/ajax/ivanbastos18@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(formData),
@@ -32,7 +32,7 @@ function HighScore() {
       if (response.ok) {
         setSent(true);
       } else {
-        console.error("Formspree error:", response);
+        console.error("FormSubmit error:", response);
         setSent(true);
       }
     } catch (e) {
