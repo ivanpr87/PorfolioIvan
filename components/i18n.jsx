@@ -270,7 +270,7 @@ const I18N = {
     // Tab Reactions
     sk_tab_skills: "Your skill tree is looking impressive! Almost max level?",
     sk_tab_stats: "High Charisma and Logic. Perfect for a Product Owner role.",
-    sk_tab_inv: "The technical treasure chest. Choose your gear wisely.",
+    sk_tab_inventory: "The technical treasure chest. Choose your gear wisely.",
 
     // Specific Item Lore
     'sk_lore_Claude': "Claude is like my super-intelligent cousin. A bit of a know-it-all, eh?",
@@ -493,7 +493,7 @@ const I18N = {
     // Tab Reactions
     sk_tab_skills: "¡Tu árbol de habilidades es impresionante! ¿Ya casi nivel máximo?",
     sk_tab_stats: "Carisma y Lógica por las nubes. Ideal para un Product Owner.",
-    sk_tab_inv: "El baúl de tesoros técnicos. Elegí bien tu equipo.",
+    sk_tab_inventory: "El baúl de tesoros técnicos. Elegí bien tu equipo.",
 
     // Specific Item Lore
     'sk_lore_Claude': "Claude es como mi primo superinteligente. Un poco sabelotodo, ¿no?",
