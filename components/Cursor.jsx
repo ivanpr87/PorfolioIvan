@@ -182,6 +182,45 @@ const AudioCtx = {
   click() { this.blip(220, 0.08, 'square', 0.05); setTimeout(() => this.blip(440, 0.06, 'square', 0.04), 40); },
   coin()  { this.blip(988, 0.05); setTimeout(() => this.blip(1318, 0.12), 60); },
   select(){ this.blip(523, 0.04); setTimeout(() => this.blip(784, 0.05), 50); },
+  bgmSource: null,
+  playBgm() {
+    if (this.muted || this.bgmSource) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const ctx = this.ctx;
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 0.2);
+      g.connect(ctx.destination);
+      
+      const melody = [
+        [523.25, 0.1], [0, 0.05], [523.25, 0.1], [0, 0.05], [659.25, 0.1], [783.99, 0.15],
+        [0, 0.05], [659.25, 0.1], [783.99, 0.3], [0, 0.2]
+      ];
+      
+      let t = ctx.currentTime + 0.05;
+      melody.forEach(([f, d]) => {
+        if (f > 0) {
+          const o = ctx.createOscillator();
+          o.type = 'square';
+          o.frequency.setValueAtTime(f, t);
+          o.connect(g);
+          o.start(t); o.stop(t + d);
+        }
+        t += d;
+      });
+      this.bgmSource = g;
+    } catch(e) {}
+  },
+  stopBgm() {
+    if (this.bgmSource) {
+      try { this.bgmSource.disconnect(); } catch(e) {}
+      this.bgmSource = null;
+    }
+  }
 };
 
 Object.assign(window, { SpaceCursor, ShipSprite, AudioCtx });

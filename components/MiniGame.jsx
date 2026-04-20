@@ -33,6 +33,7 @@ function MiniGame() {
     winTimer: null,
     autoplay: false,
     wave: 1,
+    shoot: null,
   });
 
   // Init stars once
@@ -80,8 +81,27 @@ function MiniGame() {
     g.bullets = []; g.efire = []; g.particles = [];
     spawnWave(1);
     setState('ready');
+    AudioCtx.playBgm();
     setTimeout(() => { setState('play'); g.running = true; }, 800);
   };
+
+  // Visibility logic for BGM
+  React.useEffect(() => {
+    if (!wrapperRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          AudioCtx.stopBgm();
+        } else if (state === 'play' || state === 'ready') {
+          // Resume if visible and playing (but playBgm checks if already playing)
+          AudioCtx.playBgm();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(wrapperRef.current);
+    return () => observer.disconnect();
+  }, [state]);
 
   // Main loop
   React.useEffect(() => {
@@ -93,7 +113,7 @@ function MiniGame() {
     let last = performance.now();
     let raf;
 
-    const shoot = () => {
+    g.shoot = () => {
       if (g.player.cool > 0) return;
       g.bullets.push({ x: g.player.x, y: g.player.y - 8, w: 3, h: 8, vy: -360 });
       g.player.cool = 0.22;
@@ -124,7 +144,7 @@ function MiniGame() {
       let moved = false;
       if (g.keys['ArrowLeft'] || g.keys['a'] || g.keys['A']) { g.player.x -= speed * dt; moved = true; }
       if (g.keys['ArrowRight'] || g.keys['d'] || g.keys['D']) { g.player.x += speed * dt; moved = true; }
-      if (g.keys[' ']) { shoot(); moved = true; }
+      if (g.keys[' ']) { g.shoot(); moved = true; }
       if (g.touch != null) moved = true;
 
       if (moved && g.autoplay) {
@@ -143,14 +163,14 @@ function MiniGame() {
           if (Math.abs(dx) > 4) {
             g.player.x += Math.sign(dx) * speed * dt;
           }
-          if (Math.abs(dx) < 20 || Math.random() < 0.05) shoot();
+          if (Math.abs(dx) < 20 || Math.random() < 0.05) g.shoot();
         }
       }
 
       if (g.touch != null) g.player.x = g.touch;
       g.player.x = Math.max(14, Math.min(g.W - 14, g.player.x));
       g.player.cool = Math.max(0, g.player.cool - dt);
-      if (g.keys[' ']) shoot();
+      if (g.keys[' ']) g.shoot();
 
       // Bullets
       g.bullets.forEach(b => b.y += b.vy * dt);
@@ -409,6 +429,29 @@ function MiniGame() {
             width: '100%', height: '100%', display: 'block',
             imageRendering: 'pixelated',
           }}/>
+
+          {/* Mobile Fire Button */}
+          {state === 'play' && (
+            <div 
+              onTouchStart={(e) => { e.preventDefault(); g.shoot(); }}
+              onMouseDown={(e) => { e.preventDefault(); g.shoot(); }}
+              className="fire-btn-mobile"
+              style={{
+                position: 'absolute', bottom: 20, right: 20,
+                width: 70, height: 70, borderRadius: '50%',
+                border: '4px solid rgba(255, 56, 96, 0.6)',
+                background: 'rgba(255, 56, 96, 0.1)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'rgba(255, 56, 96, 0.8)', fontFamily: 'VT323, monospace',
+                fontSize: 16, fontWeight: 'bold', pointerEvents: 'auto',
+                userSelect: 'none', zIndex: 20,
+                boxShadow: '0 0 15px rgba(255, 56, 96, 0.3)',
+                transition: 'all 0.1s'
+              }}
+            >
+              FIRE
+            </div>
+          )}
 
           {/* Overlay states */}
           {(state === 'idle' || state === 'over' || state === 'ready' || state === 'win') && (
