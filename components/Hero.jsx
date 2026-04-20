@@ -204,7 +204,7 @@ function CharacterSelect() {
   );
 }
 
-function PlayerPortrait() {
+function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }) {
   const m = window.Motion.motion;
   const [look, setLook] = React.useState({ x: 0, y: 0 });
   const containerRef = React.useRef(null);
@@ -223,89 +223,115 @@ function PlayerPortrait() {
     return () => window.removeEventListener('mousemove', handleMove);
   }, []);
 
+  const faceColor = emotion === 'sad' ? '#c49a6a' : emotion === 'happy' ? '#e8b88a' : '#e8b88a';
+
   return (
     <div ref={containerRef} style={{
-      width: '100%', aspectRatio: '1 / 1',
-      background: 'linear-gradient(180deg, #2a1f5e 0%, #0d0a1f 100%)',
+      width: size, aspectRatio: '1 / 1',
+      background: floating ? 'transparent' : 'linear-gradient(180deg, #2a1f5e 0%, #0d0a1f 100%)',
       position: 'relative', overflow: 'hidden',
-      border: '2px solid var(--ink-white)',
+      border: floating ? 'none' : '2px solid var(--ink-white)',
+      imageRendering: 'pixelated'
     }}>
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'linear-gradient(var(--neon-magenta) 1px, transparent 1px), linear-gradient(90deg, var(--neon-magenta) 1px, transparent 1px)',
-        backgroundSize: '20px 20px', opacity: 0.15,
-      }}/>
-
-      <m.div 
-        animate={{ y: ['-100%', '100%'] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-        style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(rgba(28, 242, 255, 0.1) 0%, transparent 10%, transparent 90%, rgba(28, 242, 255, 0.1) 100%)',
-          zIndex: 5, pointerEvents: 'none'
-        }}
-      />
+      {!floating && (
+        <>
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'linear-gradient(var(--neon-magenta) 1px, transparent 1px), linear-gradient(90deg, var(--neon-magenta) 1px, transparent 1px)',
+            backgroundSize: '20px 20px', opacity: 0.15,
+          }}/>
+          <m.div 
+            animate={{ y: ['-100%', '100%'] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(rgba(28, 242, 255, 0.1) 0%, transparent 10%, transparent 90%, rgba(28, 242, 255, 0.1) 100%)',
+              zIndex: 5, pointerEvents: 'none'
+            }}
+          />
+        </>
+      )}
 
       <svg viewBox="0 0 32 32" style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }} shapeRendering="crispEdges">
-        {/* HAIR - Improved Symmetrical Shape */}
+        {/* HAIR */}
         <rect x="7" y="5" width="18" height="5" fill="#1f1406"/>
         <rect x="5" y="8" width="3" height="8" fill="#1f1406"/>
         <rect x="24" y="8" width="3" height="8" fill="#1f1406"/>
         
-        {/* HEAD GROUP (follows mouse slightly) */}
+        {/* HEAD GROUP */}
         <m.g animate={{ x: look.x * 0.4, y: look.y * 0.4 }}>
-          {/* Face Base */}
-          <rect x="8" y="9" width="16" height="10" fill="#e8b88a"/>
+          <rect x="8" y="9" width="16" height="10" fill={faceColor}/>
           <rect x="9" y="19" width="14" height="2" fill="#d49a6a"/>
           
-          {/* Eyes Group (Clamped to prevent escaping the face) */}
           <m.g animate={{ x: look.x * 0.8, y: look.y * 0.8 }}>
-            {/* Left Eye */}
-            <rect x="11" y="12" width="3" height="2" fill="#fff"/>
-            <m.rect animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 5, repeat: Infinity, times: [0, 0.4, 0.45, 0.5, 1] }}
-              x="12" y="12" width="1" height="2" fill="#07060f"/>
-            
-            {/* Right Eye */}
-            <rect x="18" y="12" width="3" height="2" fill="#fff"/>
-            <m.rect animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 5, repeat: Infinity, times: [0, 0.4, 0.45, 0.5, 1] }}
-              x="19" y="12" width="1" height="2" fill="#07060f"/>
+            {/* Eyes */}
+            {emotion === 'sad' ? (
+              <>
+                <rect x="11" y="12" width="3" height="1" fill="#07060f"/>
+                <rect x="18" y="12" width="3" height="1" fill="#07060f"/>
+              </>
+            ) : (
+              <>
+                <rect x="11" y="12" width="3" height="2" fill="#fff"/>
+                <m.rect animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
+                  transition={{ duration: 5, repeat: Infinity }}
+                  x="12" y="12" width="1" height="2" fill="#07060f"/>
+                
+                <rect x="18" y="12" width="3" height="2" fill="#fff"/>
+                <m.rect animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
+                  transition={{ duration: 5, repeat: Infinity }}
+                  x="19" y="12" width="1" height="2" fill="#07060f"/>
+              </>
+            )}
           </m.g>
 
           {/* Brows */}
-          <rect x="10" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
-          <rect x="18" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
+          <m.rect animate={{ y: emotion === 'sad' ? 1 : emotion === 'happy' ? -1 : 0 }} x="10" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
+          <m.rect animate={{ y: emotion === 'sad' ? 1 : emotion === 'happy' ? -1 : 0 }} x="18" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
           
-          {/* Nose & Mouth */}
           <rect x="15" y="14" width="2" height="2" fill="#d49a6a"/>
-          <rect x="14" y="18" width="4" height="1" fill="#ff3860"/>
+          
+          {/* Mouth */}
+          {emotion === 'happy' ? (
+            <rect x="13" y="17" width="6" height="2" fill="#ff3860"/>
+          ) : emotion === 'sad' ? (
+            <rect x="14" y="18" width="4" height="1" fill="#07060f"/>
+          ) : (
+            <rect x="14" y="18" width="4" height="1" fill="#ff3860"/>
+          )}
         </m.g>
         
-        <rect x="13" y="21" width="6" height="2" fill="#d49a6a"/>
-        <rect x="6" y="23" width="20" height="9" fill="#ff2fb6"/>
-        <rect x="6" y="23" width="20" height="1" fill="#ffffff"/>
-        <rect x="14" y="23" width="4" height="9" fill="#07060f"/>
-        <rect x="4" y="24" width="2" height="6" fill="#8a2dff"/>
-        <rect x="26" y="24" width="2" height="6" fill="#8a2dff"/>
-        <rect x="15" y="23" width="2" height="4" fill="#1cf2ff"/>
-        <rect x="15" y="27" width="2" height="1" fill="#ffe74c"/>
+        {!floating && (
+          <>
+            <rect x="13" y="21" width="6" height="2" fill="#d49a6a"/>
+            <rect x="6" y="23" width="20" height="9" fill="#ff2fb6"/>
+            <rect x="6" y="23" width="20" height="1" fill="#ffffff"/>
+            <rect x="14" y="23" width="4" height="9" fill="#07060f"/>
+            <rect x="4" y="24" width="2" height="6" fill="#8a2dff"/>
+            <rect x="26" y="24" width="2" height="6" fill="#8a2dff"/>
+          </>
+        )}
       </svg>
       
-      <div style={{
-        position: 'absolute', top: 10, left: 10, right: 10,
-        display: 'flex', gap: 6, alignItems: 'center', zIndex: 10
-      }}>
-        <span className="font-pixel" style={{ fontSize: 8, color: 'var(--neon-green)' }}>HP</span>
-        <div style={{ flex: 1, height: 8, background: 'var(--bg-void)', border: '1px solid var(--ink-white)', padding: 1 }}>
-          <m.div 
-            initial={{ width: '0%' }}
-            animate={{ width: '92%' }}
-            transition={{ duration: 1.5, delay: 0.5 }}
-            style={{ height: '100%', background: 'var(--neon-green)' }}
-          />
+      {!floating && (
+        <div style={{
+          position: 'absolute', top: 10, left: 10, right: 10,
+          display: 'flex', gap: 6, alignItems: 'center', zIndex: 10
+        }}>
+          <span className="font-pixel" style={{ fontSize: 8, color: 'var(--neon-green)' }}>HP</span>
+          <div style={{ flex: 1, height: 8, background: 'var(--bg-void)', border: '1px solid var(--ink-white)', padding: 1 }}>
+            <m.div 
+              initial={{ width: '0%' }}
+              animate={{ width: '92%' }}
+              transition={{ duration: 1.5, delay: 0.5 }}
+              style={{ height: '100%', background: 'var(--neon-green)' }}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
+
 
 Object.assign(window, { Hero, CharacterSelect, PlayerPortrait });

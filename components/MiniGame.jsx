@@ -14,6 +14,12 @@ function MiniGame() {
   });
   const [lives, setLives] = React.useState(3);
   const [wave, setWave] = React.useState(1);
+  const [emotion, setEmotion] = React.useState('neutral');
+
+  const triggerEmotion = (emo, dur = 2000) => {
+    setEmotion(emo);
+    setTimeout(() => setEmotion('neutral'), dur);
+  };
 
   const game = React.useRef({
     W: 480, H: 360,
@@ -236,6 +242,7 @@ function MiniGame() {
         // Wave cleared
         g.running = false;
         setState('win');
+        triggerEmotion('happy', 2000);
         g.wave += 1;
         setWave(g.wave);
         AudioCtx.coin();
@@ -279,6 +286,7 @@ function MiniGame() {
           b.y = g.H + 50;
           explode(g.player.x, g.player.y, '#ff3860', 12);
           AudioCtx.blip(120, 0.2, 'sawtooth', 0.04);
+          triggerEmotion('sad', 1500);
           setLives(L => {
             const nl = L - 1;
             if (nl <= 0) {
@@ -301,6 +309,7 @@ function MiniGame() {
           explode(e.x, e.y, '#ff3860', 14);
           explode(g.player.x, g.player.y, '#ff3860', 12);
           AudioCtx.blip(100, 0.25, 'sawtooth', 0.05);
+          triggerEmotion('sad', 1500);
           setLives(L => {
             const nl = L - 1;
             if (nl <= 0) {
@@ -427,12 +436,27 @@ function MiniGame() {
           <span style={{ color: 'var(--neon-cyan)' }}>{t('game_wave')} {String(wave).padStart(2, '0')}</span>
           <span style={{ color: 'var(--neon-green)' }}>{t('game_lives')} {'▲'.repeat(Math.max(lives,0))}</span>
         </div>
+        
+        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          {/* Sidekick Avatar */}
+          {state !== 'idle' && (
+            <div className="hide-mobile" style={{ width: 80, marginTop: 10 }}>
+              <PlayerPortrait emotion={emotion} floating={true} size="80px" />
+              <div className="font-pixel" style={{ 
+                fontSize: 8, color: 'var(--ink-dim)', textAlign: 'center', 
+                marginTop: 4, background: 'var(--bg-void)', padding: 4,
+                border: '1px solid var(--ink-ghost)'
+              }}>
+                {emotion === 'happy' ? 'YEAH!' : emotion === 'sad' ? 'UGRH!' : '...'}
+              </div>
+            </div>
+          )}
 
-        <div style={{ position: 'relative', aspectRatio: '4 / 3', background: '#07060f', border: '2px solid var(--ink-white)' }}>
-          <canvas ref={canvasRef} width={480} height={360} style={{
-            width: '100%', height: '100%', display: 'block',
-            imageRendering: 'pixelated',
-          }}/>
+          <div style={{ flex: 1, position: 'relative', aspectRatio: '4 / 3', background: '#07060f', border: '2px solid var(--ink-white)' }}>
+            <canvas ref={canvasRef} width={480} height={360} style={{
+              width: '100%', height: '100%', display: 'block',
+              imageRendering: 'pixelated',
+            }}/>
 
           {/* Mobile Fire Button */}
           {state === 'play' && (
