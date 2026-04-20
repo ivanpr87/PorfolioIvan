@@ -205,6 +205,7 @@ function CharacterSelect() {
 }
 
 function PlayerPortrait() {
+  const m = window.Motion.motion;
   return (
     <div style={{
       width: '100%', aspectRatio: '1 / 1',
@@ -217,38 +218,72 @@ function PlayerPortrait() {
         backgroundImage: 'linear-gradient(var(--neon-magenta) 1px, transparent 1px), linear-gradient(90deg, var(--neon-magenta) 1px, transparent 1px)',
         backgroundSize: '20px 20px', opacity: 0.15,
       }}/>
+
+      {/* CRT SCANLINE ANIMATION */}
+      <m.div 
+        animate={{ y: ['-100%', '100%'] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+        style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(rgba(28, 242, 255, 0.1) 0%, transparent 10%, transparent 90%, rgba(28, 242, 255, 0.1) 100%)',
+          zIndex: 5, pointerEvents: 'none'
+        }}
+      />
+
       <svg viewBox="0 0 32 32" style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }} shapeRendering="crispEdges">
-        <rect x="8" y="5" width="16" height="2" fill="#2a1a0a"/>
-        <rect x="7" y="6" width="18" height="3" fill="#3a2510"/>
-        <rect x="6" y="8" width="2" height="6" fill="#3a2510"/>
-        <rect x="24" y="8" width="2" height="6" fill="#3a2510"/>
+        {/* Hair */}
+        <rect x="8" y="5" width="16" height="3" fill="#2a1a0a"/>
+        <rect x="7" y="6" width="18" height="3" fill="#1f1406"/>
+        <rect x="6" y="8" width="2" height="6" fill="#1f1406"/>
+        <rect x="24" y="8" width="2" height="6" fill="#1f1406"/>
+        
+        {/* Hairclip Ship */}
+        <rect x="9" y="8" width="3" height="2" fill="#fff"/>
+        <rect x="10" y="7" width="1" height="1" fill="#8a2dff"/>
+        <rect x="10" y="9" width="1" height="1" fill="#8a2dff"/>
+
+        {/* Face */}
         <rect x="8" y="9" width="16" height="10" fill="#e8b88a"/>
         <rect x="9" y="19" width="14" height="2" fill="#d49a6a"/>
-        <rect x="11" y="12" width="2" height="2" fill="#ffffff"/>
-        <rect x="12" y="12" width="1" height="2" fill="#1cf2ff"/>
-        <rect x="19" y="12" width="2" height="2" fill="#ffffff"/>
-        <rect x="20" y="12" width="1" height="2" fill="#1cf2ff"/>
-        <rect x="11" y="10" width="2" height="1" fill="#2a1a0a"/>
-        <rect x="19" y="10" width="2" height="1" fill="#2a1a0a"/>
+        
+        {/* Eyes (Black with blinking animation) */}
+        <m.g animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 3, repeat: Infinity, times: [0, 0.45, 0.5, 0.55, 1] }}>
+          <rect x="11" y="12" width="3" height="2" fill="#07060f"/>
+          <rect x="19" y="12" width="3" height="2" fill="#07060f"/>
+        </m.g>
+
+        <rect x="11" y="10" width="3" height="1" fill="#2a1a0a" opacity="0.6"/>
+        <rect x="19" y="10" width="3" height="1" fill="#2a1a0a" opacity="0.6"/>
+        
         <rect x="15" y="14" width="2" height="2" fill="#d49a6a"/>
         <rect x="13" y="17" width="6" height="1" fill="#8a3a2a"/>
-        <rect x="14" y="18" width="4" height="1" fill="#c44"/>
+        <rect x="14" y="18" width="4" height="1" fill="#ff3860"/>
+        
+        {/* Body */}
         <rect x="13" y="21" width="6" height="2" fill="#d49a6a"/>
         <rect x="6" y="23" width="20" height="9" fill="#ff2fb6"/>
         <rect x="6" y="23" width="20" height="1" fill="#ffffff"/>
         <rect x="14" y="23" width="4" height="9" fill="#07060f"/>
         <rect x="4" y="24" width="2" height="6" fill="#8a2dff"/>
         <rect x="26" y="24" width="2" height="6" fill="#8a2dff"/>
+        
+        {/* Tie detail */}
         <rect x="15" y="23" width="2" height="4" fill="#1cf2ff"/>
         <rect x="15" y="27" width="2" height="1" fill="#ffe74c"/>
       </svg>
+      
       <div style={{
         position: 'absolute', top: 10, left: 10, right: 10,
-        display: 'flex', gap: 6, alignItems: 'center',
+        display: 'flex', gap: 6, alignItems: 'center', zIndex: 10
       }}>
         <span className="font-pixel" style={{ fontSize: 8, color: 'var(--neon-green)' }}>HP</span>
         <div style={{ flex: 1, height: 8, background: 'var(--bg-void)', border: '1px solid var(--ink-white)', padding: 1 }}>
-          <div style={{ width: '92%', height: '100%', background: 'var(--neon-green)' }}/>
+          <m.div 
+            initial={{ width: '0%' }}
+            animate={{ width: '92%' }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+            style={{ height: '100%', background: 'var(--neon-green)' }}
+          />
         </div>
       </div>
     </div>
