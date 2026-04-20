@@ -303,6 +303,11 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
 .grid-inv    { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .grid-skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px; }
 
+.fire-btn-mobile { display: flex; }
+@media (min-width: 769px) {
+  .fire-btn-mobile { display: none !important; }
+}
+
 @media (max-width: 768px) {
   section { padding: 80px 5vw 60px; }
 
