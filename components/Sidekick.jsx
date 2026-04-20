@@ -45,7 +45,7 @@ function Sidekick({ sectionId }) {
       } else {
         clearInterval(interval);
       }
-    }, 40 character/ms typing speed);
+    }, 40);
     return () => clearInterval(interval);
   }, [msg]);
 
