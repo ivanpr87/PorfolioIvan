@@ -51,7 +51,7 @@ function MiniGame() {
   const spawnWave = (w) => {
     const g = game.current; g.enemies = []; g.isBossWave = (w % 5 === 0);
     if (g.isBossWave) {
-      const bossHp = 40 + (w / 5) * 60;
+      const bossHp = 30 + (w / 5) * 40; // Balanced HP
       g.enemies.push({
         x: g.W/2, y: 80, w: 60, h: 40, type: 'mega_boss', alive: true, hp: bossHp, maxHp: bossHp,
         state: 'boss_move', dir: 1, shootTimer: 1, pattern: 0,
