@@ -23,7 +23,7 @@ const PLAYER_DATA = {
   ],
   stats: { HP: 92, MP: 94, ATK: 88, DEF: 82, SPD: 90, LCK: 78 },
   inventory: [
-    { id: 'it1', k: 'Claude',     r: 'epic',   t: 'artifact', stats: { MP: 50, INT: 99 } },
+    { id: 'it1', k: 'Claude',     r: 'legendary',   t: 'artifact', stats: { MP: 50, INT: 99 } },
     { id: 'it2', k: 'OpenAI',     r: 'rare',   t: 'artifact', stats: { MP: 30, INT: 85 } },
     { id: 'it3', k: 'n8n',        r: 'epic',   t: 'weapon',   stats: { ATK: 45, SPD: 95 } },
     { id: 'it4', k: 'Next.js',    r: 'rare',   t: 'armor',    stats: { DEF: 40, SPD: 20 } },
