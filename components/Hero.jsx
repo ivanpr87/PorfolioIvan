@@ -217,7 +217,7 @@ function PlayerPortrait() {
       const centerY = rect.top + rect.height / 2;
       const dx = (e.clientX - centerX) / (window.innerWidth / 2);
       const dy = (e.clientY - centerY) / (window.innerHeight / 2);
-      setLook({ x: dx * 2, y: dy * 1.5 }); // Subtle movement
+      setLook({ x: dx, y: dy });
     };
     window.addEventListener('mousemove', handleMove);
     return () => window.removeEventListener('mousemove', handleMove);
@@ -247,46 +247,45 @@ function PlayerPortrait() {
       />
 
       <svg viewBox="0 0 32 32" style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }} shapeRendering="crispEdges">
-        {/* HAIR - Fixed */}
+        {/* HAIR - Improved Symmetrical Shape */}
         <rect x="7" y="5" width="18" height="5" fill="#1f1406"/>
-        <rect x="6" y="8" width="2" height="6" fill="#1f1406"/>
-        <rect x="24" y="8" width="2" height="6" fill="#1f1406"/>
+        <rect x="5" y="8" width="3" height="8" fill="#1f1406"/>
+        <rect x="24" y="8" width="3" height="8" fill="#1f1406"/>
         
         {/* HEAD GROUP (follows mouse slightly) */}
-        <m.g animate={{ x: look.x * 0.5, y: look.y * 0.5 }}>
+        <m.g animate={{ x: look.x * 0.4, y: look.y * 0.4 }}>
           {/* Face Base */}
           <rect x="8" y="9" width="16" height="10" fill="#e8b88a"/>
           <rect x="9" y="19" width="14" height="2" fill="#d49a6a"/>
           
-          {/* Eyes Group (follows mouse more) */}
-          <m.g animate={{ x: look.x * 1.5, y: look.y * 1 }}>
+          {/* Eyes Group (Clamped to prevent escaping the face) */}
+          <m.g animate={{ x: look.x * 0.8, y: look.y * 0.8 }}>
             {/* Left Eye */}
             <rect x="11" y="12" width="3" height="2" fill="#fff"/>
-            <m.rect animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 4, repeat: Infinity, times: [0, 0.6, 0.65, 0.7, 1] }}
+            <m.rect animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 5, repeat: Infinity, times: [0, 0.4, 0.45, 0.5, 1] }}
               x="12" y="12" width="1" height="2" fill="#07060f"/>
             
             {/* Right Eye */}
-            <rect x="19" y="12" width="3" height="2" fill="#fff"/>
-            <m.rect animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 4, repeat: Infinity, times: [0, 0.6, 0.65, 0.7, 1] }}
-              x="20" y="12" width="1" height="2" fill="#07060f"/>
+            <rect x="18" y="12" width="3" height="2" fill="#fff"/>
+            <m.rect animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 5, repeat: Infinity, times: [0, 0.4, 0.45, 0.5, 1] }}
+              x="19" y="12" width="1" height="2" fill="#07060f"/>
           </m.g>
 
           {/* Brows */}
-          <rect x="11" y="10" width="3" height="1" fill="#2a1a0a" opacity="0.6"/>
-          <rect x="19" y="10" width="3" height="1" fill="#2a1a0a" opacity="0.6"/>
+          <rect x="10" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
+          <rect x="18" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
           
+          {/* Nose & Mouth */}
           <rect x="15" y="14" width="2" height="2" fill="#d49a6a"/>
           <rect x="14" y="18" width="4" height="1" fill="#ff3860"/>
         </m.g>
         
-        {/* Body (stays fixed) */}
         <rect x="13" y="21" width="6" height="2" fill="#d49a6a"/>
         <rect x="6" y="23" width="20" height="9" fill="#ff2fb6"/>
         <rect x="6" y="23" width="20" height="1" fill="#ffffff"/>
         <rect x="14" y="23" width="4" height="9" fill="#07060f"/>
         <rect x="4" y="24" width="2" height="6" fill="#8a2dff"/>
         <rect x="26" y="24" width="2" height="6" fill="#8a2dff"/>
-        
         <rect x="15" y="23" width="2" height="4" fill="#1cf2ff"/>
         <rect x="15" y="27" width="2" height="1" fill="#ffe74c"/>
       </svg>
