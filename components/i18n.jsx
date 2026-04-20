@@ -19,6 +19,7 @@ const PLAYER_DATA = {
     { key: 'ts',     lvl: 90, color: 'var(--neon-cyan)',    tagEn: 'LANG',  tagEs: 'LENG' },
     { key: 'po',     lvl: 88, color: 'var(--neon-magenta)', tagEn: 'META',  tagEs: 'META' },
     { key: 'qa',     lvl: 85, color: 'var(--neon-yellow)',  tagEn: 'OPS',   tagEs: 'OPS' },
+    { key: 'linux',  lvl: 82, color: 'var(--neon-green)',   tagEn: 'OPS',   tagEs: 'OPS' },
   ],
   stats: { HP: 92, MP: 94, ATK: 88, DEF: 82, SPD: 90, LCK: 78 },
   inventory: [
@@ -30,6 +31,7 @@ const PLAYER_DATA = {
     { id: 'it6', k: 'PostgreSQL', r: 'rare',   t: 'weapon',   stats: { ATK: 35, INT: 10 } },
     { id: 'it7', k: 'Prisma',     r: 'common', t: 'artifact', stats: { DEX: 25, LCK: 5  } },
     { id: 'it8', k: 'Docker',     r: 'common', t: 'armor',    stats: { DEF: 25, RES: 30 } },
+    { id: 'it9', k: 'Linux Bash', r: 'rare',   t: 'weapon',   stats: { ATK: 30, SPD: 20 } },
   ],
 };
 
@@ -122,6 +124,7 @@ const I18N = {
     sk_ts: 'TypeScript',
     sk_po: 'PRODUCT MINDSET',
     sk_qa: 'QA / TESTING',
+    sk_linux: 'LINUX / BASH',
 
     // Inventory descriptions
     inv_Claude: 'Primary LLM companion. +∞ MP. Used across all multi-agent orchestration.',
@@ -132,6 +135,7 @@ const I18N = {
     inv_PostgreSQL: 'Battle-hardened relational weapon. Joins never miss.',
     inv_Prisma: 'Type-safe ORM talisman. Zero N+1 curses cast on you.',
     inv_Docker: 'Container armor. Works on any dungeon.',
+    'inv_Linux Bash': 'The master key to any server environment. Root access granted.',
 
     // Projects
     proj_stage: 'STAGE 04',
@@ -306,6 +310,7 @@ const I18N = {
     sk_ts: 'TypeScript',
     sk_po: 'MENTALIDAD PO',
     sk_qa: 'QA / TESTING',
+    sk_linux: 'LINUX / BASH',
 
     inv_Claude: 'Compañero LLM principal. +∞ MP. Usado en toda orquestación multi-agente.',
     inv_OpenAI: 'Caster versátil. Grimorio de respaldo cuando Claude se queda sin maná.',
@@ -315,6 +320,7 @@ const I18N = {
     inv_PostgreSQL: 'Arma relacional curtida. Los JOINs nunca fallan.',
     inv_Prisma: 'Talismán ORM type-safe. Cero maldiciones N+1.',
     inv_Docker: 'Armadura contenedora. Funciona en cualquier mazmorra.',
+    'inv_Linux Bash': 'La llave maestra de cualquier servidor. Acceso root concedido.',
 
     proj_stage: 'STAGE 04',
     proj_title: 'ELIGE UN CART',
