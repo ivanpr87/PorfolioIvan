@@ -110,6 +110,7 @@ function App() {
         setMuted={(m) => { setMuted(m); persist({ muted: m }); }}
         section={section}
       />
+      <AchievementSystem />
       <CornerBrackets/>
       <SpaceCursor variant={cursorVariant}/>
       <Sidekick sectionId={currentSectionId}/>

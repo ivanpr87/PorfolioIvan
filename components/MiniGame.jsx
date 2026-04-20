@@ -21,29 +21,15 @@ function MiniGame() {
     setEmotion(emo);
     setTimeout(() => setEmotion('neutral'), dur);
   };
-
   const game = React.useRef({
     W: 480, H: 360,
-    player: { x: 240, y: 320, w: 22, h: 14, cool: 0 },
-    bullets: [],
-    enemies: [],
-    efire: [],
-    particles: [],
-    stars: [],
-    keys: {},
-    touch: null,
-    dir: 1,
-    step: 0,
-    diveTimer: 2,
-    running: false,
-    t: 0,
-    winTimer: null,
-    autoplay: false,
-    wave: 1,
-    shoot: null,
+    player: { x: 240, y: 320, w: 22, h: 14, cool: 0, shield: 0 },
+    bullets: [], enemies: [], efire: [], particles: [], stars: [], powerups: [],
+    keys: {}, touch: null, dir: 1, step: 0, diveTimer: 2, running: false, t: 0,
+    winTimer: null, autoplay: false, wave: 1, shoot: null, isBossWave: false,
+    powers: { double: 0, rapid: 0 },
   });
 
-  // Init stars once
   React.useEffect(() => {
     const g = game.current;
     g.stars = Array.from({ length: 40 }, () => ({
@@ -54,389 +40,204 @@ function MiniGame() {
   }, []);
 
   const spawnWave = (w) => {
-    const g = game.current;
-    g.enemies = [];
-    const cols = 8, rows = Math.min(3 + Math.floor(w / 2), 5);
-    const margin = 60, gap = 38;
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        g.enemies.push({
-          x: margin + c * gap,
-          y: 60 + r * 28,
-          w: 18, h: 14,
-          type: r === 0 ? 'boss' : r === 1 ? 'mid' : 'grunt',
-          alive: true,
-          homeX: margin + c * gap,
-          homeY: 60 + r * 28,
-          state: 'formation',
-          divePath: null,
-          diveT: 0,
-        });
+    const g = game.current; g.enemies = []; g.isBossWave = (w % 5 === 0);
+    if (g.isBossWave) {
+      g.enemies.push({
+        x: g.W/2, y: 80, w: 60, h: 40, type: 'mega_boss', alive: true, hp: 15 + w*3, maxHp: 15 + w*3,
+        state: 'boss_move', dir: 1, shootTimer: 1
+      });
+    } else {
+      const cols = 8, rows = Math.min(3 + Math.floor(w/2), 5);
+      const margin = 60, gap = 38;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          g.enemies.push({
+            x: margin + c*gap, y: 60 + r*28, w: 18, h: 14,
+            type: r===0?'boss':r===1?'mid':'grunt', alive: true,
+            homeX: margin + c*gap, homeY: 60 + r*28, state: 'formation', diveT: 0
+          });
+        }
       }
     }
-    g.dir = 1;
-    g.step = 0;
-    g.diveTimer = 2.5;
+    g.diveTimer = 2.5; g.dir = 1;
   };
 
   const start = () => {
-    AudioCtx.coin();
-    setScore(0); setLives(3); setWave(1);
-    const g = game.current;
-    g.wave = 1;
-    g.player = { x: g.W / 2, y: 320, w: 22, h: 14, cool: 0 };
-    g.bullets = []; g.efire = []; g.particles = [];
-    spawnWave(1);
-    setState('ready');
-    AudioCtx.playBgm();
+    AudioCtx.coin(); setScore(0); setLives(3); setWave(1);
+    const g = game.current; g.wave = 1;
+    g.player = { x: g.W/2, y: 320, w: 22, h: 14, cool: 0, shield: 0 };
+    g.bullets = []; g.efire = []; g.particles = []; g.powerups = [];
+    g.powers = { double: 0, rapid: 0 }; spawnWave(1);
+    setState('ready'); AudioCtx.playBgm();
+    window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'start_game' }));
     setTimeout(() => { setState('play'); g.running = true; }, 800);
   };
 
-  // Visibility logic for BGM
-  React.useEffect(() => {
-    if (!wrapperRef.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) {
-          AudioCtx.stopBgm();
-        } else if (state === 'play' || state === 'ready') {
-          // Resume if visible and playing (but playBgm checks if already playing)
-          AudioCtx.playBgm();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(wrapperRef.current);
-    return () => observer.disconnect();
-  }, [state]);
-
   const shoot = () => {
-    const g = game.current;
-    if (g.player.cool > 0) return;
-    g.bullets.push({ x: g.player.x, y: g.player.y - 8, w: 3, h: 8, vy: -360 });
-    g.player.cool = 0.22;
-    AudioCtx.blip(1200, 0.04, 'square', 0.03);
+    const g = game.current; if (g.player.cool > 0) return;
+    const isRapid = g.powers.rapid > 0, isDouble = g.powers.double > 0;
+    if (isDouble) {
+      g.bullets.push({ x: g.player.x-6, y: g.player.y-8, w:3, h:8, vy:-380 });
+      g.bullets.push({ x: g.player.x+6, y: g.player.y-8, w:3, h:8, vy:-380 });
+    } else {
+      g.bullets.push({ x: g.player.x, y: g.player.y-8, w:3, h:8, vy:-360 });
+    }
+    g.player.cool = isRapid ? 0.08 : 0.22;
+    AudioCtx.blip(isRapid ? 1600 : 1200, 0.04, 'square', 0.03);
   };
-  // Store in ref for loop access
   React.useEffect(() => { game.current.shoot = shoot; }, []);
 
-  // Main loop
   React.useEffect(() => {
-    const g = game.current;
-    const cvs = canvasRef.current;
-    if (!cvs) return;
-    const ctx = cvs.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-    let last = performance.now();
-    let raf;
-
+    const g = game.current; const cvs = canvasRef.current; if (!cvs) return;
+    const ctx = cvs.getContext('2d'); ctx.imageSmoothingEnabled = false;
+    let last = performance.now(); let raf;
 
     const explode = (x, y, color, n = 6) => {
-      for (let i = 0; i < n; i++) {
-        g.particles.push({
-          x, y,
-          vx: (Math.random() - 0.5) * 160,
-          vy: (Math.random() - 0.5) * 160,
-          life: 0.4 + Math.random() * 0.3,
-          color,
-        });
-      }
+      for (let i = 0; i < n; i++) g.particles.push({
+        x, y, vx: (Math.random()-0.5)*160, vy: (Math.random()-0.5)*160,
+        life: 0.4+Math.random()*0.3, color
+      });
+    };
+    const spawnPowerup = (x, y) => {
+      if (Math.random() > 0.15) return;
+      const types = ['double', 'rapid', 'shield'];
+      g.powerups.push({ x, y, type: types[Math.floor(Math.random()*types.length)], vy: 80 });
     };
 
     const update = (dt) => {
-      if (!g.running) return;
-      g.t += dt;
+      if (!g.running) return; g.t += dt;
+      g.stars.forEach(s => { s.y += s.sp*30*dt; if (s.y > g.H) { s.y = 0; s.x = Math.random()*g.W; } });
+      if (g.powers.double > 0) g.powers.double -= dt;
+      if (g.powers.rapid > 0) g.powers.rapid -= dt;
+      if (g.player.shield > 0) g.player.shield -= dt;
 
-      // Stars
-      g.stars.forEach(s => { s.y += s.sp * 30 * dt; if (s.y > g.H) { s.y = 0; s.x = Math.random() * g.W; } });
-
-      // Player input
       const speed = 200;
-      let moved = false;
-      if (g.keys['ArrowLeft'] || g.keys['a'] || g.keys['A']) { g.player.x -= speed * dt; moved = true; }
-      if (g.keys['ArrowRight'] || g.keys['d'] || g.keys['D']) { g.player.x += speed * dt; moved = true; }
-      if (g.keys[' ']) { g.shoot(); moved = true; }
-      if (g.touch != null) moved = true;
-
-      if (moved && g.autoplay) {
-        g.autoplay = false; // Take control!
-      }
-
-      // AI Pilot (Autoplay)
-      if (g.autoplay && g.enemies.length) {
-        const aliveInFormation = g.enemies.filter(e => e.alive && e.state === 'formation');
-        const diving = g.enemies.filter(e => e.alive && e.state === 'dive');
-        const target = diving.sort((a,b) => b.y - a.y)[0] || 
-                     aliveInFormation.sort((a,b) => b.y - a.y || Math.abs(a.x - g.player.x) - Math.abs(b.x - g.player.x))[0];
-        
-        if (target) {
-          const dx = target.x - g.player.x;
-          if (Math.abs(dx) > 4) {
-            g.player.x += Math.sign(dx) * speed * dt;
-          }
-          if (Math.abs(dx) < 20 || Math.random() < 0.05) g.shoot();
-        }
-      }
-
-      if (g.touch != null) g.player.x = g.touch;
-      g.player.x = Math.max(14, Math.min(g.W - 14, g.player.x));
-      g.player.cool = Math.max(0, g.player.cool - dt);
+      if (g.keys['ArrowLeft'] || g.keys['a']) g.player.x -= speed * dt;
+      if (g.keys['ArrowRight'] || g.keys['d']) g.player.x += speed * dt;
       if (g.keys[' ']) g.shoot();
+      if (g.touch != null) g.player.x = g.touch;
+      g.player.x = Math.max(14, Math.min(g.W-14, g.player.x));
+      g.player.cool = Math.max(0, g.player.cool - dt);
 
-      // Bullets
-      g.bullets.forEach(b => b.y += b.vy * dt);
-      g.bullets = g.bullets.filter(b => b.y > -10);
+      g.bullets.forEach(b => b.y += b.vy * dt); g.bullets = g.bullets.filter(b => b.y > -10);
+      g.powerups.forEach(p => { 
+        p.y += p.vy * dt;
+        if (Math.abs(p.x - g.player.x) < 20 && Math.abs(p.y - g.player.y) < 20) {
+          p.y = 500; AudioCtx.coin();
+          if (p.type === 'double') g.powers.double = 10;
+          if (p.type === 'rapid') g.powers.rapid = 10;
+          if (p.type === 'shield') g.player.shield = 8;
+        }
+      });
+      g.powerups = g.powerups.filter(p => p.y < g.H + 10);
 
-      // Enemy formation marching
       const alive = g.enemies.filter(e => e.alive);
       if (alive.length) {
-        g.step += dt;
-        const marchDist = 18 * dt * (1 + (1 - alive.length / 40));
-        let hitEdge = false;
-        alive.forEach(e => {
-          if (e.state === 'formation') {
-            e.homeX += g.dir * marchDist;
-            e.x = e.homeX;
-            if (e.homeX < 20 || e.homeX > g.W - 20) hitEdge = true;
+        if (g.isBossWave) {
+          const b = alive[0]; b.x += b.dir * 100 * dt;
+          if (b.x < 100 || b.x > g.W-100) b.dir *= -1; b.y = 80 + Math.sin(g.t*2)*20;
+          b.shootTimer -= dt;
+          if (b.shootTimer <= 0) {
+            for(let i=-1; i<=1; i++) g.efire.push({ x: b.x+i*20, y: b.y+20, vy: 180+Math.random()*40 });
+            b.shootTimer = 1.2 - Math.min(0.8, g.wave*0.05);
           }
-        });
-        if (hitEdge) {
-          g.dir *= -1;
-          alive.forEach(e => { if (e.state === 'formation') e.homeY += 10; e.y = e.homeY; });
-        }
-
-        // Dive bomber
-        g.diveTimer -= dt;
-        if (g.diveTimer <= 0) {
-          const candidates = alive.filter(e => e.state === 'formation');
-          if (candidates.length) {
-            const pick = candidates[Math.floor(Math.random() * candidates.length)];
-            pick.state = 'dive';
-            pick.diveT = 0;
-            pick.diveStart = { x: pick.x, y: pick.y };
-          }
-          g.diveTimer = 2.2 + Math.random() * 1.5;
-        }
-
-        // Diving enemies
-        alive.forEach(e => {
-          if (e.state === 'dive') {
-            e.diveT += dt;
-            // Swoop curve
-            const targetX = g.player.x + Math.sin(e.diveT * 3) * 60;
-            e.x += (targetX - e.x) * dt * 2;
-            e.y += 130 * dt;
-            // Fire bullets
-            if (Math.random() < dt * 2.5) {
-              g.efire.push({ x: e.x, y: e.y + 6, w: 3, h: 6, vy: 160 });
+        } else {
+          g.step += dt; const marchDist = 18*dt*(1+(1-alive.length/40)); let hitEdge = false;
+          alive.forEach(e => {
+            if (e.state === 'formation') {
+              e.homeX += g.dir * marchDist; e.x = e.homeX;
+              if (e.homeX < 20 || e.homeX > g.W-20) hitEdge = true;
             }
-            if (e.y > g.H + 20) {
-              e.state = 'formation';
-              e.y = e.homeY;
-              e.x = e.homeX;
-            }
-          } else if (e.state === 'formation' && Math.random() < dt * 0.08) {
-            g.efire.push({ x: e.x, y: e.y + 6, w: 3, h: 6, vy: 140 });
+          });
+          if (hitEdge) {
+            g.dir *= -1; alive.forEach(e => { if (e.state === 'formation') e.homeY += 10; e.y = e.homeY; });
           }
-        });
+          g.diveTimer -= dt;
+          if (g.diveTimer <= 0) {
+            const cs = alive.filter(e => e.state === 'formation');
+            if (cs.length) { const p = cs[Math.floor(Math.random()*cs.length)]; p.state = 'dive'; p.diveT = 0; }
+            g.diveTimer = 2.0 + Math.random()*1.5;
+          }
+          alive.forEach(e => {
+            if (e.state === 'dive') {
+              e.diveT += dt; e.x += (g.player.x - e.x)*dt*1.5; e.y += 140*dt;
+              if (Math.random() < dt*2) g.efire.push({ x: e.x, y: e.y+6, vy: 180 });
+              if (e.y > g.H+20) { e.state = 'formation'; e.y = e.homeY; e.x = e.homeX; }
+            } else if (Math.random() < dt*0.08) g.efire.push({ x: e.x, y: e.y+6, vy: 140 });
+          });
+        }
       } else {
-        // Wave cleared
-        g.running = false;
-        setState('win');
-        triggerEmotion('happy', 2000);
-        g.wave += 1;
-        setWave(g.wave);
-        AudioCtx.coin();
-        if (g.winTimer) clearTimeout(g.winTimer);
-        g.winTimer = setTimeout(() => {
-          spawnWave(g.wave);
-          setState('play');
-          g.running = true;
-          g.winTimer = null;
-        }, 1500);
+        g.running = false; setState('win');
+        if (g.wave === 5) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'wave_5' }));
+        if (g.isBossWave) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'boss_slayer' }));
+        g.wave += 1; setWave(g.wave); AudioCtx.coin();
+        const bns = ['double', 'rapid', 'shield']; const won = bns[Math.floor(Math.random()*bns.length)];
+        if (won === 'shield') g.player.shield = 12; else g.powers[won] = 12;
+        setTimeout(() => { spawnWave(g.wave); setState('play'); g.running = true; }, 1500);
       }
 
-      // Enemy bullets
-      g.efire.forEach(b => b.y += b.vy * dt);
-      g.efire = g.efire.filter(b => b.y < g.H + 10);
-
-      // Collisions: player bullets vs enemies
       g.bullets.forEach(b => {
         g.enemies.forEach(e => {
-          if (e.alive && Math.abs(b.x - e.x) < e.w / 2 && Math.abs(b.y - e.y) < e.h / 2) {
-            e.alive = false;
+          if (e.alive && Math.abs(b.x - e.x) < e.w/2 && Math.abs(b.y - e.y) < e.h/2) {
             b.y = -100;
-            const pts = e.type === 'boss' ? 300 : e.type === 'mid' ? 150 : 80;
-            setScore(s => {
-              const ns = s + pts;
-              setHi(h => {
-                if (ns > h) { try { localStorage.setItem('bugInvadersHi', ns); } catch(_) {} return ns; }
-                return h;
+            if (e.type === 'mega_boss') {
+              e.hp -= 1; AudioCtx.blip(600,0.05,'sawtooth',0.02);
+              if (e.hp <= 0) { e.alive = false; setScore(s => s+2000); explode(e.x, e.y, '#ff9500', 30); AudioCtx.blip(100,0.4,'sawtooth',0.1); }
+            } else {
+              e.alive = false; setScore(s => {
+                const ns = s + (e.type==='boss'?300:e.type==='mid'?150:80);
+                if (ns >= 100) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'first_kill' }));
+                if (ns > hi) { setHi(ns); localStorage.setItem('bugInvadersHi', ns); }
+                return ns;
               });
-              return ns;
-            });
-            explode(e.x, e.y, e.type === 'boss' ? '#ff2fb6' : e.type === 'mid' ? '#ffe74c' : '#1cf2ff');
-            AudioCtx.blip(200 + Math.random() * 200, 0.06, 'square', 0.03);
+              explode(e.x, e.y, e.type==='boss'?'#ff2fb6':e.type==='mid'?'#ffe74c':'#1cf2ff');
+              spawnPowerup(e.x, e.y); AudioCtx.blip(300,0.06,'square',0.03);
+            }
           }
         });
       });
 
-      // Enemy bullets vs player
-      g.efire.forEach(b => {
-        if (Math.abs(b.x - g.player.x) < g.player.w / 2 && Math.abs(b.y - g.player.y) < g.player.h / 2) {
-          b.y = g.H + 50;
-          explode(g.player.x, g.player.y, '#ff3860', 12);
-          AudioCtx.blip(120, 0.2, 'sawtooth', 0.04);
-          triggerEmotion('sad', 1500);
-          setLives(L => {
-            const nl = L - 1;
-            if (nl <= 0) {
-              g.running = false;
-              if (g.winTimer) clearTimeout(g.winTimer);
-              setState('over');
-            }
-            return nl;
-          });
-          g.player.x = g.W / 2;
-        }
-      });
-
-      // Diving enemy vs player
-      g.enemies.forEach(e => {
-        if (e.alive && e.state === 'dive' &&
-            Math.abs(e.x - g.player.x) < (e.w + g.player.w) / 2 &&
-            Math.abs(e.y - g.player.y) < (e.h + g.player.h) / 2) {
-          e.alive = false;
-          explode(e.x, e.y, '#ff3860', 14);
-          explode(g.player.x, g.player.y, '#ff3860', 12);
-          AudioCtx.blip(100, 0.25, 'sawtooth', 0.05);
-          triggerEmotion('sad', 1500);
-          setLives(L => {
-            const nl = L - 1;
-            if (nl <= 0) {
-              g.running = false;
-              if (g.winTimer) clearTimeout(g.winTimer);
-              setState('over');
-            }
-            return nl;
-          });
-          g.player.x = g.W / 2;
-        }
-      });
-
-      // Particles
-      g.particles.forEach(p => {
-        p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
-      });
-      g.particles = g.particles.filter(p => p.life > 0);
+      const hit = () => {
+        if (g.player.shield > 0) return;
+        explode(g.player.x, g.player.y, '#ff3860', 12); AudioCtx.blip(120,0.2,'sawtooth',0.04);
+        setLives(L => { if (L<=1) { g.running=false; setState('over'); return 0; } return L-1; });
+        g.player.x = g.W/2; g.powers = { double: 0, rapid: 0 };
+      };
+      g.efire.forEach(b => { if (Math.abs(b.x - g.player.x) < 12 && Math.abs(b.y - g.player.y) < 12) { b.y=500; hit(); } });
+      g.enemies.forEach(e => { if (e.alive && e.state === 'dive' && Math.abs(e.x - g.player.x) < 20 && Math.abs(e.y - g.player.y) < 20) { e.alive=false; hit(); } });
+      g.efire = g.efire.filter(b => b.y < g.H+10);
+      g.particles.forEach(p => { p.x += p.vx*dt; p.y += p.vy*dt; p.life -= dt; }); g.particles = g.particles.filter(p => p.life>0);
     };
-
-    const gameWave = () => wave;
 
     const draw = () => {
-      ctx.fillStyle = '#07060f';
-      ctx.fillRect(0, 0, g.W, g.H);
-      // Grid
-      ctx.strokeStyle = 'rgba(58, 107, 255, 0.12)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < g.W; x += 24) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, g.H); ctx.stroke(); }
-      for (let y = 0; y < g.H; y += 24) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(g.W, y); ctx.stroke(); }
-      // Stars
-      g.stars.forEach(s => { ctx.fillStyle = s.s === 1 ? '#f2f0ff' : '#1cf2ff'; ctx.fillRect(s.x, s.y, s.s, s.s); });
-
-      // Player
+      ctx.fillStyle = '#07060f'; ctx.fillRect(0,0,g.W,g.H);
+      g.stars.forEach(s => { ctx.fillStyle = s.s===1?'#f2f0ff':'#1cf2ff'; ctx.fillRect(s.x,s.y,s.s,s.s); });
+      if (g.powers.double > 0) { ctx.fillStyle = '#ff9500'; ctx.fillRect(10, g.H-15, (g.powers.double/10)*60, 3); }
+      if (g.powers.rapid > 0) { ctx.fillStyle = '#1cf2ff'; ctx.fillRect(10, g.H-10, (g.powers.rapid/10)*60, 3); }
+      if (g.player.shield > 0) { ctx.strokeStyle = '#ffe74c'; ctx.beginPath(); ctx.arc(g.player.x, g.player.y, 18, 0, Math.PI*2); ctx.stroke(); }
       drawPlayer(ctx, g.player.x, g.player.y);
-
-      // Bullets
-      ctx.fillStyle = '#ffe74c';
-      g.bullets.forEach(b => ctx.fillRect(b.x - b.w/2, b.y - b.h/2, b.w, b.h));
-      ctx.fillStyle = '#ff3860';
-      g.efire.forEach(b => ctx.fillRect(b.x - b.w/2, b.y - b.h/2, b.w, b.h));
-
-      // Enemies
-      g.enemies.forEach(e => {
-        if (!e.alive) return;
-        drawBug(ctx, e.x, e.y, e.type, g.t);
+      ctx.fillStyle = '#ffe74c'; g.bullets.forEach(b => ctx.fillRect(b.x-1, b.y-4, 3, 8));
+      ctx.fillStyle = '#ff3860'; g.efire.forEach(b => ctx.fillRect(b.x-1, b.y-3, 3, 6));
+      g.enemies.forEach(e => { if (e.alive) { if(e.type==='mega_boss') drawMegaBoss(ctx, e.x, e.y, e.hp, e.maxHp, g.t); else drawBug(ctx, e.x, e.y, e.type, g.t); } });
+      g.powerups.forEach(p => { 
+        ctx.fillStyle = p.type==='double'?'#ff9500':p.type==='rapid'?'#1cf2ff':'#ffe74c';
+        ctx.fillRect(p.x-6, p.y-6, 12, 12); ctx.fillStyle = '#fff'; ctx.fillRect(p.x-2, p.y-2, 4, 4);
       });
-
-      // Particles
-      g.particles.forEach(p => {
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = Math.max(0, p.life);
-        ctx.fillRect(p.x - 1, p.y - 1, 3, 3);
-      });
-      ctx.globalAlpha = 1;
-
-      // Scanlines (Removed loop for performance, now handled by CSS overlay)
+      g.particles.forEach(p => { ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.life); ctx.fillRect(p.x-1,p.y-1,3,3); });
       ctx.globalAlpha = 1;
     };
 
-    const loop = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      update(dt);
-      draw();
-      raf = requestAnimationFrame(loop);
-    };
+    const loop = (n) => { const dt = Math.min(0.05, (n-last)/1000); last=n; update(dt); draw(); raf=requestAnimationFrame(loop); };
     raf = requestAnimationFrame(loop);
-
-    const onKeyDown = (e) => {
-      g.keys[e.key] = true;
-      if (e.key === ' ') e.preventDefault();
-    };
-    const onKeyUp = (e) => { g.keys[e.key] = false; };
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
-
-    const onCanvasClick = (e) => {
-      if (state === 'play') setIsMouseControl(true);
-      // Shoot on click
-      shoot();
-    };
-
-    const onMouseMove = (e) => {
-      if (!isMouseControl) return;
-      const r = rect();
-      const x = (e.clientX - r.left) * (g.W / r.width);
-      g.touch = x;
-    };
-
-    const onMouseLeave = () => {
-      setIsMouseControl(false);
-      g.touch = null;
-    };
-
-    // Touch
-    const rect = () => cvs.getBoundingClientRect();
-    const onTouch = (e) => {
-      const r = rect();
-      const touch = e.touches ? e.touches[0] : e;
-      if (!touch) return;
-      const x = (touch.clientX - r.left) * (g.W / r.width);
-      g.touch = x;
-      if (e.type === 'touchstart') shoot();
-    };
-    const onLeave = () => { g.touch = null; };
-
-    cvs.addEventListener('touchstart', onTouch, { passive: true });
-    cvs.addEventListener('touchmove', onTouch, { passive: true });
-    cvs.addEventListener('touchend', onLeave);
-    cvs.addEventListener('mousedown', onCanvasClick);
-    cvs.addEventListener('mousemove', onMouseMove);
-    cvs.addEventListener('mouseleave', onMouseLeave);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
-      cvs.removeEventListener('touchstart', onTouch);
-      cvs.removeEventListener('touchmove', onTouch);
-      cvs.removeEventListener('touchend', onLeave);
-      cvs.removeEventListener('mousedown', onCanvasClick);
-      cvs.removeEventListener('mousemove', onMouseMove);
-      cvs.removeEventListener('mouseleave', onMouseLeave);
-      if (g.winTimer) clearTimeout(g.winTimer);
-    };
+    const cvs_el = canvasRef.current;
+    const reqPos = (e) => { const r = cvs_el.getBoundingClientRect(); const t = e.touches?e.touches[0]:e; return (t.clientX - r.left) * (g.W/r.width); };
+    const onTouch = (e) => { g.touch = reqPos(e); if (e.type === 'touchstart') g.shoot(); };
+    cvs_el.addEventListener('touchstart', onTouch, { passive: false });
+    cvs_el.addEventListener('touchmove', (e) => { g.touch = reqPos(e); }, { passive: false });
+    cvs_el.addEventListener('mousedown', (e) => { setIsMouseControl(true); g.shoot(); });
+    cvs_el.addEventListener('mousemove', (e) => { if (isMouseControl) g.touch = reqPos(e); });
+    window.addEventListener('mouseup', () => setIsMouseControl(false));
+    return () => cancelAnimationFrame(raf);
   }, [state, isMouseControl]);
 
   return (

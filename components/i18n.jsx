@@ -288,6 +288,13 @@ const I18N = {
     'sk_lore_Node JS': "Asynchronous power! The foundation where all your logic runs.",
     'sk_lore_Python': "The universal serpent. Clean code, automated world!",
     'sk_lore_SQL': "SELECT * FROM SKILLS WHERE TYPE='EPIC'... Found it! Your queries never miss.",
+    ach_start: 'Game Started',
+    ach_kill: 'First Bug Smashed',
+    ach_wave5: 'Survival Expert',
+    ach_boss: 'Boss Exterminated',
+    ach_inv: 'Full Inventory',
+    ach_hi: 'New Record Set',
+    ach_legend: 'Legendary Coder',
   },
   es: {
     hud_credits: 'CRÉDITOS',
@@ -513,6 +520,13 @@ const I18N = {
     'sk_lore_Node JS': "¡Poder asincrónico! El cimiento donde corre toda tu lógica.",
     'sk_lore_Python': "La serpiente universal. Código limpio, mundo automatizado.",
     'sk_lore_SQL': "SELECT * FROM SKILLS WHERE TYPE='EPIC'... ¡Lo encontré! Tus consultas nunca fallan.",
+    ach_start: 'Juego Iniciado',
+    ach_kill: 'Primer Bug Aplastado',
+    ach_wave5: 'Experto en Supervivencia',
+    ach_boss: 'Jefe Exterminado',
+    ach_inv: 'Inventario Completo',
+    ach_hi: 'Nuevo Récord Establecido',
+    ach_legend: 'Programador Legendario',
   },
 };
 
