@@ -32,6 +32,7 @@ function MiniGame() {
     t: 0,
     winTimer: null,
     autoplay: false,
+    wave: 1,
   });
 
   // Init stars once
@@ -74,6 +75,7 @@ function MiniGame() {
     AudioCtx.coin();
     setScore(0); setLives(3); setWave(1);
     const g = game.current;
+    g.wave = 1;
     g.player = { x: g.W / 2, y: 320, w: 22, h: 14, cool: 0 };
     g.bullets = []; g.efire = []; g.particles = [];
     spawnWave(1);
@@ -119,14 +121,20 @@ function MiniGame() {
 
       // Player input
       const speed = 200;
-      if (g.keys['ArrowLeft'] || g.keys['a'] || g.keys['A']) g.player.x -= speed * dt;
-      if (g.keys['ArrowRight'] || g.keys['d'] || g.keys['D']) g.player.x += speed * dt;
-      
+      let moved = false;
+      if (g.keys['ArrowLeft'] || g.keys['a'] || g.keys['A']) { g.player.x -= speed * dt; moved = true; }
+      if (g.keys['ArrowRight'] || g.keys['d'] || g.keys['D']) { g.player.x += speed * dt; moved = true; }
+      if (g.keys[' ']) { shoot(); moved = true; }
+      if (g.touch != null) moved = true;
+
+      if (moved && g.autoplay) {
+        g.autoplay = false; // Take control!
+      }
+
       // AI Pilot (Autoplay)
       if (g.autoplay && g.enemies.length) {
         const aliveInFormation = g.enemies.filter(e => e.alive && e.state === 'formation');
         const diving = g.enemies.filter(e => e.alive && e.state === 'dive');
-        // Priority: Diving enemies first, then the nearest formation enemy
         const target = diving.sort((a,b) => b.y - a.y)[0] || 
                      aliveInFormation.sort((a,b) => b.y - a.y || Math.abs(a.x - g.player.x) - Math.abs(b.x - g.player.x))[0];
         
@@ -135,7 +143,6 @@ function MiniGame() {
           if (Math.abs(dx) > 4) {
             g.player.x += Math.sign(dx) * speed * dt;
           }
-          // Shoot if roughly aligned or random chance
           if (Math.abs(dx) < 20 || Math.random() < 0.05) shoot();
         }
       }
@@ -205,11 +212,12 @@ function MiniGame() {
         // Wave cleared
         g.running = false;
         setState('win');
-        setWave(w => w + 1);
+        g.wave += 1;
+        setWave(g.wave);
         AudioCtx.coin();
         if (g.winTimer) clearTimeout(g.winTimer);
         g.winTimer = setTimeout(() => {
-          spawnWave(g.enemies.length === 0 ? (wave + 1) : 1);
+          spawnWave(g.wave);
           setState('play');
           g.running = true;
           g.winTimer = null;
@@ -417,16 +425,37 @@ function MiniGame() {
                   <div style={{ fontFamily: 'VT323, monospace', fontSize: 18, color: 'var(--ink-dim)', maxWidth: 320 }}>
                     {t('game_tip')}
                   </div>
-                  <button className="pixel-btn blink" onClick={() => { game.current.autoplay = false; start(); }} onMouseEnter={() => AudioCtx.hover()}>{t('game_start')}</button>
-                  <button className="font-pixel" onClick={() => { game.current.autoplay = true; start(); }} 
-                    onMouseEnter={() => AudioCtx.hover()}
-                    style={{ border: 'none', background: 'transparent', color: 'var(--neon-cyan)', fontSize: 10, cursor: 'none' }}>
-                    [ RUN AI_PILOT.EXE (DEMO) ]
+                  <button className="pixel-btn blink" onClick={() => { game.current.autoplay = false; start(); }} 
+                    onMouseEnter={() => AudioCtx.hover()} style={{ padding: '16px 32px', fontSize: 16 }}>
+                    {t('game_start')}
                   </button>
+
+                  <div style={{ padding: '1px', background: 'var(--neon-cyan)', marginTop: 24 }}>
+                    <button className="font-pixel" onClick={() => { game.current.autoplay = true; start(); }} 
+                      onMouseEnter={() => AudioCtx.hover()}
+                      style={{ 
+                        border: 'none', background: 'var(--bg-void)', color: 'var(--neon-cyan)', 
+                        fontSize: 10, cursor: 'none', padding: '10px 16px', letterSpacing: '0.1em'
+                      }}>
+                      [ ACTIVAR PILOTO AUTOMÁTICO IA ]
+                    </button>
+                  </div>
+                  <div style={{ fontSize: 9, color: 'var(--ink-ghost)', marginTop: 8, maxWidth: 280 }}>
+                    * El sistema jugará solo. Puedes tomar el control en cualquier momento moviéndote o disparando.
+                  </div>
                 </>
               )}
               {state === 'ready' && (
                 <div className="font-pixel blink" style={{ fontSize: 24, color: 'var(--neon-yellow)' }}>{t('game_ready')}</div>
+              )}
+              {state === 'play' && game.current.autoplay && (
+                 <div className="font-pixel blink" style={{ 
+                   position: 'absolute', top: 20, left: '50%', transform: 'translateX(-50%)',
+                   fontSize: 9, color: 'var(--neon-magenta)', background: 'var(--bg-void)',
+                   padding: '4px 8px', border: '1px solid var(--neon-magenta)', zIndex: 10
+                 }}>
+                   ● AUTOPILOT ENABLED
+                 </div>
               )}
               {state === 'win' && (
                 <div className="font-pixel" style={{ fontSize: 20, color: 'var(--neon-cyan)' }}>{t('game_win')}</div>

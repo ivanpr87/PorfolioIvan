@@ -61,22 +61,20 @@ function HUD({ palette, setPalette, muted, setMuted, section }) {
         <span style={{ color: 'var(--neon-cyan)' }}>{t('hud_now')}: {section}</span>
       </div>
 
-      {muted && (
-        <div 
-          onClick={() => { setMuted(false); if (AudioCtx) AudioCtx.muted = false; AudioCtx.coin(); }}
-          onMouseEnter={() => AudioCtx && AudioCtx.hover()}
-          className="font-pixel blink"
-          style={{
-            pointerEvents: 'auto', cursor: 'none',
-            fontSize: 9, color: 'var(--bg-void)', background: 'var(--neon-magenta)',
-            padding: '6px 12px', boxShadow: '4px 4px 0 var(--ink-white)',
-            letterSpacing: '0.1em'
-          }}>
-          🔊 ENABLE SOUND
-        </div>
-      )}
-
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', pointerEvents: 'auto', flexWrap: 'wrap' }}>
+        {muted && (
+          <div onClick={() => { setMuted(false); if (AudioCtx) AudioCtx.muted = false; AudioCtx.coin(); }}
+            onMouseEnter={() => AudioCtx && AudioCtx.hover()}
+            className="font-pixel blink"
+            style={{
+              fontSize: 8, color: 'var(--bg-void)', background: 'var(--neon-magenta)',
+              padding: '6px 10px', boxShadow: '2px 2px 0 var(--ink-white)',
+              letterSpacing: '0.1em', cursor: 'pointer', marginRight: 12
+            }}>
+            🔉 ESCUCHAR MÚSICA? (ON)
+          </div>
+        )}
+
         {/* LANGUAGE TOGGLE */}
         <div className="font-pixel" style={{ fontSize: 9, color: 'var(--ink-ghost)', marginRight: 4 }}>{t('hud_lang')}</div>
         {['es','en'].map(l => (
