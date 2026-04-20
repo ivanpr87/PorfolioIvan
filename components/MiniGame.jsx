@@ -166,14 +166,29 @@ function MiniGame() {
             } else if (Math.random() < dt*0.08) g.efire.push({ x: e.x, y: e.y+6, vy: 140 });
           });
         }
-      } else {
-        g.running = false; setState('win');
+      } else if (state === 'play') {
+        // Wave cleared
+        g.running = false;
+        setState('win');
+        triggerEmotion('happy', 2000);
         if (g.wave === 5) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'wave_5' }));
         if (g.isBossWave) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'boss_slayer' }));
-        g.wave += 1; setWave(g.wave); AudioCtx.coin();
-        const bns = ['double', 'rapid', 'shield']; const won = bns[Math.floor(Math.random()*bns.length)];
+        
+        g.wave += 1;
+        setWave(g.wave);
+        AudioCtx.coin();
+        
+        const bns = ['double', 'rapid', 'shield'];
+        const won = bns[Math.floor(Math.random() * bns.length)];
         if (won === 'shield') g.player.shield = 12; else g.powers[won] = 12;
-        setTimeout(() => { spawnWave(g.wave); setState('play'); g.running = true; }, 1500);
+
+        if (g.winTimer) clearTimeout(g.winTimer);
+        g.winTimer = setTimeout(() => {
+          spawnWave(g.wave);
+          g.running = true;
+          setState('play');
+          g.winTimer = null;
+        }, 1500);
       }
 
       g.bullets.forEach(b => {
@@ -231,7 +246,13 @@ function MiniGame() {
     raf = requestAnimationFrame(loop);
     const cvs_el = canvasRef.current;
     const reqPos = (e) => { const r = cvs_el.getBoundingClientRect(); const t = e.touches?e.touches[0]:e; return (t.clientX - r.left) * (g.W/r.width); };
-    const onTouch = (e) => { g.touch = reqPos(e); if (e.type === 'touchstart') g.shoot(); };
+    const onKeyDown = (e) => {
+      const gameKeys = [' ', 'ArrowLeft', 'ArrowRight', 'a', 'd', 'w', 's', 'A', 'D', 'W', 'S'];
+      if (gameKeys.includes(e.key)) {
+        e.preventDefault();
+        g.keys[e.key] = true;
+      }
+    };
     cvs_el.addEventListener('touchstart', onTouch, { passive: false });
     cvs_el.addEventListener('touchmove', (e) => { g.touch = reqPos(e); }, { passive: false });
     cvs_el.addEventListener('mousedown', (e) => { setIsMouseControl(true); g.shoot(); });
