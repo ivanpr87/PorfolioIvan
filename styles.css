@@ -21,6 +21,7 @@
   --neon-violet:    #8a2dff;
   --neon-yellow:    #ffe74c;
   --neon-green:     #26e07f;
+  --neon-orange:    #ff9500;
   --neon-red:       #ff3860;
 
   --accent-1: var(--neon-magenta);
@@ -385,6 +386,16 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
 @keyframes epic-glow {
   0%, 100% { box-shadow: 0 0 10px var(--neon-magenta), inset 0 0 5px var(--neon-magenta); }
   50% { box-shadow: 0 0 25px var(--neon-magenta), inset 0 0 15px var(--neon-magenta); }
+}
+
+.legendary-pulse {
+  animation: legendary-glow 2s ease-in-out infinite;
+  background: linear-gradient(135deg, var(--bg-panel) 0%, #4d2b1a 100%) !important;
+}
+
+@keyframes legendary-glow {
+  0%, 100% { box-shadow: 0 0 10px var(--neon-orange), inset 0 0 5px var(--neon-orange); }
+  50% { box-shadow: 0 0 30px var(--neon-orange), inset 0 0 20px var(--neon-orange); }
 }
 
 .grid-inv-items button:hover {

@@ -145,7 +145,12 @@ function StatsPanel() {
 
 function InventoryPanel() {
   const { t } = useLang();
-  const rarityColor = { common: 'var(--ink-dim)', rare: 'var(--neon-cyan)', epic: 'var(--neon-magenta)' };
+  const rarityColor = { 
+    common: 'var(--ink-dim)', 
+    rare: 'var(--neon-green)', 
+    epic: 'var(--neon-magenta)', 
+    legendary: 'var(--neon-orange)' 
+  };
   const [sel, setSel] = React.useState(0);
   const item = PLAYER_DATA.inventory[sel];
 
@@ -165,7 +170,7 @@ function InventoryPanel() {
                 window.dispatchEvent(new CustomEvent('sidekick-lore', { detail: it.k }));
               }}
               onMouseEnter={() => AudioCtx.hover()}
-              className={it.r === 'epic' ? 'epic-pulse' : ''}
+              className={it.r === 'epic' ? 'epic-pulse' : it.r === 'legendary' ? 'legendary-pulse' : ''}
               style={{
                 aspectRatio: '1',
                 background: sel === i ? 'var(--bg-panel-hi)' : 'var(--bg-void)',
@@ -175,7 +180,7 @@ function InventoryPanel() {
                 display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                 gap: 6, cursor: 'pointer', transition: 'all 0.2s',
               }}>
-              <ItemIcon type={it.t} color={rarityColor[it.r]}/>
+              <ItemIcon type={it.t} color={rarityColor[it.r]} name={it.k}/>
               <span className="font-pixel" style={{ fontSize: 7, color: rarityColor[it.r], letterSpacing: '0.05em', textAlign: 'center' }}>
                 {it.k.toUpperCase()}
               </span>
@@ -225,7 +230,20 @@ function InventoryPanel() {
   );
 }
 
-function ItemIcon({ type, color }) {
+function ItemIcon({ type, color, name }) {
+  if (name === 'Python') {
+    return (
+      <svg width="32" height="32" viewBox="0 0 16 16" shapeRendering="crispEdges">
+        <rect x="8" y="2" width="5" height="4" fill={color}/>
+        <rect x="11" y="3" width="1" height="1" fill="var(--bg-void)"/>
+        <rect x="4" y="2" width="4" height="2" fill={color}/> 
+        <rect x="3" y="4" width="2" height="6" fill={color}/>
+        <rect x="5" y="8" width="6" height="2" fill={color}/>
+        <rect x="10" y="10" width="2" height="4" fill={color}/>
+        <rect x="6" y="12" width="4" height="2" fill={color}/>
+      </svg>
+    );
+  }
   if (type === 'weapon') {
     return (
       <svg width="32" height="32" viewBox="0 0 16 16" shapeRendering="crispEdges">
