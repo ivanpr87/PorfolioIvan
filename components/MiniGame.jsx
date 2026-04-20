@@ -103,6 +103,16 @@ function MiniGame() {
     return () => observer.disconnect();
   }, [state]);
 
+  const shoot = () => {
+    const g = game.current;
+    if (g.player.cool > 0) return;
+    g.bullets.push({ x: g.player.x, y: g.player.y - 8, w: 3, h: 8, vy: -360 });
+    g.player.cool = 0.22;
+    AudioCtx.blip(1200, 0.04, 'square', 0.03);
+  };
+  // Store in ref for loop access
+  React.useEffect(() => { game.current.shoot = shoot; }, []);
+
   // Main loop
   React.useEffect(() => {
     const g = game.current;
@@ -113,12 +123,6 @@ function MiniGame() {
     let last = performance.now();
     let raf;
 
-    g.shoot = () => {
-      if (g.player.cool > 0) return;
-      g.bullets.push({ x: g.player.x, y: g.player.y - 8, w: 3, h: 8, vy: -360 });
-      g.player.cool = 0.22;
-      AudioCtx.blip(1200, 0.04, 'square', 0.03);
-    };
 
     const explode = (x, y, color, n = 6) => {
       for (let i = 0; i < n; i++) {
@@ -433,23 +437,24 @@ function MiniGame() {
           {/* Mobile Fire Button */}
           {state === 'play' && (
             <div 
-              onTouchStart={(e) => { e.preventDefault(); g.shoot(); }}
-              onMouseDown={(e) => { e.preventDefault(); g.shoot(); }}
+              onTouchStart={(e) => { e.preventDefault(); shoot(); }}
+              onMouseDown={(e) => { e.preventDefault(); shoot(); }}
+              onClick={(e) => { e.preventDefault(); shoot(); }}
               className="fire-btn-mobile"
               style={{
-                position: 'absolute', bottom: 20, right: 20,
-                width: 70, height: 70, borderRadius: '50%',
-                border: '4px solid rgba(255, 56, 96, 0.6)',
-                background: 'rgba(255, 56, 96, 0.1)',
+                position: 'absolute', bottom: 15, right: 15,
+                width: 52, height: 52, borderRadius: '50%',
+                border: '3px solid rgba(255, 56, 96, 0.7)',
+                background: 'rgba(255, 56, 96, 0.2)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'rgba(255, 56, 96, 0.8)', fontFamily: 'VT323, monospace',
-                fontSize: 16, fontWeight: 'bold', pointerEvents: 'auto',
-                userSelect: 'none', zIndex: 20,
-                boxShadow: '0 0 15px rgba(255, 56, 96, 0.3)',
+                color: 'var(--ink-white)', fontFamily: 'VT323, monospace',
+                fontSize: 12, fontWeight: 'bold', pointerEvents: 'auto',
+                userSelect: 'none', zIndex: 100,
+                boxShadow: '0 0 10px rgba(255, 56, 96, 0.4)',
                 transition: 'all 0.1s'
               }}
             >
-              FIRE
+              SHOT
             </div>
           )}
 
