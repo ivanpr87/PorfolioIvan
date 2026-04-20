@@ -6,6 +6,7 @@ function HighScore() {
   const [initials, setInitials] = React.useState(['I', 'V', 'N']);
   const [sel, setSel] = React.useState(0);
   const [msg, setMsg] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [sent, setSent] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -16,6 +17,7 @@ function HighScore() {
 
     const formData = {
       initials: initials.join(''),
+      email: email, // Formspree uses this for Reply-To
       message: msg,
       _subject: `Arcadia High Score from ${initials.join('')}`,
     };
@@ -31,7 +33,6 @@ function HighScore() {
         setSent(true);
       } else {
         console.error("Formspree error:", response);
-        // Fallback to success UI anyway to not ruin the game vibe, but log it
         setSent(true);
       }
     } catch (e) {
@@ -152,6 +153,16 @@ function HighScore() {
               </div>
             ))}
           </div>
+
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+            placeholder={t('score_email_ph')} data-hover="1"
+            style={{
+              width: '100%', background: 'var(--bg-void)',
+              border: '2px solid var(--neon-cyan)',
+              color: 'var(--ink-white)', padding: '8px 12px',
+              fontFamily: 'VT323, monospace', fontSize: 20,
+              outline: 'none', marginBottom: 12,
+            }}/>
 
           <textarea value={msg} onChange={(e) => setMsg(e.target.value)}
             placeholder={t('score_msg_ph')} rows={5} data-hover="1"
