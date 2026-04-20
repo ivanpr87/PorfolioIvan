@@ -139,6 +139,9 @@ const I18N = {
     inv_Prisma: 'Type-safe ORM talisman. Zero N+1 curses cast on you.',
     inv_Docker: 'Container armor. Works on any dungeon.',
     'inv_Linux Bash': 'The master key to any server environment. Root access granted.',
+    inv_React: 'The legendary UI library. Your primary blade for crafting interactive experiences.',
+    'inv_Node JS': 'Asynchronous JavaScript runtime. The engine powering your backend logic.',
+    inv_Python: 'A versatile legendary artifact. Ideal for data processing and statistical scripts.',
 
     // Projects
     proj_stage: 'STAGE 04',
@@ -365,6 +368,9 @@ const I18N = {
     inv_Prisma: 'Talismán ORM type-safe. Cero maldiciones N+1.',
     inv_Docker: 'Armadura contenedora. Funciona en cualquier mazmorra.',
     'inv_Linux Bash': 'La llave maestra de cualquier servidor. Acceso root concedido.',
+    inv_React: 'La legendaria librería de UI. Tu espada principal para crear experiencias interactivas.',
+    'inv_Node JS': 'Entorno de ejecución asíncrono. El motor que impulsa tu lógica de backend.',
+    inv_Python: 'Un artefacto legendario versátil. Ideal para procesamiento de datos y scripts estadísticos.',
 
     proj_stage: 'STAGE 04',
     proj_title: 'ELIGE UN CART',
