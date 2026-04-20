@@ -3,24 +3,21 @@
    CURSOR — retro fighter sprite w/ thruster animation on scroll
    ============================================================ */
 function SpaceCursor({ variant = 'fighter' }) {
-  const [pos, setPos] = React.useState({ x: -100, y: -100 });
   const [boosting, setBoosting] = React.useState(false);
   const [clicking, setClicking] = React.useState(false);
   const [hovering, setHovering] = React.useState(false);
   const scrollTimer = React.useRef(null);
-  const trail = React.useRef([]);
   const [trailPts, setTrailPts] = React.useState([]);
 
   React.useEffect(() => {
     const onMove = (e) => {
-      setPos({ x: e.clientX, y: e.clientY });
-      trail.current = [{ x: e.clientX, y: e.clientY, t: Date.now() }, ...trail.current].slice(0, 6);
-      setTrailPts([...trail.current]);
-
       // Hover detection
       const el = document.elementFromPoint(e.clientX, e.clientY);
       const interactive = el?.closest('button, a, [data-hover], input, textarea, .cartridge');
       setHovering(!!interactive);
+      
+      // Trail
+      setTrailPts(prev => [{ x: e.clientX, y: e.clientY, t: Date.now() }, ...prev].slice(0, 6));
     };
     const onDown = () => setClicking(true);
     const onUp = () => setClicking(false);
@@ -51,10 +48,9 @@ function SpaceCursor({ variant = 'fighter' }) {
           key={p.t + '-' + i}
           style={{
             position: 'fixed',
-            left: p.x - 2,
-            top: p.y - 2,
-            width: 4,
-            height: 4,
+            left: 0, top: 0,
+            transform: `translate(${p.x - 2}px, ${p.y - 2}px)`,
+            width: 4, height: 4,
             background: i % 2 ? 'var(--neon-cyan)' : 'var(--neon-magenta)',
             opacity: (1 - i / 6) * 0.5,
             pointerEvents: 'none',
@@ -67,9 +63,8 @@ function SpaceCursor({ variant = 'fighter' }) {
       <div
         style={{
           position: 'fixed',
-          left: pos.x,
-          top: pos.y,
-          transform: `translate(-50%, -50%) scale(${scale})`,
+          left: 0, top: 0,
+          transform: `translate(calc(var(--mx) - 50%), calc(var(--my) - 50%)) scale(${scale})`,
           pointerEvents: 'none',
           zIndex: 9999,
           transition: 'transform 80ms steps(3)',

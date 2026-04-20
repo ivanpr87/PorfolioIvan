@@ -79,6 +79,17 @@ function App() {
     return () => window.removeEventListener('message', onMsg);
   }, []);
 
+  React.useEffect(() => {
+    const handleMove = (e) => {
+      document.documentElement.style.setProperty('--mx', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--my', `${e.clientY}px`);
+      document.documentElement.style.setProperty('--mnx', (e.clientX / window.innerWidth) * 2 - 1);
+      document.documentElement.style.setProperty('--mny', (e.clientY / window.innerHeight) * 2 - 1);
+    };
+    window.addEventListener('mousemove', handleMove);
+    return () => window.removeEventListener('mousemove', handleMove);
+  }, []);
+
   const persist = (edits) => {
     try { window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*'); } catch (_) {}
   };

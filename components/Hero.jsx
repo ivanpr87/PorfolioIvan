@@ -31,6 +31,7 @@ function Hero() {
           background: 'radial-gradient(circle at 35% 35%, var(--neon-magenta) 0%, var(--neon-violet) 50%, var(--neon-blue) 90%)',
           boxShadow: '0 0 80px rgba(255,47,182,0.4), inset -20px -20px 40px rgba(0,0,0,0.5)',
           zIndex: 0,
+          willChange: 'transform, opacity',
         }}
       >
         <div style={{
@@ -163,14 +164,14 @@ function CharacterSelect() {
             </p>
           </m.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-            {[
-              { k: t('char_role'),    v: t('char_role_v'),    c: 'var(--neon-magenta)' },
-              { k: t('char_stack'),   v: t('char_stack_v'),   c: 'var(--neon-cyan)' },
-              { k: t('char_mindset'), v: t('char_mindset_v'), c: 'var(--neon-yellow)' },
-              { k: t('char_status'),  v: t('char_status_v'),  c: 'var(--neon-green)' },
-            ].map((s, i) => (
-              <div key={i} style={{
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+              {[
+                { id: 'role',    k: t('char_role'),    v: t('char_role_v'),    c: 'var(--neon-magenta)' },
+                { id: 'stack',   k: t('char_stack'),   v: t('char_stack_v'),   c: 'var(--neon-cyan)' },
+                { id: 'mind',    k: t('char_mindset'), v: t('char_mindset_v'), c: 'var(--neon-yellow)' },
+                { id: 'status',  k: t('char_status'),  v: t('char_status_v'),  c: 'var(--neon-green)' },
+              ].map((s) => (
+                <div key={s.id} style={{
                 background: 'var(--bg-panel)',
                 border: `2px solid ${s.c}`,
                 padding: '12px 14px',
@@ -191,11 +192,11 @@ function CharacterSelect() {
             <div className="font-pixel" style={{ fontSize: 9, color: 'var(--neon-cyan)', marginBottom: 10, letterSpacing: '0.1em' }}>
               {t('char_moves')}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 8 }}>
-              <div>↑ ↑ ↓ ↓ ← → B A — <span style={{ color: 'var(--neon-yellow)' }}>{t('char_move1')}</span></div>
-              <div>↓ ↘ → + PUNCH — <span style={{ color: 'var(--neon-magenta)' }}>{t('char_move2')}</span></div>
-              <div>← ↙ ↓ ↘ → + KICK — <span style={{ color: 'var(--neon-cyan)' }}>{t('char_move3')}</span></div>
-              <div>HOLD SELECT — <span style={{ color: 'var(--neon-green)' }}>{t('char_move4')}</span></div>
+            <div translate="no" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 8 }}>
+              <div key="m1">↑ ↑ ↓ ↓ ← → B A — <span style={{ color: 'var(--neon-yellow)' }}>{t('char_move1')}</span></div>
+              <div key="m2">↓ ↘ → + PUNCH — <span style={{ color: 'var(--neon-magenta)' }}>{t('char_move2')}</span></div>
+              <div key="m3">← ↙ ↓ ↘ → + KICK — <span style={{ color: 'var(--neon-cyan)' }}>{t('char_move3')}</span></div>
+              <div key="m4">HOLD SELECT — <span style={{ color: 'var(--neon-green)' }}>{t('char_move4')}</span></div>
             </div>
           </div>
         </div>
@@ -206,22 +207,7 @@ function CharacterSelect() {
 
 function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }) {
   const m = window.Motion.motion;
-  const [look, setLook] = React.useState({ x: 0, y: 0 });
   const containerRef = React.useRef(null);
-
-  React.useEffect(() => {
-    const handleMove = (e) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const dx = (e.clientX - centerX) / (window.innerWidth / 2);
-      const dy = (e.clientY - centerY) / (window.innerHeight / 2);
-      setLook({ x: dx, y: dy });
-    };
-    window.addEventListener('mousemove', handleMove);
-    return () => window.removeEventListener('mousemove', handleMove);
-  }, []);
 
   const faceColor = emotion === 'sad' ? '#c49a6a' : emotion === 'happy' ? '#e8b88a' : '#e8b88a';
 
@@ -259,11 +245,11 @@ function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }
         <rect x="24" y="8" width="3" height="8" fill="#1f1406"/>
         
         {/* HEAD GROUP */}
-        <m.g animate={{ x: look.x * 0.4, y: look.y * 0.4 }}>
+        <m.g style={{ x: 'calc(var(--mnx) * 0.4px)', y: 'calc(var(--mny) * 0.4px)' }}>
           <rect x="8" y="9" width="16" height="10" fill={faceColor}/>
           <rect x="9" y="19" width="14" height="2" fill="#d49a6a"/>
           
-          <m.g animate={{ x: look.x * 0.8, y: look.y * 0.8 }}>
+          <m.g style={{ x: 'calc(var(--mnx) * 0.8px)', y: 'calc(var(--mny) * 0.8px)' }}>
             {/* Eyes */}
             {emotion === 'sad' ? (
               <>
