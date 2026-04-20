@@ -245,7 +245,8 @@ function MiniGame() {
     };
 
     const update = (dt) => {
-      if (!g.running) return; g.t += dt;
+      g.t += dt; if (state === 'victory') g.victoryT += dt;
+      if (!g.running && state !== 'victory') return; 
       g.stars.forEach(s => { s.y += s.sp*30*dt; if (s.y > g.H) { s.y = 0; s.x = Math.random()*g.W; } });
       if (g.powers.double > 0) g.powers.double -= dt;
       if (g.powers.rapid > 0) g.powers.rapid -= dt;
@@ -462,7 +463,6 @@ function MiniGame() {
       if (g.abilityAlert) {
          g.abilityAlert.timer -= dt; if (g.abilityAlert.timer <= 0) g.abilityAlert = null;
       }
-      if (state === 'victory') g.victoryT += dt;
     };
 
     const draw = () => {
