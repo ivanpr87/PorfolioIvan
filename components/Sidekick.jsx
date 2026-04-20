@@ -7,26 +7,21 @@ function Sidekick({ sectionId }) {
   const [displayedText, setDisplayedText] = React.useState('');
   const [visible, setVisible] = React.useState(false);
   const [emotion, setEmotion] = React.useState('neutral');
+  const timerRef = React.useRef(null);
 
-  // Map section IDs to i18n keys
-  const msgMap = {
-    'hero':     { key: 'sk_msg_intro',    emo: 'happy' },
-    'about':    { key: 'sk_msg_about',    emo: 'neutral' },
-    'stats':    { key: 'sk_msg_skills',   emo: 'happy' },
-    'projects': { key: 'sk_msg_projects', emo: 'neutral' },
-    'game':     { key: 'sk_msg_game',     emo: 'sad' },
-    'contact':  { key: 'sk_msg_contact',  emo: 'happy' },
+  const showMsg = (text, emo, duration = 6000) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setMsg(text);
+    setEmotion(emo);
+    setVisible(true);
+    timerRef.current = setTimeout(() => setVisible(false), duration);
   };
 
   // Change message when section changes
   React.useEffect(() => {
     const config = msgMap[sectionId];
     if (config) {
-      setMsg(t(config.key));
-      setEmotion(config.emo);
-      setVisible(true);
-      const timer = setTimeout(() => setVisible(false), 6000);
-      return () => clearTimeout(timer);
+      showMsg(t(config.key), config.emo);
     }
   }, [sectionId, t]);
 
@@ -39,57 +34,32 @@ function Sidekick({ sectionId }) {
       last = now;
 
       const rand = Math.floor(Math.random() * 5) + 1;
-      setMsg(t(`sk_click_${rand}`));
-      setEmotion('happy');
-      setVisible(true);
-      
-      const timer = setTimeout(() => setVisible(false), 4000);
-      return () => clearTimeout(timer);
+      showMsg(t(`sk_click_${rand}`), 'happy', 4000);
     };
     window.addEventListener('click', onClick);
     return () => window.removeEventListener('click', onClick);
   }, [t]);
 
-  // Inventory equip reactions
+  // Inventory & Tab reactions
   React.useEffect(() => {
     const onEquip = (e) => {
       const item = e.detail;
       const typeMsg = t(`sk_eq_${item.t}`);
       const genMsg = t('sk_eq_gen').replace('{item}', item.k);
-      
-      setMsg(`${genMsg} ${typeMsg}`);
-      setEmotion('happy');
-      setVisible(true);
-      
-      const timer = setTimeout(() => setVisible(false), 5000);
-      return () => clearTimeout(timer);
+      showMsg(`${genMsg} ${typeMsg}`, 'happy', 5000);
     };
-    window.addEventListener('sidekick-equip', onEquip);
-    return () => window.removeEventListener('sidekick-equip', onEquip);
-  }, [t]);
-
-  // Tab & Lore listeners
-  React.useEffect(() => {
     const onTab = (e) => {
-      setMsg(t(`sk_tab_${e.detail.toLowerCase()}`));
-      setEmotion('neutral');
-      setVisible(true);
-      const timer = setTimeout(() => setVisible(false), 5000);
-      return () => clearTimeout(timer);
+      showMsg(t(`sk_tab_${e.detail.toLowerCase()}`), 'neutral', 5000);
     };
-
     const onLore = (e) => {
-      const key = `sk_lore_${e.detail}`;
-      setMsg(t(key));
-      setEmotion('happy');
-      setVisible(true);
-      const timer = setTimeout(() => setVisible(false), 6000);
-      return () => clearTimeout(timer);
+      showMsg(t(`sk_lore_${e.detail}`), 'happy', 6000);
     };
 
+    window.addEventListener('sidekick-equip', onEquip);
     window.addEventListener('sidekick-tab', onTab);
     window.addEventListener('sidekick-lore', onLore);
     return () => {
+      window.removeEventListener('sidekick-equip', onEquip);
       window.removeEventListener('sidekick-tab', onTab);
       window.removeEventListener('sidekick-lore', onLore);
     };
