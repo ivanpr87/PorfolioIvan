@@ -333,6 +333,15 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
     display: block !important;
   }
 
+  .hide-mobile { display: none !important; }
+  
+  /* Compact HUD for mobile */
+  [translate="no"] button { 
+    padding: 4px 6px !important; 
+    font-size: 7px !important; 
+  }
+  .hud-now-label { display: none; }
+
   *, *:hover, *:focus, *:active,
   button, a, input, textarea, select { cursor: auto !important; }
 }

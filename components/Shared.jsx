@@ -53,12 +53,12 @@ function HUD({ palette, setPalette, muted, setMuted, section }) {
     }}>
       <div className="font-pixel" style={{
         pointerEvents: 'auto',
-        fontSize: 10, color: 'var(--ink-dim)',
-        display: 'flex', gap: 18, alignItems: 'center',
+        fontSize: 'clamp(8px, 2vw, 10px)', color: 'var(--ink-dim)',
+        display: 'flex', gap: 'clamp(8px, 3vw, 18px)', alignItems: 'center',
       }}>
         <span style={{ color: 'var(--neon-green)' }}>● 1P</span>
         <span>{t('hud_credits')} <span style={{ color: 'var(--neon-yellow)' }}>99</span></span>
-        <span style={{ color: 'var(--neon-cyan)' }}>{t('hud_now')}: {section}</span>
+        <span style={{ color: 'var(--neon-cyan)' }} className="hud-now-label">{t('hud_now')}: {section}</span>
       </div>
 
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', pointerEvents: 'auto', flexWrap: 'wrap' }}>
@@ -137,10 +137,12 @@ function CornerBrackets() {
   );
   return (
     <>
+    <div className="hide-mobile">
       <C style={{ top: 78, left: 18 }}/>
       <C style={{ top: 78, right: 18, transform: 'scaleX(-1)' }}/>
       <C style={{ bottom: 18, left: 18, transform: 'scaleY(-1)' }}/>
       <C style={{ bottom: 18, right: 18, transform: 'scale(-1,-1)' }}/>
+    </div>
     </>
   );
 }

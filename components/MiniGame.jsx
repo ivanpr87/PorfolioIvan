@@ -395,7 +395,8 @@ function MiniGame() {
         {/* Scoreboard */}
         <div className="font-pixel" translate="no" style={{
           display: 'flex', justifyContent: 'space-between',
-          fontSize: 10, marginBottom: 12, letterSpacing: '0.1em', flexWrap: 'wrap', gap: 8,
+          fontSize: 'clamp(7px, 2vw, 10px)', marginBottom: 12, 
+          letterSpacing: '0.05em', flexWrap: 'wrap', gap: '4px 8px',
         }}>
           <span style={{ color: 'var(--neon-yellow)' }}>{t('game_score')} {String(score).padStart(6, '0')}</span>
           <span style={{ color: 'var(--neon-magenta)' }}>{t('game_hi')} {String(hi).padStart(6, '0')}</span>
@@ -413,35 +414,41 @@ function MiniGame() {
           {(state === 'idle' || state === 'over' || state === 'ready' || state === 'win') && (
             <div key={`overlay-${state}`} style={{
               position: 'absolute', inset: 0,
-              background: 'rgba(7,6,15,0.7)',
+              background: 'rgba(7,6,15,0.85)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              gap: 14, textAlign: 'center', padding: 20,
+              gap: 'clamp(8px, 3.5%, 16px)', textAlign: 'center', padding: '10px 20px',
             }}>
               {state === 'idle' && (
                 <>
-                  <div className="font-pixel" style={{ fontSize: 18, color: 'var(--neon-green)', textShadow: '3px 3px 0 var(--bg-void)' }}>
+                  <div className="font-pixel" style={{ 
+                    fontSize: 'clamp(14px, 5vw, 18px)', color: 'var(--neon-green)', 
+                    textShadow: '3px 3px 0 var(--bg-void)' 
+                  }}>
                     BUG INVADERS
                   </div>
-                  <div style={{ fontFamily: 'VT323, monospace', fontSize: 18, color: 'var(--ink-dim)', maxWidth: 320 }}>
+                  <div style={{ 
+                    fontFamily: 'VT323, monospace', fontSize: 'clamp(14px, 3.5vw, 18px)', 
+                    color: 'var(--ink-dim)', maxWidth: 300, lineHeight: 1.1 
+                  }}>
                     {t('game_tip')}
                   </div>
                   <button className="pixel-btn blink" onClick={() => { game.current.autoplay = false; start(); }} 
-                    onMouseEnter={() => AudioCtx.hover()} style={{ padding: '16px 32px', fontSize: 16 }}>
+                    onMouseEnter={() => AudioCtx.hover()} style={{ padding: '12px 24px', fontSize: 14 }}>
                     {t('game_start')}
                   </button>
 
-                  <div style={{ padding: '1px', background: 'var(--neon-cyan)', marginTop: 24 }}>
+                  <div style={{ padding: '1px', background: 'var(--neon-cyan)', marginTop: 8 }}>
                     <button className="font-pixel" onClick={() => { game.current.autoplay = true; start(); }} 
                       onMouseEnter={() => AudioCtx.hover()}
                       style={{ 
                         border: 'none', background: 'var(--bg-void)', color: 'var(--neon-cyan)', 
-                        fontSize: 10, cursor: 'none', padding: '10px 16px', letterSpacing: '0.1em'
+                        fontSize: 'clamp(8px, 1.8vw, 10px)', cursor: 'none', padding: '6px 10px', letterSpacing: '0.05em'
                       }}>
-                      [ ACTIVAR PILOTO AUTOMÁTICO IA ]
+                      [ ACTIVAR PILOTO IA ]
                     </button>
                   </div>
-                  <div style={{ fontSize: 9, color: 'var(--ink-ghost)', marginTop: 8, maxWidth: 280 }}>
-                    * El sistema jugará solo. Puedes tomar el control en cualquier momento moviéndote o disparando.
+                  <div style={{ fontSize: 'clamp(7px, 1.5vw, 9px)', color: 'var(--ink-ghost)', marginTop: 4, maxWidth: 240 }}>
+                    * El sistema jugará solo. Recuperas el control moviéndote.
                   </div>
                 </>
               )}
