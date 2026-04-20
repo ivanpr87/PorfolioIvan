@@ -15,18 +15,18 @@ function GlitchText({ children, className = '', as: Tag = 'span' }) {
     <Tag className={className} style={{ position: 'relative', display: 'inline-block' }}>
       <span style={{ position: 'relative', zIndex: 2 }}>{children}</span>
       {g && (
-        <>
-          <span style={{
+        <span className="glitch-layers">
+          <span key="g1" style={{
             position: 'absolute', inset: 0, color: 'var(--neon-magenta)',
             transform: `translate(${-2 - Math.random() * 3}px, ${Math.random() * 2}px)`,
             mixBlendMode: 'screen', zIndex: 1, clipPath: 'inset(20% 0 40% 0)',
           }}>{children}</span>
-          <span style={{
+          <span key="g2" style={{
             position: 'absolute', inset: 0, color: 'var(--neon-cyan)',
             transform: `translate(${2 + Math.random() * 3}px, ${-Math.random() * 2}px)`,
             mixBlendMode: 'screen', zIndex: 1, clipPath: 'inset(50% 0 10% 0)',
           }}>{children}</span>
-        </>
+        </span>
       )}
     </Tag>
   );
