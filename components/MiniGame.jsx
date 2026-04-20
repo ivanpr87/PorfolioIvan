@@ -120,7 +120,7 @@ function MiniGame() {
         const neon = `hsl(${Math.round(t*100 % 360)}, 100%, 50%)`;
         for(let i=0; i<4; i++) { P(5+i*15, 15+hover, 6, 4, neon); }
         P(25, 0+hover, 10, 10, '#12a4ff'); // Dome
-      } else { // Ancient Prism
+      } else if (model === 2) { // Ancient Prism
         ctx.save(); ctx.translate(x, y); ctx.rotate(t);
         ctx.fillStyle = '#8a2dff'; ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(25, 20); ctx.lineTo(-25, 20); ctx.fill();
         ctx.fillStyle = '#1cf2ff'; ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI*2); ctx.fill();
@@ -131,6 +131,22 @@ function MiniGame() {
           const fy = y + Math.sin(t*2 + i*Math.PI/2)*40;
           ctx.fillStyle = '#fff'; ctx.fillRect(fx-2, fy-2, 4, 4);
         }
+      } else if (model === 3) { // Binary Hydra
+        for(let i=0; i<3; i++) {
+          const sx = x + Math.sin(t*5 + i*2)*20;
+          const sy = y + Math.cos(t*3 + i)*10;
+          ctx.fillStyle = i===1?'#ff3860':'#8a2dff'; ctx.fillRect(sx-10, sy-10, 20, 20);
+          ctx.fillStyle = '#fff'; ctx.fillRect(sx-2, sy-2, 4, 4);
+        }
+      } else if (model === 4) { // The Monolith
+        const pulse = Math.sin(t*2)*0.2 + 0.8;
+        ctx.fillStyle = '#111'; ctx.shadowBlur = 10; ctx.shadowColor = '#ff2fb6';
+        ctx.fillRect(x-20, y-30, 40, 60); ctx.shadowBlur = 0;
+        ctx.fillStyle = '#ff3860'; P(25, 15, 10, 4, '#ff3860'); // Red line
+      } else { // OmegArchitect
+        ctx.fillStyle = '#ffe74c'; ctx.beginPath(); ctx.arc(x, y, 30, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#07060f'; ctx.fillRect(x-15, y-5, 8, 4); ctx.fillRect(x+7, y-5, 8, 4);
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
       }
       
       ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x-30, y-35, 60, 4);
@@ -325,26 +341,31 @@ function MiniGame() {
       } else if (state === 'play') {
         // Wave cleared
         g.running = false;
-        setState('win');
-        triggerEmotion('happy', 2000);
-        if (g.wave === 5) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'wave_5' }));
-        if (g.isBossWave) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'boss_slayer' }));
-        
-        g.wave += 1;
-        setWave(g.wave);
-        AudioCtx.coin();
-        
-        const bns = ['double', 'rapid', 'shield'];
-        const won = bns[Math.floor(Math.random() * bns.length)];
-        if (won === 'shield') g.player.shield = 1; else g.powers[won] = 12;
+        // For testing, trigger ending after wave 1. Normally use (g.wave === 30)
+        if (g.wave >= 1) { 
+          setState('victory');
+        } else {
+          setState('win');
+          triggerEmotion('happy', 2000);
+          if (g.wave === 5) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'wave_5' }));
+          if (g.isBossWave) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'boss_slayer' }));
+          
+          g.wave += 1;
+          setWave(g.wave);
+          AudioCtx.coin();
+          
+          const bns = ['double', 'rapid', 'shield'];
+          const won = bns[Math.floor(Math.random() * bns.length)];
+          if (won === 'shield') g.player.shield = 1; else g.powers[won] = 12;
 
-        if (g.winTimer) clearTimeout(g.winTimer);
-        g.winTimer = setTimeout(() => {
-          spawnWave(g.wave);
-          g.running = true;
-          setState('play');
-          g.winTimer = null;
-        }, 1500);
+          if (g.winTimer) clearTimeout(g.winTimer);
+          g.winTimer = setTimeout(() => {
+            spawnWave(g.wave);
+            g.running = true;
+            setState('play');
+            g.winTimer = null;
+          }, 1500);
+        }
       }
 
       g.bullets.forEach(b => {
@@ -421,6 +442,29 @@ function MiniGame() {
 
     const draw = () => {
       ctx.fillStyle = '#07060f'; ctx.fillRect(0,0,g.W,g.H);
+      
+      if (state === 'victory') {
+        const time = g.t;
+        // Wormhole effect
+        ctx.save(); ctx.translate(g.W/2, g.H/2);
+        for(let i=0; i<60; i++) {
+          const a = i * 0.2 + time*5;
+          const r = (i*4 + time*100) % 300;
+          ctx.fillStyle = i%2===0?'#8a2dff':'#1cf2ff';
+          ctx.fillRect(Math.cos(a)*r, Math.sin(a)*r, 2, 2);
+        }
+        ctx.restore();
+        // Earth Rising
+        const ey = g.H - Math.min(g.H, (time%10)*40);
+        ctx.fillStyle = '#12a4ff'; ctx.beginPath(); ctx.arc(g.W/2, ey + 400, 380, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#2ecc71'; ctx.beginPath(); ctx.arc(g.W/2 - 20, ey + 40, 15, 0, Math.PI*2); ctx.fill();
+        
+        ctx.font = '20px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+        ctx.fillText("MISSION ACCOMPLISHED", g.W/2, g.H/2 - 20);
+        ctx.font = '10px VT323'; ctx.fillText("EARTH IS SAFE. WELCOME HOME PILOT.", g.W/2, g.H/2 + 10);
+        return;
+      }
+
       g.stars.forEach(s => { ctx.fillStyle = s.s===1?'#f2f0ff':'#1cf2ff'; ctx.fillRect(s.x,s.y,s.s,s.s); });
       if (g.powers.double > 0) { ctx.fillStyle = '#ff9500'; ctx.fillRect(10, g.H-15, (g.powers.double/10)*60, 3); }
       if (g.powers.rapid > 0) { ctx.fillStyle = '#1cf2ff'; ctx.fillRect(10, g.H-10, (g.powers.rapid/10)*60, 3); }
