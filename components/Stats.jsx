@@ -10,7 +10,11 @@ function StatsScreen() {
       <div style={{ display: 'flex', gap: 4, marginBottom: 24, flexWrap: 'wrap' }}>
         {[['SKILLS', t('stats_tab_skills')], ['STATS', t('stats_tab_stats')], ['INVENTORY', t('stats_tab_inv')]].map(([k, label]) => (
           <button key={k}
-            onClick={() => { setTab(k); AudioCtx.select(); }}
+            onClick={() => { 
+              setTab(k); 
+              AudioCtx.select(); 
+              window.dispatchEvent(new CustomEvent('sidekick-tab', { detail: k }));
+            }}
             onMouseEnter={() => AudioCtx.hover()}
             className="font-pixel"
             style={{
@@ -158,6 +162,7 @@ function InventoryPanel() {
                 setSel(i); 
                 AudioCtx.select();
                 window.dispatchEvent(new CustomEvent('sidekick-equip', { detail: it }));
+                window.dispatchEvent(new CustomEvent('sidekick-lore', { detail: it.k }));
               }}
               onMouseEnter={() => AudioCtx.hover()}
               className={it.r === 'epic' ? 'epic-pulse' : ''}

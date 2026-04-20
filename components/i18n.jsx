@@ -260,6 +260,22 @@ const I18N = {
     sk_eq_armor: "Solid choice. No bugs will cross this layer.",
     sk_eq_artifact: "Magic processing... this tool is ahead of its time.",
     sk_eq_gen: "Equipping {item}... Looking powerful!",
+
+    // Tab Reactions
+    sk_tab_skills: "Your skill tree is looking impressive! Almost max level?",
+    sk_tab_stats: "High Charisma and Logic. Perfect for a Product Owner role.",
+    sk_tab_inv: "The technical treasure chest. Choose your gear wisely.",
+
+    // Specific Item Lore
+    'sk_lore_Claude': "Claude is like my super-intelligent cousin. A bit of a know-it-all, eh?",
+    'sk_lore_OpenAI': "The reliable wizard. Always has a spell for every problem.",
+    'sk_lore_n8n': "Nine active workflows? You're a master of automation, boss!",
+    'sk_lore_Next.js': "Pure rendering speed. Web apps go Zoom!",
+    'sk_lore_NestJS': "The architectural fortress. No chaos allowed here.",
+    'sk_lore_PostgreSQL': "The database blade. It slices through data with ACID precision.",
+    'sk_lore_Prisma': "A type-safe talisman. Keeps the bugs away from the DB.",
+    'sk_lore_Docker': "Everything in its neat little box. Order is power.",
+    'sk_lore_Linux Bash': "The black terminal... where the TRUE magic happens.",
   },
   es: {
     hud_credits: 'CRÉDITOS',
@@ -461,6 +477,22 @@ const I18N = {
     sk_eq_armor: "Buena elección. Ningún bug pasará esta capa.",
     sk_eq_artifact: "Procesando magia... esta herramienta es de otro nivel.",
     sk_eq_gen: "Equipando {item}... ¡Te ves imparable!",
+
+    // Tab Reactions
+    sk_tab_skills: "¡Tu árbol de habilidades es impresionante! ¿Ya casi nivel máximo?",
+    sk_tab_stats: "Carisma y Lógica por las nubes. Ideal para un Product Owner.",
+    sk_tab_inv: "El baúl de tesoros técnicos. Elegí bien tu equipo.",
+
+    // Specific Item Lore
+    'sk_lore_Claude': "Claude es como mi primo superinteligente. Un poco sabelotodo, ¿no?",
+    'sk_lore_OpenAI': "El mago confiable. Siempre tiene un hechizo para cada problema.",
+    'sk_lore_n8n': "¡¿Nueve flujos activos?! Sos el maestro de la automatización, jefe.",
+    'sk_lore_Next.js': "Velocidad pura de renderizado. ¡Las webs vuelan!",
+    'sk_lore_NestJS': "La fortaleza arquitectónica. Acá no entra el caos.",
+    'sk_lore_PostgreSQL': "La hoja relacional. Corta datos con precisión ACID.",
+    'sk_lore_Prisma': "Talismán type-safe. Mantiene a los bugs lejos de la base.",
+    'sk_lore_Docker': "Todo en su cajita, bien ordenado. El orden es poder.",
+    'sk_lore_Linux Bash': "Ah, la terminal negra... donde ocurre la verdadera magia.",
   },
 };
 

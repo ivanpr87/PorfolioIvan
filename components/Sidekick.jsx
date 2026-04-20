@@ -68,6 +68,33 @@ function Sidekick({ sectionId }) {
     return () => window.removeEventListener('sidekick-equip', onEquip);
   }, [t]);
 
+  // Tab & Lore listeners
+  React.useEffect(() => {
+    const onTab = (e) => {
+      setMsg(t(`sk_tab_${e.detail.toLowerCase()}`));
+      setEmotion('neutral');
+      setVisible(true);
+      const timer = setTimeout(() => setVisible(false), 5000);
+      return () => clearTimeout(timer);
+    };
+
+    const onLore = (e) => {
+      const key = `sk_lore_${e.detail}`;
+      setMsg(t(key));
+      setEmotion('happy');
+      setVisible(true);
+      const timer = setTimeout(() => setVisible(false), 6000);
+      return () => clearTimeout(timer);
+    };
+
+    window.addEventListener('sidekick-tab', onTab);
+    window.addEventListener('sidekick-lore', onLore);
+    return () => {
+      window.removeEventListener('sidekick-tab', onTab);
+      window.removeEventListener('sidekick-lore', onLore);
+    };
+  }, [t]);
+
   // Typing effect
   React.useEffect(() => {
     setDisplayedText('');
