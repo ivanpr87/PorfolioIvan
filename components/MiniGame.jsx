@@ -119,7 +119,10 @@ function MiniGame() {
       g.player.x = Math.max(14, Math.min(g.W-14, g.player.x));
       g.player.cool = Math.max(0, g.player.cool - dt);
 
-      g.bullets.forEach(b => b.y += b.vy * dt); g.bullets = g.bullets.filter(b => b.y > -10);
+      g.bullets.forEach(b => b.y += b.vy * dt); 
+      g.bullets = g.bullets.filter(b => b.y > -10);
+      g.efire.forEach(b => b.y += b.vy * dt);
+      g.efire = g.efire.filter(b => b.y < g.H + 50);
       g.powerups.forEach(p => { 
         p.y += p.vy * dt;
         if (Math.abs(p.x - g.player.x) < 20 && Math.abs(p.y - g.player.y) < 20) {
@@ -247,12 +250,18 @@ function MiniGame() {
     const cvs_el = canvasRef.current;
     const reqPos = (e) => { const r = cvs_el.getBoundingClientRect(); const t = e.touches?e.touches[0]:e; return (t.clientX - r.left) * (g.W/r.width); };
     const onKeyDown = (e) => {
-      const gameKeys = [' ', 'ArrowLeft', 'ArrowRight', 'a', 'd', 'w', 's', 'A', 'D', 'W', 'S'];
+      if (state !== 'play') return;
+      const gameKeys = [' ', 'ArrowLeft', 'ArrowRight', 'a', 'd', 'w', 's', 'A', 'D', 'W', 'S', 'ArrowUp', 'ArrowDown'];
       if (gameKeys.includes(e.key)) {
         e.preventDefault();
         g.keys[e.key] = true;
       }
     };
+    const onKeyUp = (e) => {
+      g.keys[e.key] = false;
+    };
+    window.addEventListener('keydown', onKeyDown, { passive: false });
+    window.addEventListener('keyup', onKeyUp);
     const onTouch = (e) => { 
       // Prevent scrolling while touching the game
       if (e.cancelable) e.preventDefault();
@@ -264,7 +273,11 @@ function MiniGame() {
     cvs_el.addEventListener('mousedown', (e) => { setIsMouseControl(true); g.shoot(); });
     cvs_el.addEventListener('mousemove', (e) => { if (isMouseControl) g.touch = reqPos(e); });
     window.addEventListener('mouseup', () => setIsMouseControl(false));
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
   }, [state, isMouseControl]);
 
   return (
