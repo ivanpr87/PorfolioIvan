@@ -366,10 +366,7 @@ function MiniGame() {
       });
       ctx.globalAlpha = 1;
 
-      // Scanlines overlay
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#000';
-      for (let y = 0; y < g.H; y += 3) ctx.fillRect(0, y, g.W, 1);
+      // Scanlines (Removed loop for performance, now handled by CSS overlay)
       ctx.globalAlpha = 1;
     };
 
@@ -423,7 +420,7 @@ function MiniGame() {
         border: '3px solid var(--neon-green)',
         boxShadow: 'inset 0 0 0 2px var(--bg-void), inset 0 0 0 4px var(--ink-white), 6px 6px 0 0 var(--bg-void)',
         padding: 16,
-        maxWidth: 600, margin: '0 auto',
+        maxWidth: 850, margin: '0 auto',
       }}>
         {/* Scoreboard */}
         <div className="font-pixel" translate="no" style={{
@@ -456,6 +453,13 @@ function MiniGame() {
             <canvas ref={canvasRef} width={480} height={360} style={{
               width: '100%', height: '100%', display: 'block',
               imageRendering: 'pixelated',
+            }}/>
+
+            {/* Performance-friendly Scanline Overlay */}
+            <div style={{
+              position: 'absolute', inset: 0, pointerEvents: 'none',
+              background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03))',
+              backgroundSize: '100% 3px, 3px 100%', zIndex: 5
             }}/>
 
           {/* Mobile Fire Button */}
