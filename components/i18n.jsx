@@ -34,6 +34,7 @@ const PLAYER_DATA = {
     { id: 'it9', k: 'Linux Bash', r: 'rare',   t: 'weapon',   stats: { ATK: 30, SPD: 20 } },
     { id: 'it10', k: 'React',      r: 'epic',   t: 'weapon',   stats: { ATK: 45, SPD: 15 } },
     { id: 'it11', k: 'Node JS',    r: 'rare',   t: 'armor',    stats: { DEF: 35, HP: 10 } },
+    { id: 'it12', k: 'Python',     r: 'legendary', t: 'artifact', stats: { INT: 50, LCK: 20 } },
   ],
 };
 
@@ -280,6 +281,7 @@ const I18N = {
     'sk_lore_Linux Bash': "The black terminal... where the TRUE magic happens.",
     'sk_lore_React': "The legendary UI library. Your main blade, keep it sharp!",
     'sk_lore_Node JS': "Asynchronous power! The foundation where all your logic runs.",
+    'sk_lore_Python': "The universal serpent. Clean code, automated world!",
   },
   es: {
     hud_credits: 'CRÉDITOS',
@@ -499,6 +501,7 @@ const I18N = {
     'sk_lore_Linux Bash': "Ah, la terminal negra... donde ocurre la verdadera magia.",
     'sk_lore_React': "La legendaria librería de UI. Tu espada principal, ¡mantenela afilada!",
     'sk_lore_Node JS': "¡Poder asincrónico! El cimiento donde corre toda tu lógica.",
+    'sk_lore_Python': "La serpiente universal. Código limpio, mundo automatizado.",
   },
 };
 
