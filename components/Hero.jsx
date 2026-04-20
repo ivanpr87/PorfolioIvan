@@ -220,7 +220,7 @@ function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }
       imageRendering: 'pixelated'
     }}>
       {!floating && (
-        <>
+        <div className="portrait-bg-complex">
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'linear-gradient(var(--neon-magenta) 1px, transparent 1px), linear-gradient(90deg, var(--neon-magenta) 1px, transparent 1px)',
@@ -235,7 +235,7 @@ function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }
               zIndex: 5, pointerEvents: 'none'
             }}
           />
-        </>
+        </div>
       )}
 
       <svg viewBox="0 0 32 32" style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }} shapeRendering="crispEdges">
@@ -274,10 +274,10 @@ function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }
             </m.g>
 
             {emotion === 'sad' && (
-              <>
+              <g>
                 <rect x="11" y="13" width="3" height="1" fill="#07060f" opacity="0.4"/>
                 <rect x="18" y="13" width="3" height="1" fill="#07060f" opacity="0.4"/>
-              </>
+              </g>
             )}
           </g>
 
@@ -298,14 +298,14 @@ function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }
         </m.g>
         
         {!floating && (
-          <>
+          <g>
             <rect x="13" y="21" width="6" height="2" fill="#d49a6a"/>
             <rect x="6" y="23" width="20" height="9" fill="#ff2fb6"/>
             <rect x="6" y="23" width="20" height="1" fill="#ffffff"/>
             <rect x="14" y="23" width="4" height="9" fill="#07060f"/>
             <rect x="4" y="24" width="2" height="6" fill="#8a2dff"/>
             <rect x="26" y="24" width="2" height="6" fill="#8a2dff"/>
-          </>
+          </g>
         )}
       </svg>
       

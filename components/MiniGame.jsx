@@ -253,8 +253,14 @@ function MiniGame() {
         g.keys[e.key] = true;
       }
     };
+    const onTouch = (e) => { 
+      // Prevent scrolling while touching the game
+      if (e.cancelable) e.preventDefault();
+      g.touch = reqPos(e); 
+      if (e.type === 'touchstart') g.shoot(); 
+    };
     cvs_el.addEventListener('touchstart', onTouch, { passive: false });
-    cvs_el.addEventListener('touchmove', (e) => { g.touch = reqPos(e); }, { passive: false });
+    cvs_el.addEventListener('touchmove', onTouch, { passive: false });
     cvs_el.addEventListener('mousedown', (e) => { setIsMouseControl(true); g.shoot(); });
     cvs_el.addEventListener('mousemove', (e) => { if (isMouseControl) g.touch = reqPos(e); });
     window.addEventListener('mouseup', () => setIsMouseControl(false));
