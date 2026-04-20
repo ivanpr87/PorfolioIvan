@@ -36,7 +36,7 @@ function MiniGame() {
     bullets: [], enemies: [], efire: [], particles: [], stars: [], powerups: [],
     keys: {}, touch: null, dir: 1, step: 0, diveTimer: 2, running: false, t: 0,
     powers: { double: 0, rapid: 0 },
-    playerAbilities: [], abilityAlert: null
+    playerAbilities: [], abilityAlert: null, victoryT: 0
   });
 
   React.useEffect(() => {
@@ -359,7 +359,7 @@ function MiniGame() {
         g.running = false;
         // For testing, trigger ending after wave 1. Normally use (g.wave === 30)
         if (g.wave >= 1) { 
-          setState('victory');
+          setState('victory'); g.victoryT = 0;
         } else {
           setState('win');
           triggerEmotion('happy', 2000);
@@ -462,55 +462,85 @@ function MiniGame() {
       if (g.abilityAlert) {
          g.abilityAlert.timer -= dt; if (g.abilityAlert.timer <= 0) g.abilityAlert = null;
       }
+      if (state === 'victory') g.victoryT += dt;
     };
 
     const draw = () => {
       ctx.fillStyle = '#07060f'; ctx.fillRect(0,0,g.W,g.H);
       
       if (state === 'victory') {
-        const time = g.t;
-        // Wormhole effect
-        ctx.save(); ctx.translate(g.W/2, g.H/2);
-        const wormS = Math.min(1.5, 0.5 + time*0.1); ctx.scale(wormS, wormS);
-        for(let i=0; i<80; i++) {
-          const a = i * 0.15 + time*8;
-          const r = (i*4 + time*150) % 350;
-          ctx.fillStyle = i%3===0?'#8a2dff':i%3===1?'#1cf2ff':'#fff';
-          ctx.fillRect(Math.cos(a)*r, Math.sin(a)*r, 2, 2);
-        }
-        ctx.restore();
-
-        // Earth Rendering
-        const ey = g.H - Math.min(260, time*50);
-        const centerX = g.W/2, centerY = ey + 300;
-        // Atmosphere
-        ctx.globalAlpha = 0.3; ctx.fillStyle = '#1cf2ff'; ctx.beginPath(); ctx.arc(centerX, centerY, 320, 0, Math.PI*2); ctx.fill();
-        ctx.globalAlpha = 1.0;
-        // Ocean
-        ctx.fillStyle = '#0a4da2'; ctx.beginPath(); ctx.arc(centerX, centerY, 300, 0, Math.PI*2); ctx.fill();
-        // Drawing continents manually with paths
-        ctx.fillStyle = '#4ade80';
-        ctx.beginPath(); // Continent 1
-        ctx.arc(centerX-40, centerY-280, 40, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); // Continent 2 
-        ctx.arc(centerX+60, centerY-270, 35, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); // Land 3
-        ctx.arc(centerX, centerY-290, 50, 0, Math.PI); ctx.fill();
-        // Clouds
-        ctx.globalAlpha = 0.6; ctx.fillStyle = '#fff';
-        ctx.beginPath(); ctx.arc(centerX+20, centerY-285, 20, 0.5, 3); ctx.fill();
-        ctx.beginPath(); ctx.arc(centerX-80, centerY-270, 25, 0, 4); ctx.fill();
-        ctx.globalAlpha = 1.0;
-
-        // Ship Descending
-        const shipY = Math.max(ey - 40, 20);
-        drawPlayer(ctx, g.W/2, shipY);
+        const vt = g.victoryT; ctx.fillStyle = '#000'; ctx.fillRect(0,0,g.W,g.H);
         
-        ctx.font = 'bold 24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
-        ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-        ctx.fillText("MISSION ACCOMPLISHED", g.W/2, g.H/2 - 20);
-        ctx.font = '10px VT323'; ctx.fillText("WELCOME BACK TO EARTH, HERO.", g.W/2, g.H/2 + 10);
-        ctx.shadowBlur = 0;
+        if (vt < 2) { // PHASE 0: WARP JUMP
+          ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+          for(let i=0; i<40; i++) {
+            const x = (i * 17) % g.W, y = (g.t * 1000 + i * 23) % g.H;
+            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 50 * vt); ctx.stroke();
+          }
+          drawPlayer(ctx, g.W/2, g.H - 60 - vt*20);
+          ctx.font = '24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+          ctx.fillText("WARP DRIVE ACTIVE", g.W/2, g.H/2);
+        } 
+        else if (vt < 6) { // PHASE 1: WORMHOLE
+          const wt = vt - 2;
+          ctx.save(); ctx.translate(g.W/2, g.H/2);
+          ctx.rotate(wt * 0.5);
+          for(let i=0; i<100; i++) {
+            const a = i * 0.1 + wt * 10;
+            const r = (i * 4 + wt * 200) % 400;
+            ctx.fillStyle = i%3===0?'#8a2dff':i%3===1?'#1cf2ff':'#fff';
+            ctx.fillRect(Math.cos(a)*r, Math.sin(a)*r, 3, 3);
+          }
+          ctx.restore();
+          drawPlayer(ctx, g.W/2 + Math.sin(wt*5)*10, g.H/2 + Math.cos(wt*3)*5);
+        }
+        else { // PHASE 2: EARTH ARRIVAL
+          const et = vt - 6;
+          // Space Background with Parallax
+          g.stars.forEach(s => { ctx.fillStyle = '#fff'; ctx.fillRect(s.x, (s.y + et*20)%g.H, 1, 1); });
+          
+          // Earth
+          const earthSize = Math.min(300, et * 30);
+          const centerX = g.W/2, centerY = g.H + 400 - Math.min(500, et*40);
+          
+          // Atmosphere Glow
+          const grad = ctx.createRadialGradient(centerX, centerY, earthSize, centerX, centerY, earthSize + 20);
+          grad.addColorStop(0, 'rgba(28, 242, 255, 0.4)'); grad.addColorStop(1, 'transparent');
+          ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(centerX, centerY, earthSize + 20, 0, Math.PI*2); ctx.fill();
+          
+          // Ocean
+          ctx.fillStyle = '#0a4da2'; ctx.beginPath(); ctx.arc(centerX, centerY, earthSize, 0, Math.PI*2); ctx.fill();
+          
+          // Continents (Animated Selection)
+          ctx.save(); ctx.beginPath(); ctx.arc(centerX, centerY, earthSize, 0, Math.PI*2); ctx.clip();
+          ctx.fillStyle = '#2ecc71';
+          const rot = et * 10; // Planetary rotation
+          for(let i=-1; i<2; i++) {
+            const ox = (rot + i*400) % 800 - 400;
+            ctx.beginPath(); ctx.arc(centerX + ox, centerY - earthSize*0.5, earthSize*0.4, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(centerX + ox + 60, centerY - earthSize*0.2, earthSize*0.3, 0, Math.PI*2); ctx.fill();
+          }
+          ctx.restore();
+
+          // Clouds
+          ctx.globalAlpha = 0.4; ctx.fillStyle = '#fff';
+          for(let i=-1; i<2; i++) {
+            const ox = (et * 25 + i*500) % 1000 - 500;
+            ctx.fillRect(centerX + ox, centerY - earthSize*0.7, 100, 10);
+            ctx.fillRect(centerX + ox + 150, centerY - earthSize*0.4, 80, 8);
+          }
+          ctx.globalAlpha = 1.0;
+
+          // Ship Descending
+          const shipY = Math.max(50, g.H/2 - et*20);
+          drawPlayer(ctx, g.W/2, shipY);
+          
+          if (et > 5) {
+            ctx.font = 'bold 24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+            ctx.fillText("MISSION ACCOMPLISHED", g.W/2, g.H/2 - 40);
+            ctx.font = '14px VT323'; ctx.fillText("WELCOME BACK TO EARTH, HERO.", g.W/2, g.H/2 - 10);
+          }
+        }
         return;
       }
 
