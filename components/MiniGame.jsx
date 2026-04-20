@@ -12,6 +12,7 @@ function MiniGame() {
   const [hi, setHi] = React.useState(() => {
     try { return parseInt(localStorage.getItem('bugInvadersHi')) || 0; } catch (_) { return 0; }
   });
+  const [lives, setLives] = React.useState(3);
   const [wave, setWave] = React.useState(1);
   const [emotion, setEmotion] = React.useState('neutral');
   const [isMouseControl, setIsMouseControl] = React.useState(false);
