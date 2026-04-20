@@ -51,10 +51,11 @@ function MiniGame() {
   const spawnWave = (w) => {
     const g = game.current; g.enemies = []; g.isBossWave = (w % 5 === 0);
     if (g.isBossWave) {
-      const bossHp = 40 + (w / 5) * 60; // Scaling HP significantly
+      const bossHp = 40 + (w / 5) * 60;
       g.enemies.push({
         x: g.W/2, y: 80, w: 60, h: 40, type: 'mega_boss', alive: true, hp: bossHp, maxHp: bossHp,
-        state: 'boss_move', dir: 1, shootTimer: 1, pattern: 0
+        state: 'boss_move', dir: 1, shootTimer: 1, pattern: 0,
+        model: Math.floor((w/5 - 1) % 3)
       });
     } else {
       const cols = 8, rows = Math.min(3 + Math.floor(w/2), 5);
@@ -98,17 +99,38 @@ function MiniGame() {
         P(6, 4, 2, 2, '#1cf2ff'); P(10, 4, 2, 2, '#1cf2ff'); P(8, 9, 2, 1, '#ffe74c');
       }
     };
-    window.drawMegaBoss = (ctx, x, y, hp, maxHp, t) => {
+    window.drawMegaBoss = (ctx, x, y, hp, maxHp, t, model = 0) => {
       const px = Math.round(x - 30), py = Math.round(y - 20);
       const P = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(px+dx, py+dy, w, h); };
-      const shift = Math.sin(t*8)*5;
-      P(0, 10 + shift, 10, 15, '#ff2fb6'); P(50, 10 + shift, 10, 15, '#ff2fb6');
-      P(10, 5, 40, 30, '#ff9500'); P(15, 0, 30, 10, '#cc7700');
-      // Glowing core 
-      const core = Math.sin(t*15) > 0 ? '#fff' : '#ff3860';
-      P(25, 15, 10, 10, core);
-      const eyeColor = Math.sin(t*12) > 0 ? '#1cf2ff' : '#07060f';
-      P(18, 12, 8, 8, eyeColor); P(34, 12, 8, 8, eyeColor);
+      
+      if (model === 0) { // Dread Queen
+        const shift = Math.sin(t*8)*5;
+        P(0, 10 + shift, 10, 15, '#ff2fb6'); P(50, 10 + shift, 10, 15, '#ff2fb6');
+        P(10, 5, 40, 30, '#ff9500'); P(15, 0, 30, 10, '#cc7700');
+        P(25, 15, 10, 10, Math.sin(t*15)>0?'#fff':'#ff3860');
+        const eyeColor = Math.sin(t*12)>0?'#1cf2ff':'#07060f';
+        P(18, 12, 8, 8, eyeColor); P(34, 12, 8, 8, eyeColor);
+      } else if (model === 1) { // Command Ship
+        const hover = Math.sin(t*4)*4;
+        ctx.fillStyle = '#444'; ctx.fillRect(px, py+10+hover, 60, 15);
+        ctx.fillStyle = '#666'; ctx.fillRect(px+10, py+5+hover, 40, 25);
+        // Neon lights
+        const neon = `hsl(${Math.round(t*100 % 360)}, 100%, 50%)`;
+        for(let i=0; i<4; i++) { P(5+i*15, 15+hover, 6, 4, neon); }
+        P(25, 0+hover, 10, 10, '#12a4ff'); // Dome
+      } else { // Ancient Prism
+        ctx.save(); ctx.translate(x, y); ctx.rotate(t);
+        ctx.fillStyle = '#8a2dff'; ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(25, 20); ctx.lineTo(-25, 20); ctx.fill();
+        ctx.fillStyle = '#1cf2ff'; ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+        // Floating bits
+        for(let i=0; i<4; i++) {
+          const fx = x + Math.cos(t*2 + i*Math.PI/2)*40;
+          const fy = y + Math.sin(t*2 + i*Math.PI/2)*40;
+          ctx.fillStyle = '#fff'; ctx.fillRect(fx-2, fy-2, 4, 4);
+        }
+      }
+      
       ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x-30, y-35, 60, 4);
       ctx.fillStyle = '#ff3860'; ctx.fillRect(x-30, y-35, (hp/maxHp)*60, 4);
     };
@@ -325,7 +347,7 @@ function MiniGame() {
       drawPlayer(ctx, g.player.x, g.player.y);
       ctx.fillStyle = '#ffe74c'; g.bullets.forEach(b => ctx.fillRect(b.x-1, b.y-4, 3, 8));
       ctx.fillStyle = '#ff3860'; g.efire.forEach(b => ctx.fillRect(b.x-1, b.y-3, 3, 6));
-      g.enemies.forEach(e => { if (e.alive) { if(e.type==='mega_boss') drawMegaBoss(ctx, e.x, e.y, e.hp, e.maxHp, g.t); else drawBug(ctx, e.x, e.y, e.type, g.t); } });
+      g.enemies.forEach(e => { if (e.alive) { if(e.type==='mega_boss') drawMegaBoss(ctx, e.x, e.y, e.hp, e.maxHp, g.t, e.model); else drawBug(ctx, e.x, e.y, e.type, g.t); } });
       g.powerups.forEach(p => { 
         if(window.drawPowerup) window.drawPowerup(ctx, p.x, p.y, p.type, g.t);
         else {
