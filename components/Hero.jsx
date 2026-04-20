@@ -206,8 +206,25 @@ function CharacterSelect() {
 
 function PlayerPortrait() {
   const m = window.Motion.motion;
+  const [look, setLook] = React.useState({ x: 0, y: 0 });
+  const containerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleMove = (e) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = (e.clientX - centerX) / (window.innerWidth / 2);
+      const dy = (e.clientY - centerY) / (window.innerHeight / 2);
+      setLook({ x: dx * 2, y: dy * 1.5 }); // Subtle movement
+    };
+    window.addEventListener('mousemove', handleMove);
+    return () => window.removeEventListener('mousemove', handleMove);
+  }, []);
+
   return (
-    <div style={{
+    <div ref={containerRef} style={{
       width: '100%', aspectRatio: '1 / 1',
       background: 'linear-gradient(180deg, #2a1f5e 0%, #0d0a1f 100%)',
       position: 'relative', overflow: 'hidden',
@@ -219,7 +236,6 @@ function PlayerPortrait() {
         backgroundSize: '20px 20px', opacity: 0.15,
       }}/>
 
-      {/* CRT SCANLINE ANIMATION */}
       <m.div 
         animate={{ y: ['-100%', '100%'] }}
         transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
@@ -231,35 +247,39 @@ function PlayerPortrait() {
       />
 
       <svg viewBox="0 0 32 32" style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }} shapeRendering="crispEdges">
-        {/* Hair */}
-        <rect x="8" y="5" width="16" height="3" fill="#2a1a0a"/>
-        <rect x="7" y="6" width="18" height="3" fill="#1f1406"/>
+        {/* HAIR - Fixed */}
+        <rect x="7" y="5" width="18" height="5" fill="#1f1406"/>
         <rect x="6" y="8" width="2" height="6" fill="#1f1406"/>
         <rect x="24" y="8" width="2" height="6" fill="#1f1406"/>
         
-        {/* Hairclip Ship */}
-        <rect x="9" y="8" width="3" height="2" fill="#fff"/>
-        <rect x="10" y="7" width="1" height="1" fill="#8a2dff"/>
-        <rect x="10" y="9" width="1" height="1" fill="#8a2dff"/>
+        {/* HEAD GROUP (follows mouse slightly) */}
+        <m.g animate={{ x: look.x * 0.5, y: look.y * 0.5 }}>
+          {/* Face Base */}
+          <rect x="8" y="9" width="16" height="10" fill="#e8b88a"/>
+          <rect x="9" y="19" width="14" height="2" fill="#d49a6a"/>
+          
+          {/* Eyes Group (follows mouse more) */}
+          <m.g animate={{ x: look.x * 1.5, y: look.y * 1 }}>
+            {/* Left Eye */}
+            <rect x="11" y="12" width="3" height="2" fill="#fff"/>
+            <m.rect animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 4, repeat: Infinity, times: [0, 0.6, 0.65, 0.7, 1] }}
+              x="12" y="12" width="1" height="2" fill="#07060f"/>
+            
+            {/* Right Eye */}
+            <rect x="19" y="12" width="3" height="2" fill="#fff"/>
+            <m.rect animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 4, repeat: Infinity, times: [0, 0.6, 0.65, 0.7, 1] }}
+              x="20" y="12" width="1" height="2" fill="#07060f"/>
+          </m.g>
 
-        {/* Face */}
-        <rect x="8" y="9" width="16" height="10" fill="#e8b88a"/>
-        <rect x="9" y="19" width="14" height="2" fill="#d49a6a"/>
-        
-        {/* Eyes (Black with blinking animation) */}
-        <m.g animate={{ scaleY: [1, 1, 0.1, 1, 1] }} transition={{ duration: 3, repeat: Infinity, times: [0, 0.45, 0.5, 0.55, 1] }}>
-          <rect x="11" y="12" width="3" height="2" fill="#07060f"/>
-          <rect x="19" y="12" width="3" height="2" fill="#07060f"/>
+          {/* Brows */}
+          <rect x="11" y="10" width="3" height="1" fill="#2a1a0a" opacity="0.6"/>
+          <rect x="19" y="10" width="3" height="1" fill="#2a1a0a" opacity="0.6"/>
+          
+          <rect x="15" y="14" width="2" height="2" fill="#d49a6a"/>
+          <rect x="14" y="18" width="4" height="1" fill="#ff3860"/>
         </m.g>
-
-        <rect x="11" y="10" width="3" height="1" fill="#2a1a0a" opacity="0.6"/>
-        <rect x="19" y="10" width="3" height="1" fill="#2a1a0a" opacity="0.6"/>
         
-        <rect x="15" y="14" width="2" height="2" fill="#d49a6a"/>
-        <rect x="13" y="17" width="6" height="1" fill="#8a3a2a"/>
-        <rect x="14" y="18" width="4" height="1" fill="#ff3860"/>
-        
-        {/* Body */}
+        {/* Body (stays fixed) */}
         <rect x="13" y="21" width="6" height="2" fill="#d49a6a"/>
         <rect x="6" y="23" width="20" height="9" fill="#ff2fb6"/>
         <rect x="6" y="23" width="20" height="1" fill="#ffffff"/>
@@ -267,7 +287,6 @@ function PlayerPortrait() {
         <rect x="4" y="24" width="2" height="6" fill="#8a2dff"/>
         <rect x="26" y="24" width="2" height="6" fill="#8a2dff"/>
         
-        {/* Tie detail */}
         <rect x="15" y="23" width="2" height="4" fill="#1cf2ff"/>
         <rect x="15" y="27" width="2" height="1" fill="#ffe74c"/>
       </svg>
