@@ -294,12 +294,27 @@ function MiniGame() {
           g.diveTimer -= dt;
           if (g.diveTimer <= 0) {
             const cs = alive.filter(e => e.state === 'formation');
-            if (cs.length) { const p = cs[Math.floor(Math.random()*cs.length)]; p.state = 'dive'; p.diveT = 0; }
-            g.diveTimer = 2.0 + Math.random()*1.5;
+            if (cs.length) { 
+              const num = g.wave > 5 ? 2 : 1; 
+              for(let i=0; i<num; i++) {
+                if(cs[i]) { cs[i].state = 'dive'; cs[i].diveT = 0; }
+              }
+            }
+            g.diveTimer = 2.0 + Math.random()*1.5 - Math.min(1.0, g.wave*0.05);
           }
           alive.forEach(e => {
             if (e.state === 'dive') {
-              e.diveT += dt; e.x += (g.player.x - e.x)*dt*1.5; e.y += 140*dt;
+              e.diveT += dt; 
+              // Basic dive speed
+              e.y += 140*dt;
+              // Evasive maneuvers after wave 5
+              if (g.wave > 5) {
+                e.x += (g.player.x - e.x)*dt*1.2;
+                e.x += Math.sin(e.diveT * 6) * 120 * dt; // Slither movement
+                if (g.wave > 8) e.y += Math.cos(e.diveT * 8) * 40 * dt; // Looping effect
+              } else {
+                e.x += (g.player.x - e.x)*dt*1.5;
+              }
               if (Math.random() < dt*2) g.efire.push({ x: e.x, y: e.y+6, vy: 180 });
               if (e.y > g.H+20) { e.state = 'formation'; e.y = e.homeY; e.x = e.homeX; }
             } else if (Math.random() < dt*0.08) g.efire.push({ x: e.x, y: e.y+6, vy: 140 });
