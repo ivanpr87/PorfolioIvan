@@ -35,6 +35,7 @@ const PLAYER_DATA = {
     { id: 'it10', k: 'React',      r: 'epic',   t: 'weapon',   stats: { ATK: 45, SPD: 15 } },
     { id: 'it11', k: 'Node JS',    r: 'epic',   t: 'armor',    stats: { DEF: 35, HP: 10 } },
     { id: 'it12', k: 'Python',     r: 'legendary', t: 'artifact', stats: { INT: 50, LCK: 20 } },
+    { id: 'it13', k: 'SQL',        r: 'epic',      t: 'weapon',   stats: { ATK: 40, INT: 20 } },
   ],
 };
 
@@ -142,6 +143,7 @@ const I18N = {
     inv_React: 'The legendary UI library. Your primary blade for crafting interactive experiences.',
     'inv_Node JS': 'Asynchronous JavaScript runtime. The engine powering your backend logic.',
     inv_Python: 'A versatile legendary artifact. Ideal for data processing and statistical scripts.',
+    inv_SQL: 'The language of data. Execute precise queries to extract the truth from any database.',
 
     // Projects
     proj_stage: 'STAGE 04',
@@ -285,6 +287,7 @@ const I18N = {
     'sk_lore_React': "The legendary UI library. Your main blade, keep it sharp!",
     'sk_lore_Node JS': "Asynchronous power! The foundation where all your logic runs.",
     'sk_lore_Python': "The universal serpent. Clean code, automated world!",
+    'sk_lore_SQL': "SELECT * FROM SKILLS WHERE TYPE='EPIC'... Found it! Your queries never miss.",
   },
   es: {
     hud_credits: 'CRÉDITOS',
@@ -371,6 +374,7 @@ const I18N = {
     inv_React: 'La legendaria librería de UI. Tu espada principal para crear experiencias interactivas.',
     'inv_Node JS': 'Entorno de ejecución asíncrono. El motor que impulsa tu lógica de backend.',
     inv_Python: 'Un artefacto legendario versátil. Ideal para procesamiento de datos y scripts estadísticos.',
+    inv_SQL: 'El lenguaje de los datos. Ejecuta consultas precisas para extraer la verdad de cualquier base de datos.',
 
     proj_stage: 'STAGE 04',
     proj_title: 'ELIGE UN CART',
@@ -508,6 +512,7 @@ const I18N = {
     'sk_lore_React': "La legendaria librería de UI. Tu espada principal, ¡mantenela afilada!",
     'sk_lore_Node JS': "¡Poder asincrónico! El cimiento donde corre toda tu lógica.",
     'sk_lore_Python': "La serpiente universal. Código limpio, mundo automatizado.",
+    'sk_lore_SQL': "SELECT * FROM SKILLS WHERE TYPE='EPIC'... ¡Lo encontré! Tus consultas nunca fallan.",
   },
 };
 
