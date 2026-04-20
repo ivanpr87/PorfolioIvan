@@ -354,7 +354,7 @@ function MiniGame() {
   }, []);
 
   return (
-    <section id="game" data-screen-label="05 Mini Game">
+    <section id="game" data-screen-label="05 Mini Game" translate="no">
       <SectionTitle stage={t('game_stage')} title={t('game_title')} sub={t('game_sub')} accent="var(--neon-green)"/>
 
       <div ref={wrapperRef} style={{
@@ -365,7 +365,7 @@ function MiniGame() {
         maxWidth: 600, margin: '0 auto',
       }}>
         {/* Scoreboard */}
-        <div className="font-pixel" style={{
+        <div className="font-pixel" translate="no" style={{
           display: 'flex', justifyContent: 'space-between',
           fontSize: 10, marginBottom: 12, letterSpacing: '0.1em', flexWrap: 'wrap', gap: 8,
         }}>
@@ -383,7 +383,7 @@ function MiniGame() {
 
           {/* Overlay states */}
           {(state === 'idle' || state === 'over' || state === 'ready' || state === 'win') && (
-            <div style={{
+            <div key={`overlay-${state}`} style={{
               position: 'absolute', inset: 0,
               background: 'rgba(7,6,15,0.7)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',

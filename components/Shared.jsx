@@ -44,7 +44,7 @@ function HUD({ palette, setPalette, muted, setMuted, section }) {
     { id: 'jrpg',    label: 'JRPG',    color: '#f2c94c' },
   ];
   return (
-    <div style={{
+    <div translate="no" style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 500,
       padding: '14px 24px',
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
