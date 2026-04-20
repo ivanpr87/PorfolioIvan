@@ -472,21 +472,23 @@ function MiniGame() {
       if (state === 'victory') {
         const vt = g.victoryT; ctx.fillStyle = '#000'; ctx.fillRect(0,0,g.W,g.H);
         
-        if (vt < 2) { // PHASE 0: WARP JUMP
+        if (vt < 1.5) { // PHASE 0: WARP JUMP
           ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+          const shake = Math.min(5, vt * 4);
+          const ox = (Math.random()-0.5)*shake, oy = (Math.random()-0.5)*shake;
           for(let i=0; i<40; i++) {
-            const x = (i * 17) % g.W, y = (g.t * 800 + i * 23) % g.H;
-            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 40 + vt*60); ctx.stroke();
+            const x = (i * 17) % g.W, y = (g.t * 1200 + i * 23) % g.H;
+            ctx.beginPath(); ctx.moveTo(x + ox, y); ctx.lineTo(x + ox, y + 100 + vt*100); ctx.stroke();
           }
-          drawPlayer(ctx, g.W/2, g.H - 60 - vt*10);
+          drawPlayer(ctx, g.W/2 + ox, g.H - 60 - vt*150); // Ship launches up
           ctx.font = 'bold 24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
           ctx.fillText("WARP DRIVE ACTIVE", g.W/2, g.H/2);
         } 
-        else if (vt < 2.2) { // FLASH
+        else if (vt < 1.7) { // FLASH
           ctx.fillStyle = '#fff'; ctx.fillRect(0,0,g.W,g.H);
         }
-        else if (vt < 6) { // PHASE 1: WORMHOLE
-          const wt = vt - 2;
+        else if (vt < 4.5) { // PHASE 1: WORMHOLE (1.7 to 4.5s)
+          const wt = vt - 1.7;
           ctx.save(); ctx.translate(g.W/2, g.H/2);
           ctx.rotate(wt * 0.5);
           for(let i=0; i<100; i++) {
@@ -498,8 +500,8 @@ function MiniGame() {
           ctx.restore();
           drawPlayer(ctx, g.W/2 + Math.sin(wt*5)*10, g.H/2 + Math.cos(wt*3)*5);
         }
-        else { // PHASE 2: EARTH ARRIVAL & LANDING
-          const et = vt - 6;
+        else { // PHASE 2: EARTH ARRIVAL & LANDING (4.5s+)
+          const et = vt - 4.5;
           // Space Background
           g.stars.forEach(s => { ctx.fillStyle = '#fff'; ctx.fillRect(s.x, (s.y + et*10)%g.H, 1, 1); });
           
