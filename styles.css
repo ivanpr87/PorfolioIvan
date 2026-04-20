@@ -375,3 +375,24 @@ img, svg.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
   position: absolute; top: -3px; left: 12px; right: 12px; height: 3px;
   background: var(--accent-1);
 }
+
+/* --- RPG Inventory Additions --- */
+.epic-pulse {
+  animation: epic-glow 2.5s ease-in-out infinite;
+  background: linear-gradient(135deg, var(--bg-panel) 0%, #301a4d 100%) !important;
+}
+
+@keyframes epic-glow {
+  0%, 100% { box-shadow: 0 0 10px var(--neon-magenta), inset 0 0 5px var(--neon-magenta); }
+  50% { box-shadow: 0 0 25px var(--neon-magenta), inset 0 0 15px var(--neon-magenta); }
+}
+
+.grid-inv-items button:hover {
+  transform: translateY(-4px) scale(1.05);
+  background: var(--bg-panel-hi);
+  z-index: 2;
+}
+
+.grid-inv-items button:active {
+  transform: translateY(0) scale(0.95);
+}

@@ -144,46 +144,70 @@ function InventoryPanel() {
   const rarityColor = { common: 'var(--ink-dim)', rare: 'var(--neon-cyan)', epic: 'var(--neon-magenta)' };
   const [sel, setSel] = React.useState(0);
   const item = PLAYER_DATA.inventory[sel];
+
   return (
     <div className="grid-inv">
       <div>
         <div className="font-pixel" style={{ fontSize: 11, color: 'var(--neon-cyan)', marginBottom: 18, letterSpacing: '0.1em' }}>
           ▸ {t('stats_equipped')}
         </div>
-        <div className="grid-inv-items" style={{ display: 'grid', gap: 8 }}>
+        <div className="grid-inv-items" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 10 }}>
           {PLAYER_DATA.inventory.map((it, i) => (
-            <button key={it.k}
+            <button key={it.id || it.k}
               onClick={() => { setSel(i); AudioCtx.select(); }}
               onMouseEnter={() => AudioCtx.hover()}
+              className={it.r === 'epic' ? 'epic-pulse' : ''}
               style={{
                 aspectRatio: '1',
                 background: sel === i ? 'var(--bg-panel-hi)' : 'var(--bg-void)',
                 border: `2px solid ${sel === i ? rarityColor[it.r] : 'var(--ink-ghost)'}`,
-                boxShadow: sel === i ? `0 0 12px ${rarityColor[it.r]}` : 'none',
-                padding: 8,
+                boxShadow: sel === i ? `0 0 15px ${rarityColor[it.r]}` : 'none',
+                padding: 10,
                 display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-                gap: 6, color: rarityColor[it.r],
+                gap: 6, cursor: 'pointer', transition: 'all 0.2s',
               }}>
-              <ItemIcon color={rarityColor[it.r]}/>
-              <span className="font-pixel" style={{ fontSize: 7, letterSpacing: '0.05em', textAlign: 'center' }}>
-                {it.k.slice(0, 10).toUpperCase()}
+              <ItemIcon type={it.t} color={rarityColor[it.r]}/>
+              <span className="font-pixel" style={{ fontSize: 7, color: rarityColor[it.r], letterSpacing: '0.05em', textAlign: 'center' }}>
+                {it.k.toUpperCase()}
               </span>
             </button>
           ))}
         </div>
       </div>
+
       <div>
         <div className="font-pixel" style={{ fontSize: 11, color: 'var(--neon-cyan)', marginBottom: 18, letterSpacing: '0.1em' }}>
           ▸ {t('stats_detail')}
         </div>
-        <div className="dialog-box" style={{ minHeight: 220 }}>
-          <div className="font-pixel" style={{ fontSize: 16, color: rarityColor[item.r], marginBottom: 8 }}>
-            {item.k.toUpperCase()}
+        <div className="dialog-box" style={{ minHeight: 280, borderStyle: 'double', borderWidth: 4 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="font-pixel" style={{ fontSize: 18, color: rarityColor[item.r], marginBottom: 4 }}>
+              {item.k.toUpperCase()}
+            </div>
+            <div className="font-pixel" style={{ fontSize: 8, color: 'var(--neon-yellow)' }}>
+              {t('stats_type')}: {item.t.toUpperCase()}
+            </div>
           </div>
-          <div className="font-pixel" style={{ fontSize: 9, color: 'var(--ink-dim)', marginBottom: 16, letterSpacing: '0.1em' }}>
+          
+          <div className="font-pixel" style={{ fontSize: 9, color: 'var(--ink-dim)', marginBottom: 14, letterSpacing: '0.1em' }}>
             {t('stats_rarity')}: <span style={{ color: rarityColor[item.r] }}>{item.r.toUpperCase()}</span>
           </div>
-          <div style={{ fontFamily: 'VT323, monospace', fontSize: 20, color: 'var(--ink-white)', lineHeight: 1.4 }}>
+
+          <div style={{ 
+            background: 'rgba(0,0,0,0.3)', padding: 12, border: '1px solid var(--ink-ghost)', 
+            marginBottom: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 
+          }}>
+            <div className="font-pixel" style={{ fontSize: 8, color: 'var(--neon-green)', gridColumn: 'span 2', marginBottom: 4 }}>
+              [ {t('stats_bonus')} ]
+            </div>
+            {Object.entries(item.stats || {}).map(([stat, val]) => (
+              <div key={stat} className="font-pixel" style={{ fontSize: 9, color: 'var(--ink-white)' }}>
+                {stat}: <span style={{ color: 'var(--neon-cyan)' }}>+{val}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ fontFamily: 'VT323, monospace', fontSize: 22, color: 'var(--ink-white)', lineHeight: 1.3 }}>
             {t('inv_' + item.k)}
           </div>
         </div>
@@ -192,14 +216,33 @@ function InventoryPanel() {
   );
 }
 
-function ItemIcon({ color }) {
+function ItemIcon({ type, color }) {
+  if (type === 'weapon') {
+    return (
+      <svg width="32" height="32" viewBox="0 0 16 16" shapeRendering="crispEdges">
+        <rect x="7" y="2" width="2" height="10" fill={color}/>
+        <rect x="6" y="12" width="4" height="2" fill="var(--ink-white)"/>
+        <rect x="7" y="14" width="2" height="2" fill={color}/>
+        <rect x="5" y="11" width="6" height="1" fill="var(--ink-white)"/>
+      </svg>
+    );
+  }
+  if (type === 'armor') {
+    return (
+      <svg width="32" height="32" viewBox="0 0 16 16" shapeRendering="crispEdges">
+        <path d="M3,3 L13,3 L13,9 C13,12 8,15 8,15 C8,15 3,12 3,9 Z" fill={color} opacity="0.8"/>
+        <rect x="5" y="5" width="6" height="2" fill="var(--ink-white)" opacity="0.5"/>
+      </svg>
+    );
+  }
   return (
-    <svg width="32" height="32" viewBox="0 0 8 8" shapeRendering="crispEdges">
-      <rect x="3" y="1" width="2" height="1" fill={color}/>
-      <rect x="2" y="2" width="4" height="1" fill={color}/>
-      <rect x="1" y="3" width="6" height="3" fill={color} opacity="0.7"/>
-      <rect x="2" y="6" width="4" height="1" fill={color}/>
-      <rect x="3" y="3" width="2" height="2" fill="var(--bg-void)"/>
+    <svg width="32" height="32" viewBox="0 0 16 16" shapeRendering="crispEdges">
+      <rect x="4" y="4" width="8" height="8" rx="1" fill={color} opacity="0.6"/>
+      <rect x="7" y="2" width="2" height="2" fill={color}/>
+      <rect x="7" y="12" width="2" height="2" fill={color}/>
+      <rect x="2" y="7" width="2" height="2" fill={color}/>
+      <rect x="12" y="7" width="2" height="2" fill={color}/>
+      <path d="M6,6 L10,10 M10,6 L6,10" stroke="var(--ink-white)" strokeWidth="1"/>
     </svg>
   );
 }

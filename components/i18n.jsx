@@ -22,14 +22,14 @@ const PLAYER_DATA = {
   ],
   stats: { HP: 92, MP: 94, ATK: 88, DEF: 82, SPD: 90, LCK: 78 },
   inventory: [
-    { k: 'Claude',     r: 'epic' },
-    { k: 'OpenAI',     r: 'epic' },
-    { k: 'n8n',        r: 'epic' },
-    { k: 'Next.js',    r: 'rare' },
-    { k: 'NestJS',     r: 'rare' },
-    { k: 'PostgreSQL', r: 'rare' },
-    { k: 'Prisma',     r: 'rare' },
-    { k: 'Docker',     r: 'common' },
+    { id: 'it1', k: 'Claude',     r: 'epic',   t: 'artifact', stats: { MP: 50, INT: 99 } },
+    { id: 'it2', k: 'OpenAI',     r: 'rare',   t: 'artifact', stats: { MP: 30, INT: 85 } },
+    { id: 'it3', k: 'n8n',        r: 'epic',   t: 'weapon',   stats: { ATK: 45, SPD: 95 } },
+    { id: 'it4', k: 'Next.js',    r: 'rare',   t: 'armor',    stats: { DEF: 40, SPD: 20 } },
+    { id: 'it5', k: 'NestJS',     r: 'rare',   t: 'armor',    stats: { DEF: 60, STR: 15 } },
+    { id: 'it6', k: 'PostgreSQL', r: 'rare',   t: 'weapon',   stats: { ATK: 35, INT: 10 } },
+    { id: 'it7', k: 'Prisma',     r: 'common', t: 'artifact', stats: { DEX: 25, LCK: 5  } },
+    { id: 'it8', k: 'Docker',     r: 'common', t: 'armor',    stats: { DEF: 25, RES: 30 } },
   ],
 };
 
@@ -110,6 +110,8 @@ const I18N = {
     stats_equipped: 'EQUIPPED ITEMS',
     stats_detail: 'ITEM DETAIL',
     stats_rarity: 'RARITY',
+    stats_type: 'TYPE',
+    stats_bonus: 'BONUS STATS',
 
     // Skills names
     sk_ai: 'AI / LLMs',
@@ -293,6 +295,8 @@ const I18N = {
     stats_equipped: 'ÍTEMS EQUIPADOS',
     stats_detail: 'DETALLE DEL ÍTEM',
     stats_rarity: 'RAREZA',
+    stats_type: 'TIPO',
+    stats_bonus: 'STATS EXTRA',
 
     sk_ai: 'IA / LLMs',
     sk_n8n: 'n8n / AUTO',
