@@ -9,6 +9,29 @@ const TWEAKS = /*EDITMODE-BEGIN*/{
   "cursorVariant": "fighter"
 }/*EDITMODE-END*/;
 
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error, errorInfo) { console.error("Global Error Caught:", error, errorInfo); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          background: '#07060f', color: '#ff3860', fontFamily: 'Press Start 2P, monospace', textAlign: 'center', padding: 20
+        }}>
+          <div style={{ fontSize: 32, marginBottom: 20 }}>SYSTEM ERROR</div>
+          <div style={{ fontSize: 12, lineHeight: 1.6, color: '#a9a4d8' }}>THE APPLICATION HAS CRASHED.<br/>PLEASE RELOAD THE PAGE (F5).</div>
+          <button onClick={() => window.location.reload()} style={{
+            marginTop: 30, background: '#ff3860', color: '#07060f', border: 'none', padding: '12px 24px', cursor: 'pointer', fontFamily: 'inherit'
+          }}>REBOOT SYSTEM</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   const { t } = useLang();
   const [palette, setPalette] = React.useState(TWEAKS.palette);
@@ -61,7 +84,7 @@ function App() {
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <div className="bg-grid"/>
       <div className="bg-stars"/>
 
@@ -96,7 +119,7 @@ function App() {
           setCursorVariant={(v) => { setCursorVariant(v); persist({ cursorVariant: v }); }}
         />
       )}
-    </>
+    </ErrorBoundary>
   );
 }
 

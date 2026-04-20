@@ -30,6 +30,7 @@ function MiniGame() {
     diveTimer: 2,
     running: false,
     t: 0,
+    winTimer: null,
   });
 
   // Init stars once
@@ -186,10 +187,12 @@ function MiniGame() {
         setState('win');
         setWave(w => w + 1);
         AudioCtx.coin();
-        setTimeout(() => {
-          spawnWave(g.enemies.length === 0 ? (gameWave() + 1) : 1);
+        if (g.winTimer) clearTimeout(g.winTimer);
+        g.winTimer = setTimeout(() => {
+          spawnWave(g.enemies.length === 0 ? (wave + 1) : 1);
           setState('play');
           g.running = true;
+          g.winTimer = null;
         }, 1500);
       }
 
@@ -228,6 +231,7 @@ function MiniGame() {
             const nl = L - 1;
             if (nl <= 0) {
               g.running = false;
+              if (g.winTimer) clearTimeout(g.winTimer);
               setState('over');
             }
             return nl;
@@ -247,7 +251,11 @@ function MiniGame() {
           AudioCtx.blip(100, 0.25, 'sawtooth', 0.05);
           setLives(L => {
             const nl = L - 1;
-            if (nl <= 0) { g.running = false; setState('over'); }
+            if (nl <= 0) {
+              g.running = false;
+              if (g.winTimer) clearTimeout(g.winTimer);
+              setState('over');
+            }
             return nl;
           });
           g.player.x = g.W / 2;
@@ -341,6 +349,7 @@ function MiniGame() {
       cancelAnimationFrame(raf);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
+      if (g.winTimer) clearTimeout(g.winTimer);
     };
   }, []);
 

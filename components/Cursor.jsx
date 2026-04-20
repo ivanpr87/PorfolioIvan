@@ -152,21 +152,31 @@ const AudioCtx = {
   ctx: null,
   muted: true,
   init() {
-    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    try {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.warn("AudioContext init failed", e);
+    }
   },
   blip(freq = 880, dur = 0.05, type = 'square', vol = 0.04) {
     if (this.muted) return;
-    this.init();
-    const ctx = this.ctx;
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = type;
-    o.frequency.setValueAtTime(freq, ctx.currentTime);
-    g.gain.setValueAtTime(vol, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
-    o.connect(g).connect(ctx.destination);
-    o.start();
-    o.stop(ctx.currentTime + dur);
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const ctx = this.ctx;
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, ctx.currentTime);
+      g.gain.setValueAtTime(vol, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+      o.connect(g).connect(ctx.destination);
+      o.start();
+      o.stop(ctx.currentTime + dur);
+    } catch (e) {
+      console.warn("Audio blip failed", e);
+    }
   },
   hover() { this.blip(660, 0.03, 'square', 0.02); },
   click() { this.blip(220, 0.08, 'square', 0.05); setTimeout(() => this.blip(440, 0.06, 'square', 0.04), 40); },

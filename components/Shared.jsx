@@ -136,8 +136,9 @@ function CornerBrackets() {
    SECTION TITLE
    ============================================================ */
 function SectionTitle({ stage, title, sub, accent = 'var(--neon-magenta)' }) {
+  const MotionDiv = (window.Motion && window.Motion.motion && window.Motion.motion.div) || 'div';
   return (
-    <window.Motion.motion.div
+    <MotionDiv
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
@@ -163,7 +164,7 @@ function SectionTitle({ stage, title, sub, accent = 'var(--neon-magenta)' }) {
           <span style={{ color: accent }}>▸</span> {sub}
         </div>
       </div>
-    </window.Motion.motion.div>
+    </MotionDiv>
   );
 }
 

@@ -29,8 +29,8 @@ function CartridgeShelf() {
 
 function Cartridge({ p, idx }) {
   const { t } = useLang();
-  const m = window.Motion.motion;
-  const AP = window.Motion.AnimatePresence;
+  const m = (window.Motion && window.Motion.motion) || { div: 'div' };
+  const AP = (window.Motion && window.Motion.AnimatePresence) || (({ children }) => <>{children}</>);
   const [hover, setHover] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const colorMap = {
@@ -143,7 +143,7 @@ function CartCover({ p, title, accent }) {
 }
 
 function AttractMode({ p, title, accent, scenes }) {
-  const m = window.Motion.motion;
+  const m = (window.Motion && window.Motion.motion) || { div: 'div' };
   const [scene, setScene] = React.useState(0);
   const [tick, setTick] = React.useState(0);
   React.useEffect(() => {
@@ -234,7 +234,7 @@ function AttractScreenshot({ accent, scene }) {
 
 function CartridgeModal({ p, title, sub, genre, desc, accent, onClose }) {
   const { t } = useLang();
-  const m = window.Motion.motion;
+  const m = (window.Motion && window.Motion.motion) || { div: 'div' };
   React.useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', onKey);
