@@ -154,7 +154,11 @@ function InventoryPanel() {
         <div className="grid-inv-items" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 10 }}>
           {PLAYER_DATA.inventory.map((it, i) => (
             <button key={it.id || it.k}
-              onClick={() => { setSel(i); AudioCtx.select(); }}
+              onClick={() => { 
+                setSel(i); 
+                AudioCtx.select();
+                window.dispatchEvent(new CustomEvent('sidekick-equip', { detail: it }));
+              }}
               onMouseEnter={() => AudioCtx.hover()}
               className={it.r === 'epic' ? 'epic-pulse' : ''}
               style={{

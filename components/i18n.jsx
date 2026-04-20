@@ -254,6 +254,12 @@ const I18N = {
     sk_click_3: "That looks important!",
     sk_click_4: "Executing action... just kidding!",
     sk_click_5: "Right on target!",
+
+    // Equip reactions
+    sk_eq_weapon: "Equipping POWER! Let's code some destruction.",
+    sk_eq_armor: "Solid choice. No bugs will cross this layer.",
+    sk_eq_artifact: "Magic processing... this tool is ahead of its time.",
+    sk_eq_gen: "Equipping {item}... Looking powerful!",
   },
   es: {
     hud_credits: 'CRÉDITOS',
@@ -449,6 +455,12 @@ const I18N = {
     sk_click_3: "¡Eso parece importante!",
     sk_click_4: "Ejecutando acción... ¡mentira!",
     sk_click_5: "¡Directo al grano!",
+
+    // Equip reactions
+    sk_eq_weapon: "¡Equipando PODER! Vamos a codear algo épico.",
+    sk_eq_armor: "Buena elección. Ningún bug pasará esta capa.",
+    sk_eq_artifact: "Procesando magia... esta herramienta es de otro nivel.",
+    sk_eq_gen: "Equipando {item}... ¡Te ves imparable!",
   },
 };
 

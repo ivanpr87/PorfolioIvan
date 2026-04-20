@@ -50,6 +50,24 @@ function Sidekick({ sectionId }) {
     return () => window.removeEventListener('click', onClick);
   }, [t]);
 
+  // Inventory equip reactions
+  React.useEffect(() => {
+    const onEquip = (e) => {
+      const item = e.detail;
+      const typeMsg = t(`sk_eq_${item.t}`);
+      const genMsg = t('sk_eq_gen').replace('{item}', item.k);
+      
+      setMsg(`${genMsg} ${typeMsg}`);
+      setEmotion('happy');
+      setVisible(true);
+      
+      const timer = setTimeout(() => setVisible(false), 5000);
+      return () => clearTimeout(timer);
+    };
+    window.addEventListener('sidekick-equip', onEquip);
+    return () => window.removeEventListener('sidekick-equip', onEquip);
+  }, [t]);
+
   // Typing effect
   React.useEffect(() => {
     setDisplayedText('');
