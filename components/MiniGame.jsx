@@ -60,11 +60,13 @@ function MiniGame() {
     } else {
       const cols = 8, rows = Math.min(3 + Math.floor(w/2), 5);
       const margin = 60, gap = 38;
+      const enemyHp = w >= 10 ? 2 : 1;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           g.enemies.push({
             x: margin + c*gap, y: 60 + r*28, w: 18, h: 14,
             type: r===0?'boss':r===1?'mid':'grunt', alive: true,
+            hp: enemyHp, maxHp: enemyHp,
             homeX: margin + c*gap, homeY: 60 + r*28, state: 'formation', diveT: 0
           });
         }
@@ -352,7 +354,8 @@ function MiniGame() {
             if (e.type === 'mega_boss') {
               e.hp -= 1; AudioCtx.blip(600,0.05,'sawtooth',0.02);
               if (e.hp <= 0) { 
-                e.alive = false; setScore(s => s+2000); explode(e.x, e.y, '#ff9500', 30); AudioCtx.blip(100,0.4,'sawtooth',0.1);
+                e.alive = false; setScore(s => s+2000); setLives(L => L + 1); // +1 Life for Boss Kill
+                explode(e.x, e.y, '#ff9500', 30); AudioCtx.blip(100,0.4,'sawtooth',0.1);
                 // GAIN ABILITY
                 const abs = ['spread', 'homing', 'nova'];
                 const newAb = abs[e.model];
@@ -363,14 +366,19 @@ function MiniGame() {
                 }
               }
             } else {
-              e.alive = false; setScore(s => {
-                const ns = s + (e.type==='boss'?300:e.type==='mid'?150:80);
-                if (ns >= 100) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'first_kill' }));
-                if (ns > hi) { setHi(ns); localStorage.setItem('bugInvadersHi', ns); }
-                return ns;
-              });
-              explode(e.x, e.y, e.type==='boss'?'#ff2fb6':e.type==='mid'?'#ffe74c':'#1cf2ff');
-              spawnPowerup(e.x, e.y); AudioCtx.blip(300,0.06,'square',0.03);
+              e.hp -= 1;
+              if (e.hp <= 0) {
+                e.alive = false; setScore(s => {
+                  const ns = s + (e.type==='boss'?300:e.type==='mid'?150:80);
+                  if (ns >= 100) window.dispatchEvent(new CustomEvent('achievement-unlock', { detail: 'first_kill' }));
+                  if (ns > hi) { setHi(ns); localStorage.setItem('bugInvadersHi', ns); }
+                  return ns;
+                });
+                explode(e.x, e.y, e.type==='boss'?'#ff2fb6':e.type==='mid'?'#ffe74c':'#1cf2ff');
+                spawnPowerup(e.x, e.y); AudioCtx.blip(300,0.06,'square',0.03);
+              } else {
+                AudioCtx.blip(800, 0.02, 'square', 0.02); // Armor hit hit
+              }
             }
           }
         });
