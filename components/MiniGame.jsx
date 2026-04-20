@@ -51,9 +51,10 @@ function MiniGame() {
   const spawnWave = (w) => {
     const g = game.current; g.enemies = []; g.isBossWave = (w % 5 === 0);
     if (g.isBossWave) {
+      const bossHp = 40 + (w / 5) * 60; // Scaling HP significantly
       g.enemies.push({
-        x: g.W/2, y: 80, w: 60, h: 40, type: 'mega_boss', alive: true, hp: 15 + w*3, maxHp: 15 + w*3,
-        state: 'boss_move', dir: 1, shootTimer: 1
+        x: g.W/2, y: 80, w: 60, h: 40, type: 'mega_boss', alive: true, hp: bossHp, maxHp: bossHp,
+        state: 'boss_move', dir: 1, shootTimer: 1, pattern: 0
       });
     } else {
       const cols = 8, rows = Math.min(3 + Math.floor(w/2), 5);
@@ -103,11 +104,31 @@ function MiniGame() {
       const shift = Math.sin(t*8)*5;
       P(0, 10 + shift, 10, 15, '#ff2fb6'); P(50, 10 + shift, 10, 15, '#ff2fb6');
       P(10, 5, 40, 30, '#ff9500'); P(15, 0, 30, 10, '#cc7700');
+      // Glowing core 
+      const core = Math.sin(t*15) > 0 ? '#fff' : '#ff3860';
+      P(25, 15, 10, 10, core);
       const eyeColor = Math.sin(t*12) > 0 ? '#1cf2ff' : '#07060f';
       P(18, 12, 8, 8, eyeColor); P(34, 12, 8, 8, eyeColor);
-      P(20 + Math.sin(t*2)*2, 14, 2, 2, '#fff'); P(36 + Math.sin(t*2)*2, 14, 2, 2, '#fff');
       ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x-30, y-35, 60, 4);
       ctx.fillStyle = '#ff3860'; ctx.fillRect(x-30, y-35, (hp/maxHp)*60, 4);
+    };
+    window.drawPowerup = (ctx, x, y, type, t) => {
+      const px = Math.round(x - 8), py = Math.round(y - 8);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.beginPath(); ctx.arc(x, y, 10 + Math.sin(t*10)*2, 0, Math.PI*2); ctx.fill();
+      if (type === 'shield') {
+        ctx.fillStyle = '#ffe74c'; // Shield Icon 🛡️
+        ctx.beginPath(); ctx.moveTo(x, y-6); ctx.lineTo(x+6, y-2); ctx.lineTo(x+6, y+4);
+        ctx.lineTo(x, y+8); ctx.lineTo(x-6, y+4); ctx.lineTo(x-6, y-2); ctx.closePath(); ctx.fill();
+      } else if (type === 'double') {
+        ctx.fillStyle = '#ff9500'; // Double Cannon 🔫🔫
+        ctx.fillRect(x-5, y-7, 3, 14); ctx.fillRect(x+2, y-7, 3, 14);
+        ctx.fillRect(x-6, y+4, 12, 3);
+      } else if (type === 'rapid') {
+        ctx.fillStyle = '#1cf2ff'; // Bolt ⚡
+        ctx.beginPath(); ctx.moveTo(x+2, y-8); ctx.lineTo(x-4, y+1); ctx.lineTo(x+1, y+1);
+        ctx.lineTo(x-2, y+8); ctx.lineTo(x+4, y-1); ctx.lineTo(x-1, y-1); ctx.closePath(); ctx.fill();
+      }
     };
   }, []);
 
@@ -148,7 +169,7 @@ function MiniGame() {
       });
     };
     const spawnPowerup = (x, y) => {
-      if (Math.random() > 0.15) return;
+      if (Math.random() > 0.08) return; // Reduced drop rate
       const types = ['double', 'rapid', 'shield'];
       g.powerups.push({ x, y, type: types[Math.floor(Math.random()*types.length)], vy: 80 });
     };
@@ -178,7 +199,7 @@ function MiniGame() {
           p.y = 500; AudioCtx.coin();
           if (p.type === 'double') g.powers.double = 10;
           if (p.type === 'rapid') g.powers.rapid = 10;
-          if (p.type === 'shield') g.player.shield = 8;
+          if (p.type === 'shield') g.player.shield = 1; // 1 hit protection
         }
       });
       g.powerups = g.powerups.filter(p => p.y < g.H + 10);
@@ -190,8 +211,22 @@ function MiniGame() {
           if (b.x < 100 || b.x > g.W-100) b.dir *= -1; b.y = 80 + Math.sin(g.t*2)*20;
           b.shootTimer -= dt;
           if (b.shootTimer <= 0) {
-            for(let i=-1; i<=1; i++) g.efire.push({ x: b.x+i*20, y: b.y+20, vy: 180+Math.random()*40 });
-            b.shootTimer = 1.2 - Math.min(0.8, g.wave*0.05);
+            // Complex patterns based on wave
+            const pattern = Math.floor(g.wave / 5) % 3;
+            if (pattern === 0) { // Spread
+              for(let i=-2; i<=2; i++) g.efire.push({ x: b.x+i*15, y: b.y+20, vy: 160 + Math.abs(i)*20 });
+            } else if (pattern === 1) { // Targeted
+              const ang = Math.atan2(g.player.y - b.y, g.player.x - b.x);
+              g.efire.push({ x: b.x, y: b.y+10, vx: Math.cos(ang)*180, vy: Math.sin(ang)*180 });
+              g.efire.push({ x: b.x-10, y: b.y+10, vx: Math.cos(ang-0.2)*180, vy: Math.sin(ang-0.2)*180 });
+              g.efire.push({ x: b.x+10, y: b.y+10, vx: Math.cos(ang+0.2)*180, vy: Math.sin(ang+0.2)*180 });
+            } else { // Spiral / Circle
+              for(let i=0; i<8; i++) {
+                const a = (i/8)*Math.PI*2 + g.t;
+                g.efire.push({ x: b.x, y: b.y, vx: Math.cos(a)*140, vy: Math.sin(a)*140 });
+              }
+            }
+            b.shootTimer = 1.0 - Math.min(0.7, g.wave * 0.02);
           }
         } else {
           g.step += dt; const marchDist = 18*dt*(1+(1-alive.length/40)); let hitEdge = false;
@@ -232,7 +267,7 @@ function MiniGame() {
         
         const bns = ['double', 'rapid', 'shield'];
         const won = bns[Math.floor(Math.random() * bns.length)];
-        if (won === 'shield') g.player.shield = 12; else g.powers[won] = 12;
+        if (won === 'shield') g.player.shield = 1; else g.powers[won] = 12;
 
         if (g.winTimer) clearTimeout(g.winTimer);
         g.winTimer = setTimeout(() => {
@@ -265,8 +300,13 @@ function MiniGame() {
       });
 
       const hit = () => {
-        if (g.player.shield > 0) return;
-        explode(g.player.x, g.player.y, '#ff3860', 12); AudioCtx.blip(120,0.2,'sawtooth',0.04);
+        if (g.player.shield > 0) {
+          g.player.shield = 0; 
+          AudioCtx.blip(500, 0.1, 'sine', 0.05); 
+          explode(g.player.x, g.player.y, '#ffe74c', 15);
+          return;
+        }
+        explode(g.player.x, g.player.y, '#ff3860', 12); AudioCtx.blip(120,0.20,'sawtooth',0.04);
         setLives(L => { if (L<=1) { g.running=false; setState('over'); return 0; } return L-1; });
         g.player.x = g.W/2; g.powers = { double: 0, rapid: 0 };
       };
@@ -287,8 +327,11 @@ function MiniGame() {
       ctx.fillStyle = '#ff3860'; g.efire.forEach(b => ctx.fillRect(b.x-1, b.y-3, 3, 6));
       g.enemies.forEach(e => { if (e.alive) { if(e.type==='mega_boss') drawMegaBoss(ctx, e.x, e.y, e.hp, e.maxHp, g.t); else drawBug(ctx, e.x, e.y, e.type, g.t); } });
       g.powerups.forEach(p => { 
-        ctx.fillStyle = p.type==='double'?'#ff9500':p.type==='rapid'?'#1cf2ff':'#ffe74c';
-        ctx.fillRect(p.x-6, p.y-6, 12, 12); ctx.fillStyle = '#fff'; ctx.fillRect(p.x-2, p.y-2, 4, 4);
+        if(window.drawPowerup) window.drawPowerup(ctx, p.x, p.y, p.type, g.t);
+        else {
+          ctx.fillStyle = p.type==='double'?'#ff9500':p.type==='rapid'?'#1cf2ff':'#ffe74c';
+          ctx.fillRect(p.x-6, p.y-6, 12, 12);
+        }
       });
       g.particles.forEach(p => { ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.life); ctx.fillRect(p.x-1,p.y-1,3,3); });
       ctx.globalAlpha = 1;
