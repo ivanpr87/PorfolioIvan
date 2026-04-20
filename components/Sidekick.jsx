@@ -9,6 +9,15 @@ function Sidekick({ sectionId }) {
   const [emotion, setEmotion] = React.useState('neutral');
   const timerRef = React.useRef(null);
 
+  const msgMap = {
+    'hero':     { key: 'sk_msg_intro',    emo: 'happy' },
+    'about':    { key: 'sk_msg_about',    emo: 'neutral' },
+    'stats':    { key: 'sk_msg_skills',   emo: 'happy' },
+    'projects': { key: 'sk_msg_projects', emo: 'neutral' },
+    'game':     { key: 'sk_msg_game',     emo: 'sad' },
+    'contact':  { key: 'sk_msg_contact',  emo: 'happy' },
+  };
+
   const showMsg = (text, emo, duration = 6000) => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setMsg(text);
