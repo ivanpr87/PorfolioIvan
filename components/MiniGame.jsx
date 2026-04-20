@@ -12,9 +12,9 @@ function MiniGame() {
   const [hi, setHi] = React.useState(() => {
     try { return parseInt(localStorage.getItem('bugInvadersHi')) || 0; } catch (_) { return 0; }
   });
-  const [lives, setLives] = React.useState(3);
   const [wave, setWave] = React.useState(1);
   const [emotion, setEmotion] = React.useState('neutral');
+  const [isMouseControl, setIsMouseControl] = React.useState(false);
 
   const triggerEmotion = (emo, dur = 2000) => {
     setEmotion(emo);
@@ -387,6 +387,24 @@ function MiniGame() {
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
 
+    const onCanvasClick = (e) => {
+      if (state === 'play') setIsMouseControl(true);
+      // Shoot on click
+      shoot();
+    };
+
+    const onMouseMove = (e) => {
+      if (!isMouseControl) return;
+      const r = rect();
+      const x = (e.clientX - r.left) * (g.W / r.width);
+      g.touch = x;
+    };
+
+    const onMouseLeave = () => {
+      setIsMouseControl(false);
+      g.touch = null;
+    };
+
     // Touch
     const rect = () => cvs.getBoundingClientRect();
     const onTouch = (e) => {
@@ -395,21 +413,30 @@ function MiniGame() {
       if (!touch) return;
       const x = (touch.clientX - r.left) * (g.W / r.width);
       g.touch = x;
-      if (e.type === 'touchstart' || e.type === 'mousedown') shoot();
+      if (e.type === 'touchstart') shoot();
     };
     const onLeave = () => { g.touch = null; };
+
     cvs.addEventListener('touchstart', onTouch, { passive: true });
     cvs.addEventListener('touchmove', onTouch, { passive: true });
     cvs.addEventListener('touchend', onLeave);
-    cvs.addEventListener('mousedown', onTouch);
+    cvs.addEventListener('mousedown', onCanvasClick);
+    cvs.addEventListener('mousemove', onMouseMove);
+    cvs.addEventListener('mouseleave', onMouseLeave);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
+      cvs.removeEventListener('touchstart', onTouch);
+      cvs.removeEventListener('touchmove', onTouch);
+      cvs.removeEventListener('touchend', onLeave);
+      cvs.removeEventListener('mousedown', onCanvasClick);
+      cvs.removeEventListener('mousemove', onMouseMove);
+      cvs.removeEventListener('mouseleave', onMouseLeave);
       if (g.winTimer) clearTimeout(g.winTimer);
     };
-  }, []);
+  }, [state, isMouseControl]);
 
   return (
     <section id="game" data-screen-label="05 Mini Game" translate="no">
