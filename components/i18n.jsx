@@ -511,8 +511,14 @@ const LangState = {
 function useLang() {
   const [, force] = React.useState(0);
   React.useEffect(() => LangState.subscribe(() => force(x => x + 1)), []);
-  const t = (k) => (I18N[LangState.lang] && I18N[LangState.lang][k]) || (I18N.en[k] || k);
-  return { lang: LangState.lang, setLang: (l) => LangState.set(l), t };
+  
+  const t = React.useCallback((k) => (I18N[LangState.lang] && I18N[LangState.lang][k]) || (I18N.en[k] || k), [LangState.lang]);
+  
+  return React.useMemo(() => ({ 
+    lang: LangState.lang, 
+    setLang: (l) => LangState.set(l), 
+    t 
+  }), [LangState.lang, t]);
 }
 
 Object.assign(window, { PLAYER_DATA, PROJECT_DATA, I18N, LangState, useLang });
