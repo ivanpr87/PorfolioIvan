@@ -62,6 +62,46 @@ function MiniGame() {
     g.diveTimer = 2.5; g.dir = 1;
   };
 
+  // Nested drawing functions for scope reliability
+  function drawPlayer(ctx, x, y) {
+    const px = Math.round(x - 11), py = Math.round(y - 7);
+    const P = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(px + dx, py + dy, w, h); };
+    P(10, 0, 2, 3, '#1cf2ff'); P(8, 2, 6, 4, '#f2f0ff'); P(4, 5, 14, 5, '#1cf2ff');
+    P(2, 8, 18, 3, '#3a6bff'); P(9, 4, 4, 2, '#ffe74c'); P(8, 11, 2, 3, '#ffe74c');
+    P(12, 11, 2, 3, '#ffe74c'); P(9, 12, 4, 2, '#ff2fb6');
+  }
+
+  function drawBug(ctx, x, y, type, t) {
+    const flap = Math.floor(t * 6) % 2;
+    const px = Math.round(x - 9), py = Math.round(y - 7);
+    const P = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(px + dx, py + dy, w, h); };
+    if (type === 'grunt') {
+      P(7, 2, 4, 3, '#1cf2ff'); P(5, 4, 8, 4, '#1cf2ff'); P(4, 6, 10, 3, '#3a6bff');
+      P(flap ? 1 : 2, 5, 3, 3, '#1cf2ff'); P(flap ? 14 : 13, 5, 3, 3, '#1cf2ff'); P(8, 4, 2, 1, '#ffe74c');
+    } else if (type === 'mid') {
+      P(6, 2, 6, 2, '#ffe74c'); P(4, 4, 10, 4, '#ffe74c'); P(3, 7, 12, 2, '#c49b2a');
+      P(flap ? 0 : 1, 4, 3, 3, '#ffe74c'); P(flap ? 15 : 14, 4, 3, 3, '#ffe74c');
+      P(7, 3, 1, 1, '#ff3860'); P(10, 3, 1, 1, '#ff3860');
+    } else {
+      P(6, 1, 6, 2, '#ff2fb6'); P(4, 3, 10, 5, '#ff2fb6'); P(3, 7, 12, 3, '#8a2dff');
+      P(flap ? 0 : 1, 3, 3, 4, '#ff2fb6'); P(flap ? 15 : 14, 3, 3, 4, '#ff2fb6');
+      P(6, 4, 2, 2, '#1cf2ff'); P(10, 4, 2, 2, '#1cf2ff'); P(8, 9, 2, 1, '#ffe74c');
+    }
+  }
+
+  function drawMegaBoss(ctx, x, y, hp, maxHp, t) {
+    const px = Math.round(x - 30), py = Math.round(y - 20);
+    const P = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(px+dx, py+dy, w, h); };
+    const shift = Math.sin(t*8)*5;
+    P(0, 10 + shift, 10, 15, '#ff2fb6'); P(50, 10 + shift, 10, 15, '#ff2fb6');
+    P(10, 5, 40, 30, '#ff9500'); P(15, 0, 30, 10, '#cc7700');
+    const eyeColor = Math.sin(t*12) > 0 ? '#1cf2ff' : '#07060f';
+    P(18, 12, 8, 8, eyeColor); P(34, 12, 8, 8, eyeColor);
+    P(20 + Math.sin(t*2)*2, 14, 2, 2, '#fff'); P(36 + Math.sin(t*2)*2, 14, 2, 2, '#fff');
+    ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x-30, y-35, 60, 4);
+    ctx.fillStyle = 'var(--neon-red, #ff3860)'; ctx.fillRect(x-30, y-35, (hp/maxHp)*60, 4);
+  }
+
   const start = () => {
     AudioCtx.coin(); setScore(0); setLives(3); setWave(1);
     const g = game.current; g.wave = 1;
@@ -260,7 +300,9 @@ function MiniGame() {
     const onKeyUp = (e) => {
       g.keys[e.key] = false;
     };
+    const blockSpace = (e) => { if (e.key === ' ' && state !== 'idle') e.preventDefault(); };
     window.addEventListener('keydown', onKeyDown, { passive: false });
+    window.addEventListener('keydown', blockSpace, { capture: true, passive: false });
     window.addEventListener('keyup', onKeyUp);
     const onTouch = (e) => { 
       // Prevent scrolling while touching the game
@@ -276,6 +318,7 @@ function MiniGame() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keydown', blockSpace, { capture: true });
       window.removeEventListener('keyup', onKeyUp);
     };
   }, [state, isMouseControl]);
@@ -434,86 +477,6 @@ function MiniGame() {
       </div>
     </section>
   );
-}
-
-// Pixel-art player ship
-function drawPlayer(ctx, x, y) {
-  const px = Math.round(x - 11), py = Math.round(y - 7);
-  const P = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(px + dx, py + dy, w, h); };
-  // Body
-  P(10, 0, 2, 3, '#1cf2ff');
-  P(8, 2, 6, 4, '#f2f0ff');
-  P(4, 5, 14, 5, '#1cf2ff');
-  P(2, 8, 18, 3, '#3a6bff');
-  P(9, 4, 4, 2, '#ffe74c');
-  // Thruster
-  P(8, 11, 2, 3, '#ffe74c');
-  P(12, 11, 2, 3, '#ffe74c');
-  P(9, 12, 4, 2, '#ff2fb6');
-}
-
-// Pixel-art bug enemies — small, mid, boss
-function drawBug(ctx, x, y, type, t) {
-  const flap = Math.floor(t * 6) % 2;
-  const px = Math.round(x - 9), py = Math.round(y - 7);
-  const P = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(px + dx, py + dy, w, h); };
-  if (type === 'grunt') {
-    // cyan moth
-    P(7, 2, 4, 3, '#1cf2ff');
-    P(5, 4, 8, 4, '#1cf2ff');
-    P(4, 6, 10, 3, '#3a6bff');
-    // wings flap
-    P(flap ? 1 : 2, 5, 3, 3, '#1cf2ff');
-    P(flap ? 14 : 13, 5, 3, 3, '#1cf2ff');
-    P(8, 4, 2, 1, '#ffe74c'); // eyes
-  } else if (type === 'mid') {
-    // yellow beetle
-    P(6, 2, 6, 2, '#ffe74c');
-    P(4, 4, 10, 4, '#ffe74c');
-    P(3, 7, 12, 2, '#c49b2a');
-    P(flap ? 0 : 1, 4, 3, 3, '#ffe74c');
-    P(flap ? 15 : 14, 4, 3, 3, '#ffe74c');
-    P(7, 3, 1, 1, '#ff3860');
-    P(10, 3, 1, 1, '#ff3860');
-  } else {
-    // magenta boss
-    P(6, 1, 6, 2, '#ff2fb6');
-    P(4, 3, 10, 5, '#ff2fb6');
-    P(3, 7, 12, 3, '#8a2dff');
-    P(flap ? 0 : 1, 3, 3, 4, '#ff2fb6');
-    P(flap ? 15 : 14, 3, 3, 4, '#ff2fb6');
-    P(6, 4, 2, 2, '#1cf2ff');
-    P(10, 4, 2, 2, '#1cf2ff');
-    P(8, 9, 2, 1, '#ffe74c');
-  }
-}
-
-// Pixel-art Mega Boss
-function drawMegaBoss(ctx, x, y, hp, maxHp, t) {
-  const px = Math.round(x - 30), py = Math.round(y - 20);
-  const P = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(px+dx, py+dy, w, h); };
-  
-  // Wings - fluttering
-  const shift = Math.sin(t*8)*5;
-  P(0, 10 + shift, 10, 15, '#ff2fb6');
-  P(50, 10 + shift, 10, 15, '#ff2fb6');
-  
-  // Body
-  P(10, 5, 40, 30, '#ff9500');
-  P(15, 0, 30, 10, '#cc7700');
-  
-  // Eyes
-  const eyeColor = Math.sin(t*12) > 0 ? '#1cf2ff' : '#07060f';
-  P(18, 12, 8, 8, eyeColor);
-  P(34, 12, 8, 8, eyeColor);
-  
-  // Pupil follows player roughly (fake)
-  P(20 + Math.sin(t*2)*2, 14, 2, 2, '#fff');
-  P(36 + Math.sin(t*2)*2, 14, 2, 2, '#fff');
-
-  // HP Bar overlay
-  ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x-30, y-35, 60, 4);
-  ctx.fillStyle = 'var(--neon-red, #ff3860)'; ctx.fillRect(x-30, y-35, (hp/maxHp)*60, 4);
 }
 
 Object.assign(window, { MiniGame });
