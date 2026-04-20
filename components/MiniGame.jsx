@@ -250,7 +250,7 @@ function MiniGame() {
     const cvs_el = canvasRef.current;
     const reqPos = (e) => { const r = cvs_el.getBoundingClientRect(); const t = e.touches?e.touches[0]:e; return (t.clientX - r.left) * (g.W/r.width); };
     const onKeyDown = (e) => {
-      if (state !== 'play') return;
+      if (state === 'idle') return;
       const gameKeys = [' ', 'ArrowLeft', 'ArrowRight', 'a', 'd', 'w', 's', 'A', 'D', 'W', 'S', 'ArrowUp', 'ArrowDown'];
       if (gameKeys.includes(e.key)) {
         e.preventDefault();
@@ -486,6 +486,34 @@ function drawBug(ctx, x, y, type, t) {
     P(10, 4, 2, 2, '#1cf2ff');
     P(8, 9, 2, 1, '#ffe74c');
   }
+}
+
+// Pixel-art Mega Boss
+function drawMegaBoss(ctx, x, y, hp, maxHp, t) {
+  const px = Math.round(x - 30), py = Math.round(y - 20);
+  const P = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(px+dx, py+dy, w, h); };
+  
+  // Wings - fluttering
+  const shift = Math.sin(t*8)*5;
+  P(0, 10 + shift, 10, 15, '#ff2fb6');
+  P(50, 10 + shift, 10, 15, '#ff2fb6');
+  
+  // Body
+  P(10, 5, 40, 30, '#ff9500');
+  P(15, 0, 30, 10, '#cc7700');
+  
+  // Eyes
+  const eyeColor = Math.sin(t*12) > 0 ? '#1cf2ff' : '#07060f';
+  P(18, 12, 8, 8, eyeColor);
+  P(34, 12, 8, 8, eyeColor);
+  
+  // Pupil follows player roughly (fake)
+  P(20 + Math.sin(t*2)*2, 14, 2, 2, '#fff');
+  P(36 + Math.sin(t*2)*2, 14, 2, 2, '#fff');
+
+  // HP Bar overlay
+  ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x-30, y-35, 60, 4);
+  ctx.fillStyle = 'var(--neon-red, #ff3860)'; ctx.fillRect(x-30, y-35, (hp/maxHp)*60, 4);
 }
 
 Object.assign(window, { MiniGame });
