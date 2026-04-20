@@ -360,7 +360,8 @@ function MiniGame() {
         g.running = false;
         // For testing, trigger ending after wave 1. Normally use (g.wave === 30)
         if (g.wave >= 1) { 
-          setState('victory'); g.victoryT = 0;
+          setState('victory'); g.victoryT = 0; 
+          g.enemies = []; g.bullets = []; g.efire = []; g.powerups = [];
         } else {
           setState('win');
           triggerEmotion('happy', 2000);
@@ -474,13 +475,16 @@ function MiniGame() {
         if (vt < 2) { // PHASE 0: WARP JUMP
           ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
           for(let i=0; i<40; i++) {
-            const x = (i * 17) % g.W, y = (g.t * 1000 + i * 23) % g.H;
-            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 50 * vt); ctx.stroke();
+            const x = (i * 17) % g.W, y = (g.t * 800 + i * 23) % g.H;
+            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 40 + vt*60); ctx.stroke();
           }
-          drawPlayer(ctx, g.W/2, g.H - 60 - vt*20);
-          ctx.font = '24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+          drawPlayer(ctx, g.W/2, g.H - 60 - vt*10);
+          ctx.font = 'bold 24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
           ctx.fillText("WARP DRIVE ACTIVE", g.W/2, g.H/2);
         } 
+        else if (vt < 2.2) { // FLASH
+          ctx.fillStyle = '#fff'; ctx.fillRect(0,0,g.W,g.H);
+        }
         else if (vt < 6) { // PHASE 1: WORMHOLE
           const wt = vt - 2;
           ctx.save(); ctx.translate(g.W/2, g.H/2);
