@@ -494,53 +494,72 @@ function MiniGame() {
           ctx.restore();
           drawPlayer(ctx, g.W/2 + Math.sin(wt*5)*10, g.H/2 + Math.cos(wt*3)*5);
         }
-        else { // PHASE 2: EARTH ARRIVAL
+        else { // PHASE 2: EARTH ARRIVAL & LANDING
           const et = vt - 6;
-          // Space Background with Parallax
-          g.stars.forEach(s => { ctx.fillStyle = '#fff'; ctx.fillRect(s.x, (s.y + et*20)%g.H, 1, 1); });
+          // Space Background
+          g.stars.forEach(s => { ctx.fillStyle = '#fff'; ctx.fillRect(s.x, (s.y + et*10)%g.H, 1, 1); });
           
-          // Earth
-          const earthSize = Math.min(300, et * 30);
-          const centerX = g.W/2, centerY = g.H + 400 - Math.min(500, et*40);
+          const earthSize = Math.min(600, et * 40); // Getting BIGGER
+          const centerX = g.W/2, centerY = g.H + 400 - Math.min(600, et*60);
           
-          // Atmosphere Glow
-          const grad = ctx.createRadialGradient(centerX, centerY, earthSize, centerX, centerY, earthSize + 20);
-          grad.addColorStop(0, 'rgba(28, 242, 255, 0.4)'); grad.addColorStop(1, 'transparent');
-          ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(centerX, centerY, earthSize + 20, 0, Math.PI*2); ctx.fill();
-          
-          // Ocean
-          ctx.fillStyle = '#0a4da2'; ctx.beginPath(); ctx.arc(centerX, centerY, earthSize, 0, Math.PI*2); ctx.fill();
-          
-          // Continents (Animated Selection)
-          ctx.save(); ctx.beginPath(); ctx.arc(centerX, centerY, earthSize, 0, Math.PI*2); ctx.clip();
-          ctx.fillStyle = '#2ecc71';
-          const rot = et * 10; // Planetary rotation
-          for(let i=-1; i<2; i++) {
-            const ox = (rot + i*400) % 800 - 400;
-            ctx.beginPath(); ctx.arc(centerX + ox, centerY - earthSize*0.5, earthSize*0.4, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(centerX + ox + 60, centerY - earthSize*0.2, earthSize*0.3, 0, Math.PI*2); ctx.fill();
-          }
-          ctx.restore();
+          // Pixel Art Earth Rendering
+          const drawEarth = (sz, cx, cy) => {
+             // Outline
+             ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(cx, cy, sz + 4, 0, Math.PI*2); ctx.fill();
+             // Water
+             ctx.fillStyle = '#12a4ff'; ctx.beginPath(); ctx.arc(cx, cy, sz, 0, Math.PI*2); ctx.fill();
+             // Continents (Blocky)
+             ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, sz, 0, Math.PI*2); ctx.clip();
+             ctx.fillStyle = '#2ecc71';
+             const rot = et * 15;
+             for(let i=-2; i<3; i++) {
+                const ox = (rot + i*500) % 1000 - 500;
+                ctx.fillRect(cx + ox, cy - sz*0.6, sz*0.5, sz*0.4);
+                ctx.fillRect(cx + ox + 60, cy - sz*0.2, sz*0.3, sz*0.5);
+                ctx.fillRect(cx + ox - 40, cy + sz*0.1, sz*0.4, sz*0.3);
+             }
+             ctx.restore();
+             // Atmosphere
+             ctx.globalAlpha = 0.2; ctx.strokeStyle = '#fff'; ctx.lineWidth = 10;
+             ctx.beginPath(); ctx.arc(cx, cy, sz + 8, 0, Math.PI*2); ctx.stroke(); ctx.globalAlpha = 1.0;
+          };
 
-          // Clouds
-          ctx.globalAlpha = 0.4; ctx.fillStyle = '#fff';
-          for(let i=-1; i<2; i++) {
-            const ox = (et * 25 + i*500) % 1000 - 500;
-            ctx.fillRect(centerX + ox, centerY - earthSize*0.7, 100, 10);
-            ctx.fillRect(centerX + ox + 150, centerY - earthSize*0.4, 80, 8);
-          }
-          ctx.globalAlpha = 1.0;
+          drawEarth(earthSize, centerX, centerY);
 
-          // Ship Descending
-          const shipY = Math.max(50, g.H/2 - et*20);
-          drawPlayer(ctx, g.W/2, shipY);
-          
-          if (et > 5) {
-            ctx.font = 'bold 24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
-            ctx.fillText("MISSION ACCOMPLISHED", g.W/2, g.H/2 - 40);
-            ctx.font = '14px VT323'; ctx.fillText("WELCOME BACK TO EARTH, HERO.", g.W/2, g.H/2 - 10);
+          // Ship Descending and Landing
+          let shipY;
+          if (et < 8) {
+             shipY = g.H/2 - et*20;
+             drawPlayer(ctx, g.W/2, shipY);
+          } else {
+             // Touchdown Logic
+             const landT = et - 8;
+             shipY = Math.min(centerY - earthSize + 10, (g.H/2 - 160) + landT*40);
+             const isLanded = shipY >= centerY - earthSize + 10;
+             
+             if (!isLanded) {
+                // Thruster effects
+                ctx.fillStyle = Math.random()>0.5?'#ff9500':'#ffe74c';
+                ctx.fillRect(g.W/2-4, shipY+10, 8, 15);
+             } else {
+                // Landing dust
+                for(let i=0; i<8; i++) {
+                   ctx.fillStyle = '#2ecc71'; ctx.globalAlpha = 0.5;
+                   ctx.fillRect(g.W/2 - 20 + i*5, shipY + 10 + Math.sin(vt*20+i)*5, 4, 4);
+                }
+             }
+             drawPlayer(ctx, g.W/2, shipY);
+             
+             if (isLanded) {
+                ctx.font = 'bold 24px VT323'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+                ctx.fillText("SAFE LANDING", g.W/2, g.H/2 - 60);
+                ctx.font = '14px VT323'; ctx.fillText("WELCOME HOME, HERO.", g.W/2, g.H/2 - 30);
+                ctx.font = '10px VT323'; ctx.fillText("THE REPO IS SECURE.", g.W/2, g.H/2 - 10);
+             }
           }
         }
+        return;
+      }
         return;
       }
 
