@@ -239,66 +239,65 @@ function PlayerPortrait({ emotion = 'neutral', size = '100%', floating = false }
       )}
 
       <svg viewBox="0 0 32 32" style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }} shapeRendering="crispEdges">
-        {/* HAIR */}
-        <rect x="7" y="5" width="18" height="5" fill="#1f1406"/>
-        <rect x="5" y="8" width="3" height="8" fill="#1f1406"/>
-        <rect x="24" y="8" width="3" height="8" fill="#1f1406"/>
+        <rect key="hair-top" x="7" y="5" width="18" height="5" fill="#1f1406"/>
+        <rect key="hair-left" x="5" y="8" width="3" height="8" fill="#1f1406"/>
+        <rect key="hair-right" x="24" y="8" width="3" height="8" fill="#1f1406"/>
         
         {/* HEAD GROUP */}
-        <m.g style={{ x: 'calc(var(--mnx) * 0.4px)', y: 'calc(var(--mny) * 0.4px)' }}>
-          <rect x="8" y="9" width="16" height="10" fill={faceColor}/>
-          <rect x="9" y="19" width="14" height="2" fill="#d49a6a"/>
+        <m.g key="head-main" style={{ x: 'calc(var(--mnx) * 0.4px)', y: 'calc(var(--mny) * 0.4px)' }}>
+          <rect key="skin" x="8" y="9" width="16" height="10" fill={faceColor}/>
+          <rect key="jaw" x="9" y="19" width="14" height="2" fill="#d49a6a"/>
           
           {/* Eyes Group (Pupils Follow Mouse) */}
-          <g>
+          <g key="eyes-container">
             {/* Left Eye */}
-            <m.g animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
+            <m.g key="eye-l" animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
                  transition={{ duration: 5, repeat: Infinity }}
                  style={{ originY: '13px' }}>
-              <rect x="11" y="12" width="3" height="2" fill="#fff"/>
+              <rect key="eye-l-white" x="11" y="12" width="3" height="2" fill="#fff"/>
               {emotion !== 'sad' && (
-                <m.rect style={{ x: 'calc(var(--mnx) * 1.2px)', y: 'calc(var(--mny) * 1px)' }}
+                <m.rect key="eye-l-pupil" style={{ x: 'calc(var(--mnx) * 1.2px)', y: 'calc(var(--mny) * 1px)' }}
                         x="12" y="12.5" width="1" height="1" fill="#07060f"/>
               )}
             </m.g>
             
             {/* Right Eye */}
-            <m.g animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
+            <m.g key="eye-r" animate={{ scaleY: emotion === 'happy' ? 1.2 : [1, 1, 0.1, 1, 1] }} 
                  transition={{ duration: 5, repeat: Infinity }}
                  style={{ originY: '13px' }}>
-              <rect x="18" y="12" width="3" height="2" fill="#fff"/>
+              <rect key="eye-r-white" x="18" y="12" width="3" height="2" fill="#fff"/>
               {emotion !== 'sad' && (
-                <m.rect style={{ x: 'calc(var(--mnx) * 1.2px)', y: 'calc(var(--mny) * 1px)' }}
+                <m.rect key="eye-r-pupil" style={{ x: 'calc(var(--mnx) * 1.2px)', y: 'calc(var(--mny) * 1px)' }}
                         x="19" y="12.5" width="1" height="1" fill="#07060f"/>
               )}
             </m.g>
-
+ 
             {emotion === 'sad' && (
-              <g>
+              <g key="tears">
                 <rect x="11" y="13" width="3" height="1" fill="#07060f" opacity="0.4"/>
                 <rect x="18" y="13" width="3" height="1" fill="#07060f" opacity="0.4"/>
               </g>
             )}
           </g>
-
+ 
           {/* Brows */}
-          <m.rect animate={{ y: emotion === 'sad' ? 1 : emotion === 'happy' ? -1 : 0 }} x="10" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
-          <m.rect animate={{ y: emotion === 'sad' ? 1 : emotion === 'happy' ? -1 : 0 }} x="18" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
+          <m.rect key="brow-l" animate={{ y: emotion === 'sad' ? 1 : emotion === 'happy' ? -1 : 0 }} x="10" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
+          <m.rect key="brow-r" animate={{ y: emotion === 'sad' ? 1 : emotion === 'happy' ? -1 : 0 }} x="18" y="10" width="4" height="1" fill="#2a1a0a" opacity="0.6"/>
           
-          <rect x="15" y="14" width="2" height="2" fill="#d49a6a"/>
+          <rect key="nose" x="15" y="14" width="2" height="2" fill="#d49a6a"/>
           
           {/* Mouth */}
           {emotion === 'happy' ? (
-            <rect x="13" y="17" width="6" height="2" fill="#ff3860"/>
+            <rect key="mouth-p" x="13" y="17" width="6" height="2" fill="#ff3860"/>
           ) : emotion === 'sad' ? (
-            <rect x="14" y="18" width="4" height="1" fill="#07060f"/>
+            <rect key="mouth-s" x="14" y="18" width="4" height="1" fill="#07060f"/>
           ) : (
-            <rect x="14" y="18" width="4" height="1" fill="#ff3860"/>
+            <rect key="mouth-n" x="14" y="18" width="4" height="1" fill="#ff3860"/>
           )}
         </m.g>
         
         {!floating && (
-          <g>
+          <g key="torso">
             <rect x="13" y="21" width="6" height="2" fill="#d49a6a"/>
             <rect x="6" y="23" width="20" height="9" fill="#ff2fb6"/>
             <rect x="6" y="23" width="20" height="1" fill="#ffffff"/>

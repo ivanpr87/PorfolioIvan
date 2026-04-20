@@ -358,8 +358,8 @@ function MiniGame() {
       } else if (state === 'play') {
         // Wave cleared
         g.running = false;
-        // For testing, trigger ending after wave 1. Normally use (g.wave === 30)
-        if (g.wave >= 1) { 
+        // Wave cleared - Show victory sequence after wave 30
+        if (g.wave >= 30) { 
           setState('victory'); g.victoryT = 0; 
           g.enemies = []; g.bullets = []; g.efire = []; g.powerups = [];
         } else {
