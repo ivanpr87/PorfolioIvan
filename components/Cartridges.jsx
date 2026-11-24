@@ -290,8 +290,8 @@ function CartridgeModal({ p, title, sub, genre, desc, accent, onClose }) {
             ))}
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button className="pixel-btn" onMouseEnter={() => AudioCtx.hover()} onClick={() => AudioCtx.coin()}>{t('proj_view_demo')}</button>
-            <button className="pixel-btn" onMouseEnter={() => AudioCtx.hover()} onClick={() => AudioCtx.select()} style={{ background: 'transparent' }}>{t('proj_case')}</button>
+            {p.demo && <a className="pixel-btn" href={p.demo} target="_blank" rel="noopener noreferrer" onMouseEnter={() => AudioCtx.hover()} onClick={() => AudioCtx.coin()}>{t('proj_view_demo')}</a>}
+            
           </div>
           <button onClick={onClose} onMouseEnter={() => AudioCtx.hover()}
             className="font-pixel pixel-btn cart-modal-close-bottom"
