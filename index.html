@@ -1,29 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="es-AR">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Ivan Bastos — 16-bit Portfolio</title>
-  <link rel="stylesheet" href="styles.css"/>
-
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/framer-motion@11.11.17/dist/framer-motion.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101026">
+  <meta name="description" content="Portfolio de Iván Bastos: testing funcional, automatización con Playwright, diagnóstico de equipos embebidos y desarrollo de aplicaciones web.">
+  <title>Iván Bastos | QA y automatización</title>
+  <link rel="stylesheet" href="./styles.css">
 </head>
-<body data-palette="genesis">
-  <div id="root"></div>
-
-  <script type="text/babel" data-presets="react" src="components/i18n.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/Cursor.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/Shared.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/Hero.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/Stats.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/Cartridges.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/MiniGame.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/HighScore.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/Achievements.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/Sidekick.jsx?v=3.6"></script>
-  <script type="text/babel" data-presets="react" src="components/App.jsx?v=3.6"></script>
-</body>
-</html>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header><div class="wrap top"><a class="brand" href="#contenido" aria-label="Iván Bastos, inicio"><span class="monogram">IB</span><span>Iván Bastos</span></a>
+    <nav aria-label="Navegación principal"><a href="#experiencia">Experiencia</a><a href="#proyectos">Proyectos</a><a href="#contacto">Contacto</a></nav>
+  </div></header>
+  <main id="contenido">
+    <section class="hero"><div class="wrap hero-grid"><div><p class="kicker"><span></span> PORTFOLIO TÉCNICO</p><h1>Pruebas de software.<br><em>Diagnóstico de equipos.</em></h1>
+    <p class="lead">Soy Iván Bastos, técnico electrónico y analista QA. En Laser Argentina pasé de reparar equipos a probar el software que acompaña su recorrido por el laboratorio.</p><div class="actions"><a class="primary" href="#proyectos">Ver mis proyectos <span aria-hidden="true">↓</span></a><a class="textlink" href="#experiencia">Mi experiencia</a></div></div>
+    <div class="instrument" aria-hidden="true"><div class="inst-head"><b>IB / LAB</b><span>FIG. 01</span></div><svg viewBox="0 0 320 130" role="presentation" preserveAspectRatio="xMidYMid meet"><path class="guide" d="M10 89H47V45H92V89H133V45H180V89H222V45H275V89H310"/><path class="signal" d="M10 93H46Q50 93 51 65T59 42Q65 42 68 47H88Q93 47 95 73T103 88H130Q136 88 137 62T145 41Q151 41 153 47H176Q181 47 183 71T193 88H221Q226 88 228 64T236 42Q242 42 245 47H271Q275 47 278 70T289 90H310"/></svg><div class="legend"><span>Referencia</span><span>Señal</span></div></div>
+    </div></section>
+    <section class="wrap section" id="experiencia"><div class="section-head"><span class="index">01 / Trayectoria</span><h2>Experiencia</h2></div>
+    <div class="experience"><article><p class="date">Agosto 2026 · Actualidad</p><h3>Analista QA/QC/QE</h3><p class="employer">Laser Argentina</p><p>Diseño y ejecuto pruebas funcionales, de integración y regresión. Con Playwright y TypeScript valido circuitos como el de una orden de trabajo: desde el alta hasta el egreso del equipo.</p><p>En equipos embebidos verifico firmware y memoria RAM con Linux y <code>memtester</code>. Cuando aparece un fallo, reviso los registros, el consumo de recursos y las condiciones para reproducirlo.</p></article>
+    <article><p class="date">2019 · Agosto 2026</p><h3>Servicio Técnico</h3><p class="employer">Laser Argentina</p><p>Diagnostiqué y reparé equipos electrónicos. Registré intervenciones y seguí el historial por número de serie para distinguir una falla nueva de una que volvía al taller.</p></article></div></section>
+    <section class="projects-band" id="proyectos"><div class="wrap section"><div class="section-head"><span class="index">02 / Trabajo seleccionado</span><h2>Proyectos</h2></div>
+    <div class="project-list">
+      <article class="project"><div class="stamp tone1" aria-hidden="true"><span>01</span><i>↳</i></div><div><p class="tag">Operaciones de laboratorio · Google Apps Script</p><h3>Registro de Intervenciones</h3><p>Aplicación web para seguir una reparación sin perder el historial del equipo. Reúne diagnóstico, tiempos, repuestos y cambios de placa bajo el mismo número de serie.</p><details><summary>Qué se puede hacer</summary><p>Consultar intervenciones anteriores, registrar el firmware y seguir el stock y la provisión de repuestos. Con los datos ya cargados se generan informes de reparación, sin volver a transcribir el trabajo técnico.</p></details></div></article>
+      <article class="project"><div class="stamp tone2" aria-hidden="true"><span>02</span><i>▥</i></div><div><p class="tag">Análisis de posventa · Aplicación web</p><h3>Estadísticos 3.0</h3><p>Tableros que permiten comparar períodos y pasar de un indicador de posventa a su detalle. Así se puede investigar qué registros explican una diferencia, en vez de quedarse con el total.</p></div></article>
+      <article class="project"><div class="stamp tone3" aria-hidden="true"><span>03</span><i>▷</i></div><div><p class="tag">Producción audiovisual · IA y automatización</p><h3>Un invento a la vez</h3><p>Flujo de producción para YouTube que empieza antes de subir el video: elegir un tema, investigarlo y convertirlo en un guion que se pueda explicar con imágenes.</p><details><summary>Del guion al video</summary><p>Con el tema aprobado, preparo la narración, ajusto la voz y edito imágenes o incorporo tomas reales. En la revisión final comparo lo que se dice con lo que aparece en pantalla y corrijo cortes de audio antes de programar la publicación.</p></details></div></article>
+      <article class="project"><div class="stamp tone4" aria-hidden="true"><span>04</span><i>⌂</i></div><div><p class="tag">Desarrollo web · React y Vite</p><h3>Web inmobiliaria</h3><p>Catálogo de propiedades con filtros por operación, zona, tipo de inmueble, ambientes y presupuesto. El diseño le da espacio a las fotos y ofrece alternativas cuando una búsqueda queda vacía.</p><a class="demo-link" href="./demos/inmobiliaria/">Ver demo inmobiliaria con datos de ejemplo <span aria-hidden="true">↗</span></a></div></article>
+      <article class="project"><div class="stamp tone5" aria-hidden="true"><span>05</span><i>◩</i></div><div><p class="tag">Desarrollo web · Sitio de servicios</p><h3>Taller El Alemán</h3><p>Web para un taller de chapa y pintura. Un comparador permite deslizar entre el antes y el después de una reparación; la galería se amplía para ver la terminación en detalle.</p><a class="demo-link" href="./demos/taller/">Ver demo del taller con datos de ejemplo <span aria-hidden="true">↗</span></a></div></article>
+    </div></div></section>
+    <section class="wrap section"><div class="section-head"><span class="index">03 / Herramientas</span><h2>Cómo trabajo</h2></div>
+    <div class="tools"><article><h3>Pruebas con evidencia</h3><p>Contrasto especificaciones y tickets con ayuda de IA para encontrar escenarios que falten. Valido el comportamiento en el entorno de prueba, registro el resultado en TestLink y documento los defectos en Redmine.</p></article><article><h3>Desarrollo y automatización</h3><p>Trabajo con Git, bases de datos SQL y Google Apps Script. Para proyectos web uso React y Next.js; para automatizar tareas, n8n.</p></article></div></section>
+    <section id="contacto" class="contact"><div class="wrap contact-inner"><div><span class="index">04 / Contacto</span><h2>Hablemos de QA.</h2><p>Iván Bastos · Buenos Aires, Argentina</p></div><a class="primary" href="https://www.linkedin.com/in/ivan-bastos-574186216/">Contactarme por LinkedIn <span aria-hidden="true">↗</span></a></div></section>
+  </main><footer><div class="wrap">IB <span>/</span> QA · Electrónica · Desarrollo web</div></footer>
+</body></html>
